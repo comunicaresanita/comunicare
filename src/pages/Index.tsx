@@ -1,16 +1,117 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { Heart, MapPin, Calendar, Shield, Clock, UserCheck } from "lucide-react";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const features = [
+  {
+    icon: UserCheck,
+    title: "Professionisti Verificati",
+    description: "Infermieri iscritti all'OPI con documenti verificati dalla piattaforma.",
+  },
+  {
+    icon: MapPin,
+    title: "Vicino a Te",
+    description: "Trova infermieri nella zona di Firenze, con calcolo della distanza dal tuo domicilio.",
+  },
+  {
+    icon: Calendar,
+    title: "Prenotazione Facile",
+    description: "Scegli lo slot orario disponibile e prenota in pochi tocchi.",
+  },
+  {
+    icon: Shield,
+    title: "Sicurezza GDPR",
+    description: "I tuoi dati personali e sanitari sono protetti secondo la normativa europea.",
+  },
+  {
+    icon: Clock,
+    title: "Assistenza Rapida",
+    description: "Servizi infermieristici a domicilio quando ne hai bisogno.",
+  },
+  {
+    icon: Heart,
+    title: "Cura Personalizzata",
+    description: "Ogni paziente riceve un'attenzione dedicata e un servizio su misura.",
+  },
+];
+
+const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="min-h-screen flex flex-col">
+      <Header />
+
+      {/* Hero Section */}
+      <section className="bg-secondary py-20 md:py-28">
+        <div className="container mx-auto px-6 text-center">
+          <h1 className="text-senior-3xl md:text-senior-4xl font-bold text-foreground mb-6 max-w-3xl mx-auto leading-tight">
+            Assistenza Infermieristica a Domicilio a <span className="text-primary">Firenze</span>
+          </h1>
+          <p className="text-senior-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
+            Trova il professionista sanitario più vicino a te, prenota online e ricevi cure di qualità direttamente a casa tua.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/registrazione">
+              <Button size="lg" className="text-senior-base font-semibold px-10 py-6 w-full sm:w-auto">
+                Inizia Ora
+              </Button>
+            </Link>
+            <Link to="/registrazione?ruolo=professionista">
+              <Button variant="outline" size="lg" className="text-senior-base font-semibold px-10 py-6 w-full sm:w-auto border-2">
+                Sei un Infermiere?
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-20">
+        <div className="container mx-auto px-6">
+          <h2 className="text-senior-2xl md:text-senior-3xl font-bold text-center mb-4">
+            Perché Scegliere ComuniCARE
+          </h2>
+          <p className="text-senior-base text-muted-foreground text-center mb-14 max-w-xl mx-auto">
+            Una piattaforma pensata per la semplicità e la sicurezza.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((f) => (
+              <Card key={f.title} className="border-0 shadow-md hover:shadow-lg transition-shadow">
+                <CardContent className="p-8">
+                  <div className="w-14 h-14 rounded-xl bg-secondary flex items-center justify-center mb-5">
+                    <f.icon className="w-7 h-7 text-primary" />
+                  </div>
+                  <h3 className="text-senior-lg font-semibold mb-2">{f.title}</h3>
+                  <p className="text-senior-sm text-muted-foreground">{f.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-primary py-16">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="text-senior-2xl md:text-senior-3xl font-bold text-primary-foreground mb-4">
+            Pronto per Iniziare?
+          </h2>
+          <p className="text-senior-base text-primary-foreground/80 mb-8 max-w-lg mx-auto">
+            Registrati gratuitamente e accedi ai nostri servizi infermieristici a domicilio.
+          </p>
+          <Link to="/registrazione">
+            <Button variant="secondary" size="lg" className="text-senior-base font-semibold px-10 py-6">
+              Registrati Gratuitamente
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
