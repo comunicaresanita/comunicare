@@ -12,8 +12,26 @@ export default {
         "2xl": "1400px",
       },
     },
+    fontFamily: {
+      sans: ['Inter', 'system-ui', 'sans-serif'],
+    },
     extend: {
+      fontSize: {
+        'senior-sm': ['1rem', '1.5rem'],
+        'senior-base': ['1.125rem', '1.75rem'],
+        'senior-lg': ['1.25rem', '2rem'],
+        'senior-xl': ['1.5rem', '2.25rem'],
+        'senior-2xl': ['1.875rem', '2.5rem'],
+        'senior-3xl': ['2.25rem', '3rem'],
+        'senior-4xl': ['3rem', '3.75rem'],
+      },
       colors: {
+        'medical-light': 'hsl(var(--medical-light))',
+        'medical-dark': 'hsl(var(--medical-dark))',
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
