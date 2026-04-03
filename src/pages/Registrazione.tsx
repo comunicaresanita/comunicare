@@ -48,6 +48,12 @@ const Registrazione = () => {
       title: "Registrazione completata!",
       description: "Il tuo account è stato creato con successo.",
     });
+
+    if (ruolo === "professionista") {
+      navigate("/setup-professionista");
+    } else {
+      navigate("/dashboard-paziente");
+    }
   };
 
   if (!ruolo) {
