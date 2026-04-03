@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Heart, MapPin, Calendar, Shield, Clock, UserCheck } from "lucide-react";
+import { Heart, MapPin, Calendar, UserCheck } from "lucide-react";
+import logo from "@/assets/comunicare-logo.png";
 
 const features = [
   {
@@ -22,16 +23,6 @@ const features = [
     description: "Scegli lo slot orario disponibile e prenota in pochi tocchi.",
   },
   {
-    icon: Shield,
-    title: "Sicurezza GDPR",
-    description: "I tuoi dati personali e sanitari sono protetti secondo la normativa europea.",
-  },
-  {
-    icon: Clock,
-    title: "Assistenza Rapida",
-    description: "Servizi infermieristici a domicilio quando ne hai bisogno.",
-  },
-  {
     icon: Heart,
     title: "Cura Personalizzata",
     description: "Ogni paziente riceve un'attenzione dedicata e un servizio su misura.",
@@ -46,6 +37,7 @@ const Index = () => {
       {/* Hero Section */}
       <section className="bg-secondary py-20 md:py-28">
         <div className="container mx-auto px-6 text-center">
+          <img src={logo} alt="ComuniCARE" className="h-24 md:h-32 mx-auto mb-8" />
           <h1 className="text-senior-3xl md:text-senior-4xl font-bold text-foreground mb-6 max-w-3xl mx-auto leading-tight">
             Assistenza Infermieristica a Domicilio a <span className="text-primary">Firenze</span>
           </h1>
@@ -54,12 +46,12 @@ const Index = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/registrazione">
-              <Button size="lg" className="text-senior-base font-semibold px-10 py-6 w-full sm:w-auto">
+              <Button size="lg" className="px-10 py-6 w-full sm:w-auto">
                 Inizia Ora
               </Button>
             </Link>
             <Link to="/registrazione?ruolo=professionista">
-              <Button variant="outline" size="lg" className="text-senior-base font-semibold px-10 py-6 w-full sm:w-auto border-2">
+              <Button variant="outline" size="lg" className="px-10 py-6 w-full sm:w-auto border-2">
                 Sei un Infermiere?
               </Button>
             </Link>
@@ -76,7 +68,7 @@ const Index = () => {
           <p className="text-senior-base text-muted-foreground text-center mb-14 max-w-xl mx-auto">
             Una piattaforma pensata per la semplicità e la sicurezza.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((f) => (
               <Card key={f.title} className="border-0 shadow-md hover:shadow-lg transition-shadow">
                 <CardContent className="p-8">
@@ -93,16 +85,16 @@ const Index = () => {
       </section>
 
       {/* CTA */}
-      <section className="bg-primary py-16">
+      <section className="bg-card py-16">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="text-senior-2xl md:text-senior-3xl font-bold text-primary-foreground mb-4">
+          <h2 className="text-senior-2xl md:text-senior-3xl font-bold text-foreground mb-4">
             Pronto per Iniziare?
           </h2>
-          <p className="text-senior-base text-primary-foreground/80 mb-8 max-w-lg mx-auto">
+          <p className="text-senior-base text-muted-foreground mb-8 max-w-lg mx-auto">
             Registrati gratuitamente e accedi ai nostri servizi infermieristici a domicilio.
           </p>
           <Link to="/registrazione">
-            <Button variant="secondary" size="lg" className="text-senior-base font-semibold px-10 py-6">
+            <Button size="lg" className="px-10 py-6">
               Registrati Gratuitamente
             </Button>
           </Link>

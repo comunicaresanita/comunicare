@@ -17,7 +17,6 @@ const Footer = () => {
             <ul className="space-y-2 text-senior-sm">
               <li><Link to="/termini" className="opacity-80 hover:opacity-100 transition-opacity">Termini e Condizioni</Link></li>
               <li><Link to="/privacy" className="opacity-80 hover:opacity-100 transition-opacity">Privacy Policy</Link></li>
-              <li><Link to="/registrazione" className="opacity-80 hover:opacity-100 transition-opacity">Registrati</Link></li>
             </ul>
           </div>
           <div>
@@ -31,7 +30,7 @@ const Footer = () => {
         </div>
         <div className="mt-10 pt-8 border-t border-primary-foreground/20">
           <p className="text-senior-sm text-center opacity-90 font-medium leading-relaxed">
-            ⚕️ ComuniCARE è un fornitore di servizi tecnologici di intermediazione. La responsabilità della prestazione sanitaria è esclusivamente in capo al professionista abilitato.
+            ComuniCARE è un fornitore di servizi tecnologici di intermediazione. La responsabilità della prestazione sanitaria è esclusivamente in capo al professionista abilitato.
           </p>
           <p className="text-sm text-center opacity-60 mt-4">
             © {new Date().getFullYear()} ComuniCARE. Tutti i diritti riservati.

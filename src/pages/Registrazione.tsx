@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,7 @@ const Registrazione = () => {
   const [consensoPrivacy, setConsensoPrivacy] = useState(false);
   const [consensoSanitario, setConsensoSanitario] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +48,12 @@ const Registrazione = () => {
       title: "Registrazione completata!",
       description: "Il tuo account è stato creato con successo.",
     });
+
+    if (ruolo === "professionista") {
+      navigate("/setup-professionista");
+    } else {
+      navigate("/dashboard-paziente");
+    }
   };
 
   if (!ruolo) {
@@ -160,10 +167,6 @@ const Registrazione = () => {
                         <div className="space-y-2">
                           <Label htmlFor="numero_opi" className="text-senior-sm">Numero Iscrizione OPI *</Label>
                           <Input id="numero_opi" placeholder="Es. FI-12345" required className="text-senior-sm py-3" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="tariffa" className="text-senior-sm">Tariffa Oraria (€) *</Label>
-                          <Input id="tariffa" type="number" min="1" placeholder="Es. 35" required className="text-senior-sm py-3" />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="bio" className="text-senior-sm">Bio / Specializzazioni</Label>

@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    --background: 195 50% 97%;
+    --background: 195 40% 99%;
     --foreground: 210 50% 10%;
 
     --card: 0 0% 100%;
@@ -18,7 +18,7 @@
     --primary: 210 100% 35%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 193 60% 93%;
+    --secondary: 193 60% 97%;
     --secondary-foreground: 210 100% 35%;
 
     --muted: 193 40% 94%;
@@ -49,6 +49,7 @@
     --medical-dark: 210 60% 18%;
     --success: 145 63% 42%;
     --success-foreground: 0 0% 100%;
+    --warning: 45 93% 47%;
   }
 
   .dark {
