@@ -84,7 +84,7 @@ const Index = () => {
       </section>
 
       {/* CTA */}
-      <section className="bg-card py-16">
+      <section className="bg-background py-16">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-senior-2xl md:text-senior-3xl font-bold text-foreground mb-4">
             Pronto per Iniziare?
