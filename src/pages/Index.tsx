@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Heart, MapPin, Calendar, UserCheck } from "lucide-react";
-import logo from "@/assets/comunicare-logo.png";
+
 
 const features = [
   {
