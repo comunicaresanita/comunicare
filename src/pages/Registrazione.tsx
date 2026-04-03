@@ -21,6 +21,7 @@ const Registrazione = () => {
   const [consensoPrivacy, setConsensoPrivacy] = useState(false);
   const [consensoSanitario, setConsensoSanitario] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
