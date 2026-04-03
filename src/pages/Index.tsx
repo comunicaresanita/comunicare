@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Heart, MapPin, Calendar, UserCheck } from "lucide-react";
-import logo from "@/assets/comunicare-logo.png";
+
 
 const features = [
   {
@@ -35,13 +35,12 @@ const Index = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="bg-secondary py-20 md:py-28">
+      <section className="bg-secondary py-12 md:py-16">
         <div className="container mx-auto px-6 text-center">
-          <img src={logo} alt="ComuniCARE" className="h-24 md:h-32 mx-auto mb-8" />
           <h1 className="text-senior-3xl md:text-senior-4xl font-bold text-foreground mb-6 max-w-3xl mx-auto leading-tight">
             Assistenza Infermieristica a Domicilio a <span className="text-primary">Firenze</span>
           </h1>
-          <p className="text-senior-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
+          <p className="text-senior-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Trova il professionista sanitario più vicino a te, prenota online e ricevi cure di qualità direttamente a casa tua.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -85,7 +84,7 @@ const Index = () => {
       </section>
 
       {/* CTA */}
-      <section className="bg-card py-16">
+      <section className="bg-background py-16">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-senior-2xl md:text-senior-3xl font-bold text-foreground mb-4">
             Pronto per Iniziare?

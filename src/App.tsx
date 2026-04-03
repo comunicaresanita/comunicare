@@ -13,6 +13,7 @@ import SetupDisponibilita from "./pages/SetupDisponibilita.tsx";
 import DashboardProfessionista from "./pages/DashboardProfessionista.tsx";
 import DashboardPaziente from "./pages/DashboardPaziente.tsx";
 import ProfiloInfermiere from "./pages/ProfiloInfermiere.tsx";
+import Login from "./pages/Login.tsx";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/registrazione" element={<Registrazione />} />
           <Route path="/termini" element={<Termini />} />
           <Route path="/privacy" element={<Privacy />} />
