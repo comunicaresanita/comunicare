@@ -169,10 +169,6 @@ const Registrazione = () => {
                           <Input id="numero_opi" placeholder="Es. FI-12345" required className="text-senior-sm py-3" />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="tariffa" className="text-senior-sm">Tariffa Oraria (€) *</Label>
-                          <Input id="tariffa" type="number" min="1" placeholder="Es. 35" required className="text-senior-sm py-3" />
-                        </div>
-                        <div className="space-y-2">
                           <Label htmlFor="bio" className="text-senior-sm">Bio / Specializzazioni</Label>
                           <Textarea id="bio" placeholder="Descrivi la tua esperienza e le tue specializzazioni..." className="text-senior-sm" rows={3} />
                         </div>
