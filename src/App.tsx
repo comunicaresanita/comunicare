@@ -8,6 +8,11 @@ import Registrazione from "./pages/Registrazione.tsx";
 import Termini from "./pages/Termini.tsx";
 import Privacy from "./pages/Privacy.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import SetupProfessionista from "./pages/SetupProfessionista.tsx";
+import SetupDisponibilita from "./pages/SetupDisponibilita.tsx";
+import DashboardProfessionista from "./pages/DashboardProfessionista.tsx";
+import DashboardPaziente from "./pages/DashboardPaziente.tsx";
+import ProfiloInfermiere from "./pages/ProfiloInfermiere.tsx";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +27,11 @@ const App = () => (
           <Route path="/registrazione" element={<Registrazione />} />
           <Route path="/termini" element={<Termini />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/setup-professionista" element={<SetupProfessionista />} />
+          <Route path="/setup-professionista/disponibilita" element={<SetupDisponibilita />} />
+          <Route path="/dashboard-professionista" element={<DashboardProfessionista />} />
+          <Route path="/dashboard-paziente" element={<DashboardPaziente />} />
+          <Route path="/profilo-infermiere/:id" element={<ProfiloInfermiere />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
