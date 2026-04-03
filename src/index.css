@@ -49,6 +49,7 @@
     --medical-dark: 210 60% 18%;
     --success: 145 63% 42%;
     --success-foreground: 0 0% 100%;
+    --warning: 45 93% 47%;
   }
 
   .dark {
