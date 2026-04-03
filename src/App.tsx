@@ -13,6 +13,7 @@ import SetupDisponibilita from "./pages/SetupDisponibilita.tsx";
 import DashboardProfessionista from "./pages/DashboardProfessionista.tsx";
 import DashboardPaziente from "./pages/DashboardPaziente.tsx";
 import ProfiloInfermiere from "./pages/ProfiloInfermiere.tsx";
+import Login from "./pages/Login.tsx";
 
 const queryClient = new QueryClient();
 
