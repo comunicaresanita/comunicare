@@ -24,7 +24,7 @@ const features = [
   },
   {
     icon: Heart,
-    title: "Cura Personalizzata",
+    title: "Cura personalizzata",
     description: "Ogni paziente riceve un'attenzione dedicata e un servizio su misura.",
   },
 ];
