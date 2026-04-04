@@ -19,7 +19,7 @@ const features = [
   },
   {
     icon: Calendar,
-    title: "Prenotazione Facile",
+    title: "Prenotazione facile",
     description: "Scegli lo slot orario disponibile e prenota in pochi tocchi.",
   },
   {
