@@ -205,7 +205,7 @@ const ProfiloInfermiere = () => {
           {/* Servizi e Prezzi */}
           <Card className="mb-8">
             <CardHeader>
-              <CardTitle className="text-senior-lg">Servizi e Prezzi</CardTitle>
+              <CardTitle className="text-senior-lg">Servizi e prezzi</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
