@@ -32,18 +32,18 @@
 
     --border: 210 30% 88%;
     --input: 210 30% 88%;
-    --ring: 210 100% 35%;
+    --ring: 210 60% 18%;
 
     --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 210 100% 35%;
+    --sidebar-primary: 210 60% 18%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 193 60% 93%;
-    --sidebar-accent-foreground: 210 100% 35%;
+    --sidebar-accent-foreground: 210 60% 18%;
     --sidebar-border: 210 30% 88%;
-    --sidebar-ring: 210 100% 35%;
+    --sidebar-ring: 210 60% 18%;
 
     --medical-light: 193 60% 93%;
     --medical-dark: 210 60% 18%;
