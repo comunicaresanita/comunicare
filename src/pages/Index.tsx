@@ -44,7 +44,7 @@ const Index = () => {
             Trova il professionista sanitario più vicino a te, prenota online e ricevi cure di qualità direttamente a casa tua.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/registrazione">
+            <Link to="/registrazione?ruolo=paziente">
               <Button size="lg" className="px-10 py-6 w-full sm:w-auto">
                 Cerchi un professionista?
               </Button>
