@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Mail, MapPin } from "lucide-react";
 import logo from "@/assets/comunicare-logo.png";
 
 const Footer = () => {
