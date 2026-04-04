@@ -46,12 +46,12 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/registrazione">
               <Button size="lg" className="px-10 py-6 w-full sm:w-auto">
-                Inizia Ora
+                Cerchi un professionista?
               </Button>
             </Link>
             <Link to="/registrazione?ruolo=professionista">
               <Button variant="outline" size="lg" className="px-10 py-6 w-full sm:w-auto border-2">
-                Sei un Infermiere?
+                Sono un infermiere
               </Button>
             </Link>
           </div>
