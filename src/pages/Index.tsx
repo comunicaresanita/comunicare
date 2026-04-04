@@ -62,7 +62,7 @@ const Index = () => {
       <section className="py-20">
         <div className="container mx-auto px-6">
           <h2 className="text-senior-2xl md:text-senior-3xl font-bold text-center mb-4">
-            Perché scegliere ComuniCARE
+            Perché scegliere Comuni<span style={{ color: '#0097B2' }}>CARE</span>
           </h2>
           <p className="text-senior-base text-muted-foreground text-center mb-14 max-w-xl mx-auto">
             Una piattaforma pensata per la semplicità e la sicurezza.

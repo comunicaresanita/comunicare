@@ -268,7 +268,7 @@ const ProfiloInfermiere = () => {
           {servizioSelezionato && slotSelezionato && (
             <Card className="mb-8 border-primary border-2">
               <CardContent className="p-6">
-                <h3 className="text-senior-lg font-semibold mb-3">Riepilogo Prenotazione</h3>
+                <h3 className="text-senior-lg font-semibold mb-3">Riepilogo prenotazione</h3>
                 <div className="space-y-2 text-senior-sm mb-4">
                   <p><strong>Servizio:</strong> {servizioSelezionato}</p>
                   <p><strong>Giorno:</strong> {giornoSelezionato}</p>

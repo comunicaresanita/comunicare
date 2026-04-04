@@ -22,9 +22,9 @@ const Footer = () => {
           </div>
           <div>
             <h4 className="text-senior-lg font-semibold mb-4">Contatti</h4>
-            <ul className="space-y-2 text-senior-sm opacity-80">
-              <li>Email: comunicaresanita@gmail.com</li>
-              <li>Firenze, Italia</li>
+            <ul className="space-y-3 text-senior-sm opacity-80">
+              <li className="flex items-center gap-2"><Mail className="w-4 h-4 flex-shrink-0" /> comunicaresanita@gmail.com</li>
+              <li className="flex items-center gap-2"><MapPin className="w-4 h-4 flex-shrink-0" /> Firenze, Italia</li>
             </ul>
           </div>
         </div>
