@@ -77,7 +77,7 @@ const Registrazione = () => {
                   <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center mx-auto mb-5">
                     <User className="w-10 h-10 text-primary" />
                   </div>
-                  <h3 className="text-senior-xl font-semibold mb-2">Paziente</h3>
+                  <h3 className="text-senior-xl font-semibold mb-2">Utente</h3>
                   <p className="text-senior-sm text-muted-foreground">
                     Cerca e prenota servizi infermieristici a domicilio.
                   </p>
