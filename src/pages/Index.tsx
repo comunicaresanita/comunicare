@@ -87,14 +87,14 @@ const Index = () => {
       <section className="bg-background py-16">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-senior-2xl md:text-senior-3xl font-bold text-foreground mb-4">
-            Pronto per Iniziare?
+            Pronto per iniziare?
           </h2>
           <p className="text-senior-base text-muted-foreground mb-8 max-w-lg mx-auto">
             Registrati gratuitamente e accedi ai nostri servizi infermieristici a domicilio.
           </p>
           <Link to="/registrazione">
             <Button size="lg" className="px-10 py-6">
-              Registrati Gratuitamente
+              Registrati gratuitamente
             </Button>
           </Link>
         </div>
