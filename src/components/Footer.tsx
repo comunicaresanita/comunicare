@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="container mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <img src={logo} alt="ComuniCARE" className="h-12 mb-4 brightness-0 invert" />
+            <img src={logo} alt="ComuniCARE" className="h-14 mb-4" />
             <p className="text-senior-sm opacity-80">
               Servizi infermieristici a domicilio a Firenze. Qualità, professionalità e cura.
             </p>
