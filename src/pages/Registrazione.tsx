@@ -252,7 +252,7 @@ const Registrazione = () => {
                 </div>
 
                 <Button type="submit" size="lg" className="w-full text-senior-base font-semibold py-6">
-                  Completa Registrazione
+                  Completa registrazione
                 </Button>
               </form>
             </CardContent>

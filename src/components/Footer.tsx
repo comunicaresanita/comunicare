@@ -13,7 +13,7 @@ const Footer = () => {
             </p>
           </div>
           <div>
-            <h4 className="text-senior-lg font-semibold mb-4">Link Utili</h4>
+            <h4 className="text-senior-lg font-semibold mb-4">Link utili</h4>
             <ul className="space-y-2 text-senior-sm">
               <li><Link to="/termini" className="opacity-80 hover:opacity-100 transition-opacity">Termini e Condizioni</Link></li>
               <li><Link to="/privacy" className="opacity-80 hover:opacity-100 transition-opacity">Privacy Policy</Link></li>

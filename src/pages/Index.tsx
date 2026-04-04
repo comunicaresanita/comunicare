@@ -38,7 +38,7 @@ const Index = () => {
       <section className="bg-secondary py-12 md:py-16">
         <div className="container mx-auto px-6 text-center">
           <h1 className="text-senior-3xl md:text-senior-4xl font-bold text-foreground mb-6 max-w-3xl mx-auto leading-tight">
-            Assistenza Infermieristica a Domicilio a <span className="text-primary">Firenze</span>
+            Assistenza infermieristica a domicilio a <span className="text-primary">Firenze</span>
           </h1>
           <p className="text-senior-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Trova il professionista sanitario più vicino a te, prenota online e ricevi cure di qualità direttamente a casa tua.
