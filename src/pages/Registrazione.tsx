@@ -203,7 +203,7 @@ const Registrazione = () => {
 
                 {/* Consensi */}
                 <div className="border-t pt-6">
-                  <h3 className="text-senior-lg font-semibold mb-4">Consensi Obbligatori</h3>
+                  <h3 className="text-senior-lg font-semibold mb-4">Consensi obbligatori</h3>
                   <div className="space-y-4">
                     <div className="flex items-start space-x-3">
                       <Checkbox
