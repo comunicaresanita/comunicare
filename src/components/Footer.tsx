@@ -22,8 +22,7 @@ const Footer = () => {
           <div>
             <h4 className="text-senior-lg font-semibold mb-4">Contatti</h4>
             <ul className="space-y-2 text-senior-sm opacity-80">
-              <li>Email: info@comunicare.it</li>
-              <li>Tel: +39 055 000 0000</li>
+              <li>Email: comunicaresanita@gmail.com</li>
               <li>Firenze, Italia</li>
             </ul>
           </div>
