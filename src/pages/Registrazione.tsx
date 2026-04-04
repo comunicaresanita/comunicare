@@ -15,7 +15,8 @@ type Ruolo = "paziente" | "professionista";
 
 const Registrazione = () => {
   const [searchParams] = useSearchParams();
-  const initialRole = searchParams.get("ruolo") === "professionista" ? "professionista" : null;
+  const ruoloParam = searchParams.get("ruolo");
+  const initialRole = ruoloParam === "professionista" ? "professionista" : ruoloParam === "paziente" ? "paziente" : null;
   const [ruolo, setRuolo] = useState<Ruolo | null>(initialRole);
   const [consensoTermini, setConsensoTermini] = useState(false);
   const [consensoPrivacy, setConsensoPrivacy] = useState(false);
@@ -63,7 +64,7 @@ const Registrazione = () => {
         <main className="flex-1 bg-background py-16">
           <div className="container mx-auto px-6 max-w-2xl">
             <h1 className="text-senior-2xl md:text-senior-3xl font-bold text-center mb-4">
-              Crea il tuo Account
+              Crea il tuo account
             </h1>
             <p className="text-senior-base text-muted-foreground text-center mb-10">
               Seleziona il tuo profilo per iniziare la registrazione.
