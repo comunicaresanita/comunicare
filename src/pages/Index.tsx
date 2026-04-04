@@ -9,7 +9,7 @@ import { Heart, MapPin, Calendar, UserCheck } from "lucide-react";
 const features = [
   {
     icon: UserCheck,
-    title: "Professionisti Verificati",
+    title: "Professionisti verificati",
     description: "Infermieri iscritti all'OPI con documenti verificati dalla piattaforma.",
   },
   {
