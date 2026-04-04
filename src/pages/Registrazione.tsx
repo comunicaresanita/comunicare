@@ -15,7 +15,8 @@ type Ruolo = "paziente" | "professionista";
 
 const Registrazione = () => {
   const [searchParams] = useSearchParams();
-  const initialRole = searchParams.get("ruolo") === "professionista" ? "professionista" : null;
+  const ruoloParam = searchParams.get("ruolo");
+  const initialRole = ruoloParam === "professionista" ? "professionista" : ruoloParam === "paziente" ? "paziente" : null;
   const [ruolo, setRuolo] = useState<Ruolo | null>(initialRole);
   const [consensoTermini, setConsensoTermini] = useState(false);
   const [consensoPrivacy, setConsensoPrivacy] = useState(false);
