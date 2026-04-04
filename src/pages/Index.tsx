@@ -14,7 +14,7 @@ const features = [
   },
   {
     icon: MapPin,
-    title: "Vicino a Te",
+    title: "Vicino a te",
     description: "Trova infermieri nella zona di Firenze, con calcolo della distanza dal tuo domicilio.",
   },
   {
