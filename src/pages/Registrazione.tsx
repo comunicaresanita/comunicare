@@ -162,7 +162,7 @@ const Registrazione = () => {
                 {ruolo === "professionista" && (
                   <>
                     <div className="border-t pt-6">
-                      <h3 className="text-senior-lg font-semibold mb-4">Dati Professionali</h3>
+                      <h3 className="text-senior-lg font-semibold mb-4">Dati professionali</h3>
                       <div className="space-y-4">
                         <div className="space-y-2">
                           <Label htmlFor="numero_opi" className="text-senior-sm">Numero Iscrizione OPI *</Label>
