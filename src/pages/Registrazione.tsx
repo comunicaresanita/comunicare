@@ -121,7 +121,7 @@ const Registrazione = () => {
           <Card className="border-0 shadow-lg">
             <CardHeader className="pb-4">
               <CardTitle className="text-senior-xl">
-                Registrazione {ruolo === "paziente" ? "Paziente" : "Professionista"}
+                Registrazione {ruolo === "paziente" ? "utente" : "professionista"}
               </CardTitle>
               <CardDescription className="text-senior-sm">
                 {ruolo === "paziente"
