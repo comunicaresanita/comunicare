@@ -9,22 +9,22 @@ import { Heart, MapPin, Calendar, UserCheck } from "lucide-react";
 const features = [
   {
     icon: UserCheck,
-    title: "Professionisti Verificati",
+    title: "Professionisti verificati",
     description: "Infermieri iscritti all'OPI con documenti verificati dalla piattaforma.",
   },
   {
     icon: MapPin,
-    title: "Vicino a Te",
+    title: "Vicino a te",
     description: "Trova infermieri nella zona di Firenze, con calcolo della distanza dal tuo domicilio.",
   },
   {
     icon: Calendar,
-    title: "Prenotazione Facile",
+    title: "Prenotazione facile",
     description: "Scegli lo slot orario disponibile e prenota in pochi tocchi.",
   },
   {
     icon: Heart,
-    title: "Cura Personalizzata",
+    title: "Cura personalizzata",
     description: "Ogni paziente riceve un'attenzione dedicata e un servizio su misura.",
   },
 ];
@@ -38,7 +38,7 @@ const Index = () => {
       <section className="bg-secondary py-12 md:py-16">
         <div className="container mx-auto px-6 text-center">
           <h1 className="text-senior-3xl md:text-senior-4xl font-bold text-foreground mb-6 max-w-3xl mx-auto leading-tight">
-            Assistenza Infermieristica a Domicilio a <span className="text-primary">Firenze</span>
+            Assistenza infermieristica a domicilio a <span className="text-primary">Firenze</span>
           </h1>
           <p className="text-senior-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Trova il professionista sanitario più vicino a te, prenota online e ricevi cure di qualità direttamente a casa tua.
@@ -46,12 +46,12 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/registrazione">
               <Button size="lg" className="px-10 py-6 w-full sm:w-auto">
-                Inizia Ora
+                Cerchi un professionista?
               </Button>
             </Link>
             <Link to="/registrazione?ruolo=professionista">
               <Button variant="outline" size="lg" className="px-10 py-6 w-full sm:w-auto border-2">
-                Sei un Infermiere?
+                Sono un infermiere
               </Button>
             </Link>
           </div>
@@ -62,7 +62,7 @@ const Index = () => {
       <section className="py-20">
         <div className="container mx-auto px-6">
           <h2 className="text-senior-2xl md:text-senior-3xl font-bold text-center mb-4">
-            Perché Scegliere ComuniCARE
+            Perché scegliere ComuniCARE
           </h2>
           <p className="text-senior-base text-muted-foreground text-center mb-14 max-w-xl mx-auto">
             Una piattaforma pensata per la semplicità e la sicurezza.
@@ -87,14 +87,14 @@ const Index = () => {
       <section className="bg-background py-16">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-senior-2xl md:text-senior-3xl font-bold text-foreground mb-4">
-            Pronto per Iniziare?
+            Pronto per iniziare?
           </h2>
           <p className="text-senior-base text-muted-foreground mb-8 max-w-lg mx-auto">
             Registrati gratuitamente e accedi ai nostri servizi infermieristici a domicilio.
           </p>
           <Link to="/registrazione">
             <Button size="lg" className="px-10 py-6">
-              Registrati Gratuitamente
+              Registrati gratuitamente
             </Button>
           </Link>
         </div>

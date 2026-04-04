@@ -77,7 +77,7 @@ const Registrazione = () => {
                   <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center mx-auto mb-5">
                     <User className="w-10 h-10 text-primary" />
                   </div>
-                  <h3 className="text-senior-xl font-semibold mb-2">Paziente</h3>
+                  <h3 className="text-senior-xl font-semibold mb-2">Utente</h3>
                   <p className="text-senior-sm text-muted-foreground">
                     Cerca e prenota servizi infermieristici a domicilio.
                   </p>
@@ -121,7 +121,7 @@ const Registrazione = () => {
           <Card className="border-0 shadow-lg">
             <CardHeader className="pb-4">
               <CardTitle className="text-senior-xl">
-                Registrazione {ruolo === "paziente" ? "Paziente" : "Professionista"}
+                Registrazione {ruolo === "paziente" ? "utente" : "professionista"}
               </CardTitle>
               <CardDescription className="text-senior-sm">
                 {ruolo === "paziente"
@@ -162,7 +162,7 @@ const Registrazione = () => {
                 {ruolo === "professionista" && (
                   <>
                     <div className="border-t pt-6">
-                      <h3 className="text-senior-lg font-semibold mb-4">Dati Professionali</h3>
+                      <h3 className="text-senior-lg font-semibold mb-4">Dati professionali</h3>
                       <div className="space-y-4">
                         <div className="space-y-2">
                           <Label htmlFor="numero_opi" className="text-senior-sm">Numero Iscrizione OPI *</Label>
@@ -177,7 +177,7 @@ const Registrazione = () => {
 
                     {/* Upload documenti */}
                     <div className="border-t pt-6">
-                      <h3 className="text-senior-lg font-semibold mb-4">Documenti di Verifica</h3>
+                      <h3 className="text-senior-lg font-semibold mb-4">Documenti di verifica</h3>
                       <p className="text-senior-sm text-muted-foreground mb-4">
                         Carica i documenti richiesti per la verifica del tuo profilo. I file saranno conservati in modo sicuro e non saranno accessibili pubblicamente.
                       </p>
@@ -203,7 +203,7 @@ const Registrazione = () => {
 
                 {/* Consensi */}
                 <div className="border-t pt-6">
-                  <h3 className="text-senior-lg font-semibold mb-4">Consensi Obbligatori</h3>
+                  <h3 className="text-senior-lg font-semibold mb-4">Consensi obbligatori</h3>
                   <div className="space-y-4">
                     <div className="flex items-start space-x-3">
                       <Checkbox
@@ -252,7 +252,7 @@ const Registrazione = () => {
                 </div>
 
                 <Button type="submit" size="lg" className="w-full text-senior-base font-semibold py-6">
-                  Completa Registrazione
+                  Completa registrazione
                 </Button>
               </form>
             </CardContent>
