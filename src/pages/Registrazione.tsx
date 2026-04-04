@@ -177,7 +177,7 @@ const Registrazione = () => {
 
                     {/* Upload documenti */}
                     <div className="border-t pt-6">
-                      <h3 className="text-senior-lg font-semibold mb-4">Documenti di Verifica</h3>
+                      <h3 className="text-senior-lg font-semibold mb-4">Documenti di verifica</h3>
                       <p className="text-senior-sm text-muted-foreground mb-4">
                         Carica i documenti richiesti per la verifica del tuo profilo. I file saranno conservati in modo sicuro e non saranno accessibili pubblicamente.
                       </p>
