@@ -26,8 +26,6 @@ const infermieriMock = [
   { id: "inf-4", nome: "Andrea Conti", bio: "Infermiere con specializzazione in ECG e parametri vitali.", lat: 43.7580, lng: 11.2700, zona: "Coverciano", valutazione: 4.7, recensioni: 28, servizi: ["ECG a domicilio", "Misurazione parametri vitali", "Prelievo ematico a domicilio", "Iniezione intramuscolare", "Bendaggio compressivo"], prezzi: { "ECG a domicilio": 48, "Misurazione parametri vitali": 15, "Prelievo ematico a domicilio": 25, "Iniezione intramuscolare": 15, "Bendaggio compressivo": 25 } },
 ];
 
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "";
-
 const DashboardPaziente = () => {
   const navigate = useNavigate();
   const [prestazioneSelezionata, setPrestazioneSelezionata] = useState("");
