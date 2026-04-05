@@ -17,6 +17,7 @@ import ProfiloInfermiere from "./pages/ProfiloInfermiere.tsx";
 import Login from "./pages/Login.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import PagamentoSuccesso from "./pages/PagamentoSuccesso.tsx";
+import AuthCallback from "./pages/AuthCallback.tsx";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/profilo-infermiere/:id" element={<ProfiloInfermiere />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/pagamento-successo" element={<PagamentoSuccesso />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
