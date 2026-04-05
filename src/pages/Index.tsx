@@ -88,6 +88,11 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Separator */}
+      <div className="container mx-auto px-6">
+        <hr className="border-t border-border/40" />
+      </div>
+
       {/* CTA */}
       <section className="bg-background py-16">
         <div className="container mx-auto px-6 text-center">
