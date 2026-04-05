@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { MapPin, Search, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const prestazioniDisponibili = [
   "Iniezione intramuscolare", "Iniezione sottocutanea", "Prelievo ematico a domicilio",
@@ -18,44 +19,53 @@ const prestazioniDisponibili = [
   "Assistenza domiciliare continuativa", "ECG a domicilio",
 ];
 
-// Mock data for demo - in production this comes from DB
-const infermieriMock = [
-  { id: "inf-1", nome: "Maria Rossi", bio: "Infermiera con 15 anni di esperienza in assistenza domiciliare.", lat: 43.7710, lng: 11.2486, zona: "Centro storico", valutazione: 4.8, recensioni: 47, servizi: ["Medicazione semplice", "Medicazione complessa", "Iniezione intramuscolare", "Prelievo ematico a domicilio", "Gestione stomie"], prezzi: { "Medicazione semplice": 20, "Medicazione complessa": 35, "Iniezione intramuscolare": 15, "Prelievo ematico a domicilio": 25, "Gestione stomie": 35 } },
-  { id: "inf-2", nome: "Luca Bianchi", bio: "Infermiere specializzato in terapie infusive e prelievi.", lat: 43.7650, lng: 11.2600, zona: "Campo di Marte", valutazione: 4.6, recensioni: 32, servizi: ["Infusione endovenosa (flebo)", "Prelievo ematico a domicilio", "Iniezione intramuscolare", "Iniezione sottocutanea", "Cateterismo vescicale"], prezzi: { "Infusione endovenosa (flebo)": 40, "Prelievo ematico a domicilio": 22, "Iniezione intramuscolare": 14, "Iniezione sottocutanea": 14, "Cateterismo vescicale": 38 } },
-  { id: "inf-3", nome: "Giulia Verdi", bio: "Infermiera pediatrica con esperienza in assistenza domiciliare.", lat: 43.7730, lng: 11.2400, zona: "Rifredi", valutazione: 4.9, recensioni: 61, servizi: ["Assistenza post-operatoria", "Medicazione semplice", "Misurazione parametri vitali", "Educazione sanitaria al paziente", "Assistenza domiciliare continuativa"], prezzi: { "Assistenza post-operatoria": 45, "Medicazione semplice": 22, "Misurazione parametri vitali": 15, "Educazione sanitaria al paziente": 28, "Assistenza domiciliare continuativa": 32 } },
-  { id: "inf-4", nome: "Andrea Conti", bio: "Infermiere con specializzazione in ECG e parametri vitali.", lat: 43.7580, lng: 11.2700, zona: "Coverciano", valutazione: 4.7, recensioni: 28, servizi: ["ECG a domicilio", "Misurazione parametri vitali", "Prelievo ematico a domicilio", "Iniezione intramuscolare", "Bendaggio compressivo"], prezzi: { "ECG a domicilio": 48, "Misurazione parametri vitali": 15, "Prelievo ematico a domicilio": 25, "Iniezione intramuscolare": 15, "Bendaggio compressivo": 25 } },
-];
+interface InfermiereData {
+  profileId: string;
+  nome: string;
+  bio: string;
+  lat: number;
+  lng: number;
+  zona: string;
+  servizi: { name: string; price: number }[];
+  valutazione: number;
+  recensioni: number;
+}
 
 const DashboardPaziente = () => {
   const navigate = useNavigate();
+  const { profile } = useAuth();
   const [prestazioneSelezionata, setPrestazioneSelezionata] = useState("");
   const [ricerca, setRicerca] = useState("");
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const [mapsLoaded, setMapsLoaded] = useState(false);
+  const [infermieri, setInfermieri] = useState<InfermiereData[]>([]);
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   const prestazioniFiltrate = prestazioniDisponibili.filter((p) =>
     p.toLowerCase().includes(ricerca.toLowerCase())
   );
 
   const infermieriFiltrati = prestazioneSelezionata
-    ? infermieriMock.filter((inf) => inf.servizi.includes(prestazioneSelezionata))
+    ? infermieri.filter((inf) => inf.servizi.some((s) => s.name === prestazioneSelezionata))
     : [];
 
   // Load Google Maps script via edge function
   useEffect(() => {
-    if (document.getElementById("google-maps-script") || (window as any).google) {
+    if ((window as any).google?.maps) {
       setMapsLoaded(true);
       return;
     }
+    if (document.getElementById("google-maps-script")) return;
+
     const loadMaps = async () => {
       try {
         const { data } = await supabase.functions.invoke("get-maps-key");
         if (data?.apiKey) {
           const script = document.createElement("script");
           script.id = "google-maps-script";
-          script.src = `https://maps.googleapis.com/maps/api/js?key=${data.apiKey}&callback=initMap`;
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${data.apiKey}&libraries=geocoding&callback=initMap`;
           script.async = true;
           script.defer = true;
           (window as any).initMap = () => setMapsLoaded(true);
@@ -68,18 +78,88 @@ const DashboardPaziente = () => {
     loadMaps();
   }, []);
 
-  // Initialize/update map
+  // Geocode user address to get coordinates
   useEffect(() => {
-    if (!prestazioneSelezionata || !mapRef.current || !(window as any).google) return;
+    if (!mapsLoaded || !profile?.address) return;
+    if (profile.lat && profile.lng) {
+      setUserCoords({ lat: profile.lat, lng: profile.lng });
+      return;
+    }
 
     const google = (window as any).google;
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ address: profile.address + ", Italia" }, (results: any[], status: string) => {
+      if (status === "OK" && results[0]) {
+        const loc = results[0].geometry.location;
+        setUserCoords({ lat: loc.lat(), lng: loc.lng() });
+      } else {
+        // Default to Florence center
+        setUserCoords({ lat: 43.7696, lng: 11.2558 });
+      }
+    });
+  }, [mapsLoaded, profile]);
+
+  // Fetch professionals with services and reviews
+  useEffect(() => {
+    const fetchInfermieri = async () => {
+      const { data: professionals } = await supabase
+        .from("profiles")
+        .select("id, first_name, last_name, bio, lat, lng, zona")
+        .eq("role", "professionista");
+
+      if (!professionals || professionals.length === 0) return;
+
+      const profIds = professionals.map((p) => p.id);
+
+      const [{ data: services }, { data: reviews }] = await Promise.all([
+        supabase.from("services").select("professional_id, name, price").in("professional_id", profIds),
+        supabase.from("reviews").select("professional_id, rating").in("professional_id", profIds),
+      ]);
+
+      const mapped: InfermiereData[] = professionals
+        .filter((p) => p.lat && p.lng)
+        .map((p) => {
+          const profServices = (services || []).filter((s) => s.professional_id === p.id);
+          const profReviews = (reviews || []).filter((r) => r.professional_id === p.id);
+          const avg = profReviews.length > 0
+            ? Math.round((profReviews.reduce((sum, r) => sum + r.rating, 0) / profReviews.length) * 10) / 10
+            : 0;
+
+          return {
+            profileId: p.id,
+            nome: `${p.first_name} ${p.last_name}`,
+            bio: p.bio || "",
+            lat: p.lat!,
+            lng: p.lng!,
+            zona: p.zona || "",
+            servizi: profServices.map((s) => ({ name: s.name, price: s.price })),
+            valutazione: avg,
+            recensioni: profReviews.length,
+          };
+        });
+
+      setInfermieri(mapped);
+    };
+
+    fetchInfermieri();
+  }, []);
+
+  // Initialize/update map
+  useEffect(() => {
+    if (!prestazioneSelezionata || !mapRef.current || !mapsLoaded) return;
+    const google = (window as any).google;
+    if (!google) return;
+
+    const center = userCoords || { lat: 43.7696, lng: 11.2558 };
 
     if (!mapInstanceRef.current) {
       mapInstanceRef.current = new google.maps.Map(mapRef.current, {
-        center: { lat: 43.7696, lng: 11.2558 },
+        center,
         zoom: 13,
         styles: [{ featureType: "poi", stylers: [{ visibility: "simplified" }] }],
       });
+    } else {
+      mapInstanceRef.current.setCenter(center);
     }
 
     // Clear existing markers
@@ -99,7 +179,7 @@ const DashboardPaziente = () => {
       });
 
       marker.addListener("click", () => {
-        navigate(`/profilo-infermiere/${inf.id}`);
+        navigate(`/profilo-infermiere/${inf.profileId}`);
       });
       marker.addListener("mouseover", () => infoWindow.open(mapInstanceRef.current, marker));
       marker.addListener("mouseout", () => infoWindow.close());
@@ -109,9 +189,10 @@ const DashboardPaziente = () => {
     if (infermieriFiltrati.length > 0) {
       const bounds = new google.maps.LatLngBounds();
       infermieriFiltrati.forEach((inf) => bounds.extend({ lat: inf.lat, lng: inf.lng }));
+      if (userCoords) bounds.extend(userCoords);
       mapInstanceRef.current.fitBounds(bounds);
     }
-  }, [prestazioneSelezionata, infermieriFiltrati, navigate]);
+  }, [prestazioneSelezionata, infermieriFiltrati, navigate, mapsLoaded, userCoords]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -157,7 +238,7 @@ const DashboardPaziente = () => {
 
               {/* Google Maps */}
               <div ref={mapRef} className="w-full h-80 rounded-lg overflow-hidden border mb-6 bg-secondary">
-                {!(window as any).google && (
+                {!mapsLoaded && (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center">
                       <MapPin className="w-12 h-12 text-primary mx-auto mb-3" />
@@ -168,36 +249,43 @@ const DashboardPaziente = () => {
               </div>
 
               <div className="space-y-4">
-                {infermieriFiltrati.map((inf) => (
-                  <Card key={inf.id} className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
-                    onClick={() => navigate(`/profilo-infermiere/${inf.id}`)}
-                  >
-                    <CardContent className="p-6 flex items-center gap-6">
-                      <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-primary font-bold text-senior-xl flex-shrink-0">
-                        {inf.nome[0]}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-senior-lg font-semibold">{inf.nome}</h3>
-                        <p className="text-senior-sm text-muted-foreground truncate">{inf.bio}</p>
-                        <div className="flex items-center gap-4 mt-2">
-                          <span className="flex items-center gap-1 text-sm">
-                            <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                            {inf.valutazione} ({inf.recensioni} recensioni)
-                          </span>
-                          <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                            <MapPin className="w-4 h-4" /> {inf.zona}
-                          </span>
+                {infermieriFiltrati.map((inf) => {
+                  const servizio = inf.servizi.find((s) => s.name === prestazioneSelezionata);
+                  return (
+                    <Card key={inf.profileId} className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
+                      onClick={() => navigate(`/profilo-infermiere/${inf.profileId}`)}
+                    >
+                      <CardContent className="p-6 flex items-center gap-6">
+                        <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-primary font-bold text-senior-xl flex-shrink-0">
+                          {inf.nome[0]}
                         </div>
-                      </div>
-                      <div className="text-right flex-shrink-0">
-                        <p className="text-senior-lg font-bold text-primary">
-                          €{(inf.prezzi as Record<string, number>)[prestazioneSelezionata]}
-                        </p>
-                        <p className="text-sm text-muted-foreground">per prestazione</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-senior-lg font-semibold">{inf.nome}</h3>
+                          <p className="text-senior-sm text-muted-foreground truncate">{inf.bio}</p>
+                          <div className="flex items-center gap-4 mt-2">
+                            {inf.valutazione > 0 && (
+                              <span className="flex items-center gap-1 text-sm">
+                                <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+                                {inf.valutazione} ({inf.recensioni} recensioni)
+                              </span>
+                            )}
+                            {inf.zona && (
+                              <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                                <MapPin className="w-4 h-4" /> {inf.zona}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        {servizio && (
+                          <div className="text-right flex-shrink-0">
+                            <p className="text-senior-lg font-bold text-primary">€{servizio.price}</p>
+                            <p className="text-sm text-muted-foreground">per prestazione</p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
                 {infermieriFiltrati.length === 0 && (
                   <div className="text-center py-12">
                     <p className="text-senior-base text-muted-foreground">
