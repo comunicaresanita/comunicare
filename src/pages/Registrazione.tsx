@@ -217,7 +217,7 @@ const Registrazione = () => {
                   </div>
                 </div>
 
-                <Button type="submit" size="lg" className="w-full text-senior-base font-semibold py-6" disabled={loading}>
+                <Button type="submit" size="lg" className="w-full text-senior-base font-semibold py-6 text-primary-foreground" disabled={loading}>
                   {loading ? "Registrazione in corso..." : "Completa registrazione"}
                 </Button>
               </form>
