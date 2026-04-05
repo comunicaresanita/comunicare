@@ -14,7 +14,227 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      availability: {
+        Row: {
+          created_at: string
+          day_of_week: string
+          end_time: string
+          id: string
+          professional_id: string
+          start_time: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: string
+          end_time: string
+          id?: string
+          professional_id: string
+          start_time: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: string
+          end_time?: string
+          id?: string
+          professional_id?: string
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "availability_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookings: {
+        Row: {
+          created_at: string
+          day: string
+          id: string
+          patient_id: string
+          price: number
+          professional_id: string
+          service_name: string
+          status: string
+          stripe_session_id: string | null
+          time_slot: string
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          id?: string
+          patient_id: string
+          price: number
+          professional_id: string
+          service_name: string
+          status?: string
+          stripe_session_id?: string | null
+          time_slot: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          id?: string
+          patient_id?: string
+          price?: number
+          professional_id?: string
+          service_name?: string
+          status?: string
+          stripe_session_id?: string | null
+          time_slot?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          bio: string | null
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          lat: number | null
+          lng: number | null
+          numero_opi: string | null
+          role: string
+          user_id: string
+          zona: string | null
+        }
+        Insert: {
+          address?: string | null
+          bio?: string | null
+          created_at?: string
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          lat?: number | null
+          lng?: number | null
+          numero_opi?: string | null
+          role: string
+          user_id: string
+          zona?: string | null
+        }
+        Update: {
+          address?: string | null
+          bio?: string | null
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          lat?: number | null
+          lng?: number | null
+          numero_opi?: string | null
+          role?: string
+          user_id?: string
+          zona?: string | null
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          booking_id: string
+          created_at: string
+          id: string
+          patient_id: string
+          professional_id: string
+          rating: number
+          text: string | null
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          id?: string
+          patient_id: string
+          professional_id: string
+          rating: number
+          text?: string | null
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          id?: string
+          patient_id?: string
+          professional_id?: string
+          rating?: number
+          text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          price: number
+          professional_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          price: number
+          professional_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          price?: number
+          professional_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
