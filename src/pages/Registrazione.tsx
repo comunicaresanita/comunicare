@@ -150,7 +150,7 @@ const Registrazione = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="indirizzo" className="text-senior-sm">Indirizzo *</Label>
-                  <Input id="indirizzo" value={indirizzo} onChange={(e) => setIndirizzo(e.target.value)} placeholder="Via, numero civico, Firenze" required className="text-senior-sm py-3" />
+                  <Input id="indirizzo" value={indirizzo} onChange={(e) => setIndirizzo(e.target.value)} placeholder="Via, numero civico" required className="text-senior-sm py-3" />
                 </div>
 
                 {ruolo === "professionista" && (
