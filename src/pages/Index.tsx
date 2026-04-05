@@ -35,7 +35,7 @@ const Index = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="bg-secondary py-12 md:py-16">
+      <section style={{ backgroundColor: 'hsl(195, 60%, 97%)' }} className="py-12 md:py-16">
         <div className="container mx-auto px-6 text-center">
           <h1 className="text-senior-3xl md:text-senior-4xl font-bold text-foreground mb-6 max-w-3xl mx-auto leading-tight">
             Assistenza infermieristica a <span style={{ color: '#0097B2' }}>domicilio</span>
@@ -57,6 +57,11 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Separator */}
+      <div className="container mx-auto px-6">
+        <hr className="border-t border-border/40" />
+      </div>
 
       {/* Features */}
       <section className="py-20">
