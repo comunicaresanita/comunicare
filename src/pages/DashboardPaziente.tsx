@@ -33,6 +33,7 @@ const DashboardPaziente = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const [mapsLoaded, setMapsLoaded] = useState(false);
 
   const prestazioniFiltrate = prestazioniDisponibili.filter((p) =>
     p.toLowerCase().includes(ricerca.toLowerCase())
@@ -42,16 +43,29 @@ const DashboardPaziente = () => {
     ? infermieriMock.filter((inf) => inf.servizi.includes(prestazioneSelezionata))
     : [];
 
-  // Load Google Maps script
+  // Load Google Maps script via edge function
   useEffect(() => {
-    if (document.getElementById("google-maps-script")) return;
-    const script = document.createElement("script");
-    script.id = "google-maps-script";
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
-    script.async = true;
-    script.defer = true;
-    (window as any).initMap = () => {};
-    document.head.appendChild(script);
+    if (document.getElementById("google-maps-script") || (window as any).google) {
+      setMapsLoaded(true);
+      return;
+    }
+    const loadMaps = async () => {
+      try {
+        const { data } = await supabase.functions.invoke("get-maps-key");
+        if (data?.apiKey) {
+          const script = document.createElement("script");
+          script.id = "google-maps-script";
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${data.apiKey}&callback=initMap`;
+          script.async = true;
+          script.defer = true;
+          (window as any).initMap = () => setMapsLoaded(true);
+          document.head.appendChild(script);
+        }
+      } catch (err) {
+        console.error("Failed to load Google Maps:", err);
+      }
+    };
+    loadMaps();
   }, []);
 
   // Initialize/update map
