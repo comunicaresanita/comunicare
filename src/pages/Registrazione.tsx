@@ -30,9 +30,28 @@ const Registrazione = () => {
   const [indirizzo, setIndirizzo] = useState("");
   const [bio, setBio] = useState("");
   const [numeroOpi, setNumeroOpi] = useState("");
+  const [partitaIva, setPartitaIva] = useState("");
+  const [partitaIvaError, setPartitaIvaError] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
   const { signUp } = useAuth();
+
+  const validatePartitaIva = (piva: string): boolean => {
+    if (!piva) return true; // optional
+    if (!/^\d{11}$/.test(piva)) return false;
+    // Luhn algorithm for Italian P.IVA
+    let sum = 0;
+    for (let i = 0; i < 11; i++) {
+      const digit = parseInt(piva[i], 10);
+      if (i % 2 === 0) {
+        sum += digit;
+      } else {
+        const doubled = digit * 2;
+        sum += doubled > 9 ? doubled - 9 : doubled;
+      }
+    }
+    return sum % 10 === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +66,11 @@ const Registrazione = () => {
       return;
     }
 
+    if (ruolo === "professionista" && partitaIva && !validatePartitaIva(partitaIva)) {
+      setPartitaIvaError("La partita IVA deve essere di 11 cifre e rispettare l'algoritmo di Luhn.");
+      return;
+    }
+
     setLoading(true);
     const { error } = await signUp(email, password, {
       role: ruolo!,
@@ -55,6 +79,7 @@ const Registrazione = () => {
       address: indirizzo,
       bio: bio || "",
       numero_opi: numeroOpi || "",
+      partita_iva: partitaIva || "",
     });
     setLoading(false);
 
@@ -63,7 +88,7 @@ const Registrazione = () => {
       return;
     }
 
-    toast({ title: "Registrazione completata!", description: "Controlla la tua email per verificare l'account." });
+    toast({ title: "Registrazione completata!", description: "Il tuo account è stato creato con successo." });
 
     if (ruolo === "professionista") {
       navigate("/setup-professionista");
@@ -161,6 +186,11 @@ const Registrazione = () => {
                         <div className="space-y-2">
                           <Label htmlFor="numero_opi" className="text-senior-sm">Numero iscrizione OPI *</Label>
                           <Input id="numero_opi" value={numeroOpi} onChange={(e) => setNumeroOpi(e.target.value)} placeholder="Es. FI-12345" required className="text-senior-sm py-3" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="partita_iva" className="text-senior-sm">Partita IVA</Label>
+                          <Input id="partita_iva" value={partitaIva} onChange={(e) => { setPartitaIva(e.target.value); setPartitaIvaError(""); }} placeholder="Es. 12345678901" maxLength={11} className="text-senior-sm py-3" />
+                          {partitaIvaError && <p className="text-sm text-destructive">{partitaIvaError}</p>}
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="bio" className="text-senior-sm">Bio / specializzazioni</Label>

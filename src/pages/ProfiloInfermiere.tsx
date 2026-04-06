@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { MapPin, Star, Calendar, Clock, ArrowLeft } from "lucide-react";
+import { MapPin, Star, Calendar, Clock, ArrowLeft, BadgeCheck } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -209,7 +209,10 @@ const ProfiloInfermiere = () => {
                   {infermiere.nome[0]}
                 </div>
                 <div className="flex-1">
-                  <h1 className="text-senior-2xl font-bold">{infermiere.nome}</h1>
+                  <h1 className="text-senior-2xl font-bold flex items-center gap-2">
+                    {infermiere.nome}
+                    <BadgeCheck className="w-6 h-6 text-primary flex-shrink-0" />
+                  </h1>
                   <div className="flex items-center gap-4 mt-2">
                     <span className="flex items-center gap-1 text-senior-sm">
                       <Star className="w-5 h-5 fill-yellow-500 text-yellow-500" />

@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,9 +18,21 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isRecovery, setIsRecovery] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { signIn, resetPassword } = useAuth();
+
+  // Load saved credentials on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("comunicare_remember");
+    if (saved) {
+      const { email: savedEmail, password: savedPassword } = JSON.parse(saved);
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +45,14 @@ const Login = () => {
       return;
     }
 
+    // Save or clear credentials
+    if (rememberMe) {
+      localStorage.setItem("comunicare_remember", JSON.stringify({ email, password }));
+    } else {
+      localStorage.removeItem("comunicare_remember");
+    }
+
     setTimeout(async () => {
-      const { supabase } = await import("@/integrations/supabase/client");
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data: profile } = await supabase.from("profiles").select("role").eq("user_id", user.id).single();
@@ -86,6 +107,10 @@ const Login = () => {
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="remember" checked={rememberMe} onCheckedChange={(c) => setRememberMe(c === true)} />
+                  <Label htmlFor="remember" className="text-senior-sm cursor-pointer">Ricordami</Label>
                 </div>
                 <Button type="submit" className="w-full py-5" disabled={loading}>
                   {loading ? "Accesso in corso..." : "Accedi"}
