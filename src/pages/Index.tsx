@@ -60,7 +60,7 @@ const Index = () => {
 
       {/* Separator */}
       <div className="container mx-auto px-6">
-        <hr className="border-t border-border/40" />
+        <hr className="border-t border-border/70" />
       </div>
 
       {/* Features */}
@@ -90,7 +90,7 @@ const Index = () => {
 
       {/* Separator */}
       <div className="container mx-auto px-6">
-        <hr className="border-t border-border/40" />
+        <hr className="border-t border-border/70" />
       </div>
 
       {/* CTA */}
