@@ -74,13 +74,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
+  const getPublicOrigin = () => {
+    const origin = window.location.origin;
+    // If on internal sandbox domain, use the public preview URL
+    if (origin.includes('.lovableproject.com')) {
+      const projectId = origin.match(/^https?:\/\/([^.]+)/)?.[1];
+      if (projectId) return `https://id-preview--${projectId}.lovable.app`;
+    }
+    return origin;
+  };
+
   const signUp = async (email: string, password: string, metadata: Record<string, string>) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: metadata,
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${getPublicOrigin()}/auth/callback`,
       },
     });
     return { error };
@@ -98,7 +108,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const resetPassword = async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: `${getPublicOrigin()}/reset-password`,
     });
     return { error };
   };
