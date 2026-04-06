@@ -115,8 +115,10 @@ export type Database = {
           lat: number | null
           lng: number | null
           numero_opi: string | null
+          partita_iva: string | null
           role: string
           user_id: string
+          verified: boolean
           zona: string | null
         }
         Insert: {
@@ -130,8 +132,10 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           numero_opi?: string | null
+          partita_iva?: string | null
           role: string
           user_id: string
+          verified?: boolean
           zona?: string | null
         }
         Update: {
@@ -145,8 +149,10 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           numero_opi?: string | null
+          partita_iva?: string | null
           role?: string
           user_id?: string
+          verified?: boolean
           zona?: string | null
         }
         Relationships: []
