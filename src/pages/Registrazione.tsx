@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { User, Stethoscope, Upload } from "lucide-react";
+import { User, Stethoscope, Upload, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -26,7 +26,11 @@ const Registrazione = () => {
   const [nome, setNome] = useState("");
   const [cognome, setCognome] = useState("");
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [indirizzo, setIndirizzo] = useState("");
   const [bio, setBio] = useState("");
   const [numeroOpi, setNumeroOpi] = useState("");
@@ -53,8 +57,22 @@ const Registrazione = () => {
     return sum % 10 === 0;
   };
 
+  const validateEmail = (value: string): boolean => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateEmail(email)) {
+      setEmailError("Inserisci un indirizzo email valido (es. nome@dominio.it).");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast({ title: "Le password non corrispondono", description: "Assicurati che le due password siano identiche.", variant: "destructive" });
+      return;
+    }
 
     if (!consensoTermini || !consensoPrivacy) {
       toast({ title: "Consensi obbligatori", description: "Devi accettare tutti i consensi obbligatori per procedere.", variant: "destructive" });
@@ -167,11 +185,29 @@ const Registrazione = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-senior-sm">Email *</Label>
-                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@esempio.it" required className="text-senior-sm py-3" />
+                  <Input id="email" type="email" value={email} onChange={(e) => { setEmail(e.target.value); setEmailError(""); }} placeholder="email@esempio.it" required className="text-senior-sm py-3" />
+                  {emailError && <p className="text-sm text-destructive">{emailError}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-senior-sm">Password *</Label>
-                  <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Minimo 8 caratteri" required minLength={8} className="text-senior-sm py-3" />
+                  <div className="relative">
+                    <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Minimo 8 caratteri" required minLength={8} className="text-senior-sm py-3 pr-12" />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirm_password" className="text-senior-sm">Conferma password *</Label>
+                  <div className="relative">
+                    <Input id="confirm_password" type={showConfirmPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Riscrivi la password" required minLength={8} className="text-senior-sm py-3 pr-12" />
+                    <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                  {confirmPassword && password !== confirmPassword && (
+                    <p className="text-sm text-destructive">Le password non corrispondono.</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="indirizzo" className="text-senior-sm">Indirizzo *</Label>
