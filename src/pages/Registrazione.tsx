@@ -188,6 +188,11 @@ const Registrazione = () => {
                           <Input id="numero_opi" value={numeroOpi} onChange={(e) => setNumeroOpi(e.target.value)} placeholder="Es. FI-12345" required className="text-senior-sm py-3" />
                         </div>
                         <div className="space-y-2">
+                          <Label htmlFor="partita_iva" className="text-senior-sm">Partita IVA</Label>
+                          <Input id="partita_iva" value={partitaIva} onChange={(e) => { setPartitaIva(e.target.value); setPartitaIvaError(""); }} placeholder="Es. 12345678901" maxLength={11} className="text-senior-sm py-3" />
+                          {partitaIvaError && <p className="text-sm text-destructive">{partitaIvaError}</p>}
+                        </div>
+                        <div className="space-y-2">
                           <Label htmlFor="bio" className="text-senior-sm">Bio / specializzazioni</Label>
                           <Textarea id="bio" value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Descrivi la tua esperienza e le tue specializzazioni..." className="text-senior-sm" rows={3} />
                         </div>
