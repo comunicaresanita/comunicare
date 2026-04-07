@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Header from "@/components/Header";
+import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { MapPin, Search, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
