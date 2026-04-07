@@ -105,17 +105,21 @@ export type Database = {
       }
       profiles: {
         Row: {
+          additional_info: string | null
           address: string | null
+          age: number | null
           bio: string | null
           created_at: string
           email: string
           first_name: string
           id: string
+          is_caregiver: boolean | null
           last_name: string
           lat: number | null
           lng: number | null
           numero_opi: string | null
           partita_iva: string | null
+          phone: string | null
           photo_url: string | null
           role: string
           user_id: string
@@ -123,17 +127,21 @@ export type Database = {
           zona: string | null
         }
         Insert: {
+          additional_info?: string | null
           address?: string | null
+          age?: number | null
           bio?: string | null
           created_at?: string
           email: string
           first_name: string
           id?: string
+          is_caregiver?: boolean | null
           last_name: string
           lat?: number | null
           lng?: number | null
           numero_opi?: string | null
           partita_iva?: string | null
+          phone?: string | null
           photo_url?: string | null
           role: string
           user_id: string
@@ -141,17 +149,21 @@ export type Database = {
           zona?: string | null
         }
         Update: {
+          additional_info?: string | null
           address?: string | null
+          age?: number | null
           bio?: string | null
           created_at?: string
           email?: string
           first_name?: string
           id?: string
+          is_caregiver?: boolean | null
           last_name?: string
           lat?: number | null
           lng?: number | null
           numero_opi?: string | null
           partita_iva?: string | null
+          phone?: string | null
           photo_url?: string | null
           role?: string
           user_id?: string
