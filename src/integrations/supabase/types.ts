@@ -116,6 +116,7 @@ export type Database = {
           lng: number | null
           numero_opi: string | null
           partita_iva: string | null
+          photo_url: string | null
           role: string
           user_id: string
           verified: boolean
@@ -133,6 +134,7 @@ export type Database = {
           lng?: number | null
           numero_opi?: string | null
           partita_iva?: string | null
+          photo_url?: string | null
           role: string
           user_id: string
           verified?: boolean
@@ -150,6 +152,7 @@ export type Database = {
           lng?: number | null
           numero_opi?: string | null
           partita_iva?: string | null
+          photo_url?: string | null
           role?: string
           user_id?: string
           verified?: boolean
