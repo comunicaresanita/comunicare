@@ -5,12 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Camera } from "lucide-react";
+import { Camera, ArrowLeft } from "lucide-react";
 
 const Profilo = () => {
   const { user, profile, loading: authLoading, refreshProfile } = useAuth();
@@ -24,6 +25,10 @@ const Profilo = () => {
   const [numeroOpi, setNumeroOpi] = useState("");
   const [partitaIva, setPartitaIva] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
+  const [phone, setPhone] = useState("");
+  const [age, setAge] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
+  const [isCaregiver, setIsCaregiver] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
@@ -40,8 +45,20 @@ const Profilo = () => {
       setNumeroOpi(profile.numero_opi || "");
       setPartitaIva((profile as any).partita_iva || "");
       setPhotoUrl((profile as any).photo_url || "");
+      setPhone((profile as any).phone || "");
+      setAge((profile as any).age ? String((profile as any).age) : "");
+      setAdditionalInfo((profile as any).additional_info || "");
+      setIsCaregiver((profile as any).is_caregiver || false);
     }
   }, [profile]);
+
+  const handleBack = () => {
+    if (profile?.role === "professionista") {
+      navigate("/dashboard-professionista");
+    } else {
+      navigate("/dashboard-paziente");
+    }
+  };
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -78,6 +95,12 @@ const Profilo = () => {
       updates.numero_opi = numeroOpi;
       updates.partita_iva = partitaIva;
     }
+    if (profile.role === "paziente") {
+      updates.phone = phone;
+      updates.age = age ? parseInt(age) : null;
+      updates.additional_info = additionalInfo;
+      updates.is_caregiver = isCaregiver;
+    }
     const { error } = await supabase.from("profiles").update(updates).eq("user_id", user!.id);
     setSaving(false);
     if (error) {
@@ -105,6 +128,10 @@ const Profilo = () => {
       <AuthHeader />
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-2xl">
+          <Button variant="ghost" onClick={handleBack} className="mb-4 gap-2">
+            <ArrowLeft className="w-4 h-4" />
+            Torna indietro
+          </Button>
           <Card className="border-0 shadow-lg">
             <CardHeader>
               <CardTitle className="text-senior-xl">Il mio profilo</CardTitle>
@@ -146,6 +173,37 @@ const Profilo = () => {
                 <Label className="text-senior-sm">Indirizzo</Label>
                 <Input value={address} onChange={(e) => setAddress(e.target.value)} className="text-senior-sm py-3" />
               </div>
+
+              {profile.role === "paziente" && (
+                <>
+                  <div className="space-y-2">
+                    <Label className="text-senior-sm">Numero di cellulare</Label>
+                    <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Es. +39 333 1234567" className="text-senior-sm py-3" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-senior-sm">Età</Label>
+                    <Input type="number" value={age} onChange={(e) => setAge(e.target.value)} placeholder="Es. 72" className="text-senior-sm py-3" min="1" max="120" />
+                  </div>
+                  <div className="flex items-start space-x-3 p-4 rounded-lg border border-border bg-muted/30">
+                    <Checkbox
+                      id="caregiver"
+                      checked={isCaregiver}
+                      onCheckedChange={(checked) => setIsCaregiver(checked === true)}
+                      className="mt-0.5"
+                    />
+                    <div>
+                      <Label htmlFor="caregiver" className="text-senior-sm font-medium cursor-pointer">Sono un caregiver</Label>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Un caregiver è una persona che si prende cura di un familiare o conoscente che necessita di assistenza. Seleziona questa opzione se stai cercando cure per qualcun altro.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-senior-sm">Informazioni aggiuntive</Label>
+                    <Textarea value={additionalInfo} onChange={(e) => setAdditionalInfo(e.target.value)} placeholder="Inserisci eventuali informazioni utili (es. patologie, allergie, esigenze particolari...)" className="text-senior-sm" rows={3} />
+                  </div>
+                </>
+              )}
 
               {profile.role === "professionista" && (
                 <>

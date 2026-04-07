@@ -24,7 +24,7 @@ const AuthHeader = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="gap-2">
                 <User className="w-4 h-4" />
-                {profile ? `${profile.first_name} ${profile.last_name}` : "Profilo"}
+                Il tuo profilo
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
