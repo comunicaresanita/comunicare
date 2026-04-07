@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import Header from "@/components/Header";
+import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { MapPin, Star, Calendar, Clock, ArrowLeft, BadgeCheck } from "lucide-react";
 import { useState } from "react";
@@ -115,7 +115,7 @@ const ProfiloInfermiere = () => {
   if (!infermiere) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        <AuthHeader />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <p className="text-senior-xl">Profilo non trovato</p>
@@ -194,7 +194,7 @@ const ProfiloInfermiere = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <AuthHeader />
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-3xl">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6 gap-2">
