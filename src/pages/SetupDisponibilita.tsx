@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import Header from "@/components/Header";
+import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { Calendar, Clock, Plus, Trash2, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -101,7 +101,7 @@ const SetupDisponibilita = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <AuthHeader />
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-3xl">
           {/* Step indicator */}

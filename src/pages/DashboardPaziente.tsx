@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Header from "@/components/Header";
+import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { MapPin, Search, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -196,7 +196,7 @@ const DashboardPaziente = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <AuthHeader />
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-4xl">
           <h1 className="text-senior-2xl md:text-senior-3xl font-bold mb-2">

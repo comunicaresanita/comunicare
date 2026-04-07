@@ -12,9 +12,12 @@ interface Profile {
   address?: string;
   bio?: string;
   numero_opi?: string;
+  partita_iva?: string;
   lat?: number;
   lng?: number;
   zona?: string;
+  photo_url?: string;
+  verified?: boolean;
 }
 
 interface AuthContextType {

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import Header from "@/components/Header";
+import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { Plus, Trash2, Info, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -98,7 +98,7 @@ const SetupProfessionista = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <AuthHeader />
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-3xl">
           <div className="mb-8">

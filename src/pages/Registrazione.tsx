@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import GoogleMapPicker from "@/components/GoogleMapPicker";
 import { User, Stethoscope, Upload, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -36,6 +37,8 @@ const Registrazione = () => {
   const [numeroOpi, setNumeroOpi] = useState("");
   const [partitaIva, setPartitaIva] = useState("");
   const [partitaIvaError, setPartitaIvaError] = useState("");
+  const [mapLat, setMapLat] = useState<number | null>(null);
+  const [mapLng, setMapLng] = useState<number | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   const { signUp } = useAuth();
@@ -89,8 +92,13 @@ const Registrazione = () => {
       return;
     }
 
+    if (ruolo === "professionista" && (!mapLat || !mapLng)) {
+      toast({ title: "Posizione obbligatoria", description: "Indica sulla mappa il punto in cui vuoi essere visibile.", variant: "destructive" });
+      return;
+    }
+
     setLoading(true);
-    const { error } = await signUp(email, password, {
+    const metadata: Record<string, string> = {
       role: ruolo!,
       first_name: nome,
       last_name: cognome,
@@ -98,7 +106,12 @@ const Registrazione = () => {
       bio: bio || "",
       numero_opi: numeroOpi || "",
       partita_iva: partitaIva || "",
-    });
+    };
+    if (ruolo === "professionista" && mapLat && mapLng) {
+      metadata.lat = String(mapLat);
+      metadata.lng = String(mapLng);
+    }
+    const { error } = await signUp(email, password, metadata);
     setLoading(false);
 
     if (error) {
@@ -233,6 +246,15 @@ const Registrazione = () => {
                           <Textarea id="bio" value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Descrivi la tua esperienza e le tue specializzazioni..." className="text-senior-sm" rows={3} />
                         </div>
                       </div>
+                    </div>
+                    <div className="border-t pt-6">
+                      <h3 className="text-senior-lg font-semibold mb-4">Posizione sulla mappa *</h3>
+                      <GoogleMapPicker
+                        onLocationSelect={(lat, lng) => {
+                          setMapLat(lat);
+                          setMapLng(lng);
+                        }}
+                      />
                     </div>
                     <div className="border-t pt-6">
                       <h3 className="text-senior-lg font-semibold mb-4">Documenti di verifica</h3>

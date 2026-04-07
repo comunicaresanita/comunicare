@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import Header from "@/components/Header";
+import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { CheckCircle } from "lucide-react";
 
 const PagamentoSuccesso = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <AuthHeader />
       <main className="flex-1 bg-background py-16 flex items-center justify-center">
         <Card className="w-full max-w-md mx-6 text-center">
           <CardContent className="p-8">
