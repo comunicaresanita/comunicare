@@ -17,9 +17,11 @@ const prestazioniDisponibili = [
   "Educazione sanitaria al paziente", "Somministrazione terapia orale",
   "Gestione nutrizione enterale (SNG/PEG)", "Bendaggio compressivo",
   "Assistenza domiciliare continuativa", "ECG a domicilio",
+  "Fisioterapia a domicilio", "Riabilitazione motoria", "Massoterapia",
+  "Igiene personale assistita", "Mobilizzazione paziente",
 ];
 
-interface InfermiereData {
+interface ProfessionistaData {
   profileId: string;
   nome: string;
   bio: string;
@@ -29,6 +31,7 @@ interface InfermiereData {
   servizi: { name: string; price: number }[];
   valutazione: number;
   recensioni: number;
+  professionalType: string;
 }
 
 const DashboardPaziente = () => {
@@ -40,18 +43,17 @@ const DashboardPaziente = () => {
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const [mapsLoaded, setMapsLoaded] = useState(false);
-  const [infermieri, setInfermieri] = useState<InfermiereData[]>([]);
+  const [professionisti, setProfessionisti] = useState<ProfessionistaData[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   const prestazioniFiltrate = prestazioniDisponibili.filter((p) =>
     p.toLowerCase().includes(ricerca.toLowerCase())
   );
 
-  const infermieriFiltrati = prestazioneSelezionata
-    ? infermieri.filter((inf) => inf.servizi.some((s) => s.name === prestazioneSelezionata))
+  const professionistiFiltrati = prestazioneSelezionata
+    ? professionisti.filter((p) => p.servizi.some((s) => s.name === prestazioneSelezionata))
     : [];
 
-  // Load Google Maps script via edge function
   useEffect(() => {
     if ((window as any).google?.maps) {
       setMapsLoaded(true);
@@ -78,7 +80,6 @@ const DashboardPaziente = () => {
     loadMaps();
   }, []);
 
-  // Geocode user address to get coordinates
   useEffect(() => {
     if (!mapsLoaded || !profile?.address) return;
     if (profile.lat && profile.lng) {
@@ -93,18 +94,16 @@ const DashboardPaziente = () => {
         const loc = results[0].geometry.location;
         setUserCoords({ lat: loc.lat(), lng: loc.lng() });
       } else {
-        // Default to Florence center
         setUserCoords({ lat: 43.7696, lng: 11.2558 });
       }
     });
   }, [mapsLoaded, profile]);
 
-  // Fetch professionals with services and reviews
   useEffect(() => {
-    const fetchInfermieri = async () => {
+    const fetchProfessionisti = async () => {
       const { data: professionals } = await supabase
         .from("profiles")
-        .select("id, first_name, last_name, bio, lat, lng, zona")
+        .select("id, first_name, last_name, bio, lat, lng, zona, professional_type")
         .eq("role", "professionista");
 
       if (!professionals || professionals.length === 0) return;
@@ -116,7 +115,7 @@ const DashboardPaziente = () => {
         supabase.from("reviews").select("professional_id, rating").in("professional_id", profIds),
       ]);
 
-      const mapped: InfermiereData[] = professionals
+      const mapped: ProfessionistaData[] = professionals
         .filter((p) => p.lat && p.lng)
         .map((p) => {
           const profServices = (services || []).filter((s) => s.professional_id === p.id);
@@ -135,16 +134,16 @@ const DashboardPaziente = () => {
             servizi: profServices.map((s) => ({ name: s.name, price: s.price })),
             valutazione: avg,
             recensioni: profReviews.length,
+            professionalType: (p as any).professional_type || "infermiere",
           };
         });
 
-      setInfermieri(mapped);
+      setProfessionisti(mapped);
     };
 
-    fetchInfermieri();
+    fetchProfessionisti();
   }, []);
 
-  // Initialize/update map
   useEffect(() => {
     if (!prestazioneSelezionata || !mapRef.current || !mapsLoaded) return;
     const google = (window as any).google;
@@ -162,37 +161,37 @@ const DashboardPaziente = () => {
       mapInstanceRef.current.setCenter(center);
     }
 
-    // Clear existing markers
     markersRef.current.forEach((m: any) => m.setMap(null));
     markersRef.current = [];
 
-    infermieriFiltrati.forEach((inf) => {
+    professionistiFiltrati.forEach((p) => {
+      const typeLabel = p.professionalType === "oss" ? "OSS" : p.professionalType === "fisioterapista" ? "Fisiot." : "Inf.";
       const marker = new google.maps.Marker({
-        position: { lat: inf.lat, lng: inf.lng },
+        position: { lat: p.lat, lng: p.lng },
         map: mapInstanceRef.current,
-        title: inf.nome,
-        label: { text: inf.nome.split(" ")[0], color: "white", fontSize: "11px" },
+        title: p.nome,
+        label: { text: `${typeLabel} ${p.nome.split(" ")[0]}`, color: "white", fontSize: "11px" },
       });
 
       const infoWindow = new google.maps.InfoWindow({
-        content: `<div style="padding:8px"><strong>${inf.nome}</strong><br/><span>⭐ ${inf.valutazione}</span><br/><span>${inf.zona}</span></div>`,
+        content: `<div style="padding:8px"><strong>${p.nome}</strong><br/><span>⭐ ${p.valutazione}</span><br/><span>${p.zona}</span></div>`,
       });
 
       marker.addListener("click", () => {
-        navigate(`/profilo-infermiere/${inf.profileId}`);
+        navigate(`/profilo-infermiere/${p.profileId}`);
       });
       marker.addListener("mouseover", () => infoWindow.open(mapInstanceRef.current, marker));
       marker.addListener("mouseout", () => infoWindow.close());
       markersRef.current.push(marker);
     });
 
-    if (infermieriFiltrati.length > 0) {
+    if (professionistiFiltrati.length > 0) {
       const bounds = new google.maps.LatLngBounds();
-      infermieriFiltrati.forEach((inf) => bounds.extend({ lat: inf.lat, lng: inf.lng }));
+      professionistiFiltrati.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
       if (userCoords) bounds.extend(userCoords);
       mapInstanceRef.current.fitBounds(bounds);
     }
-  }, [prestazioneSelezionata, infermieriFiltrati, navigate, mapsLoaded, userCoords]);
+  }, [prestazioneSelezionata, professionistiFiltrati, navigate, mapsLoaded, userCoords]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -200,10 +199,10 @@ const DashboardPaziente = () => {
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-4xl">
           <h1 className="text-senior-2xl md:text-senior-3xl font-bold mb-2">
-            Trova il tuo infermiere
+            Trova il tuo professionista
           </h1>
           <p className="text-senior-base text-muted-foreground mb-8">
-            Seleziona la prestazione di cui hai bisogno per trovare gli infermieri più vicini a te.
+            Seleziona la prestazione di cui hai bisogno per trovare i professionisti più vicini a te.
           </p>
 
           <Card className="mb-8">
@@ -233,10 +232,9 @@ const DashboardPaziente = () => {
           {prestazioneSelezionata && (
             <>
               <h2 className="text-senior-xl font-semibold mb-4">
-                Infermieri disponibili per: <span className="text-primary">{prestazioneSelezionata}</span>
+                Professionisti disponibili per: <span className="text-primary">{prestazioneSelezionata}</span>
               </h2>
 
-              {/* Google Maps */}
               <div ref={mapRef} className="w-full h-80 rounded-lg overflow-hidden border mb-6 bg-secondary">
                 {!mapsLoaded && (
                   <div className="flex items-center justify-center h-full">
@@ -249,29 +247,31 @@ const DashboardPaziente = () => {
               </div>
 
               <div className="space-y-4">
-                {infermieriFiltrati.map((inf) => {
-                  const servizio = inf.servizi.find((s) => s.name === prestazioneSelezionata);
+                {professionistiFiltrati.map((p) => {
+                  const servizio = p.servizi.find((s) => s.name === prestazioneSelezionata);
+                  const typeLabel = p.professionalType === "oss" ? "OSS" : p.professionalType === "fisioterapista" ? "Fisioterapista" : "Infermiere";
                   return (
-                    <Card key={inf.profileId} className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
-                      onClick={() => navigate(`/profilo-infermiere/${inf.profileId}`)}
+                    <Card key={p.profileId} className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
+                      onClick={() => navigate(`/profilo-infermiere/${p.profileId}`)}
                     >
                       <CardContent className="p-6 flex items-center gap-6">
                         <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-primary font-bold text-senior-xl flex-shrink-0">
-                          {inf.nome[0]}
+                          {p.nome[0]}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-senior-lg font-semibold">{inf.nome}</h3>
-                          <p className="text-senior-sm text-muted-foreground truncate">{inf.bio}</p>
+                          <h3 className="text-senior-lg font-semibold">{p.nome}</h3>
+                          <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">{typeLabel}</span>
+                          <p className="text-senior-sm text-muted-foreground truncate mt-1">{p.bio}</p>
                           <div className="flex items-center gap-4 mt-2">
-                            {inf.valutazione > 0 && (
+                            {p.valutazione > 0 && (
                               <span className="flex items-center gap-1 text-sm">
                                 <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                                {inf.valutazione} ({inf.recensioni} recensioni)
+                                {p.valutazione} ({p.recensioni} recensioni)
                               </span>
                             )}
-                            {inf.zona && (
+                            {p.zona && (
                               <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                                <MapPin className="w-4 h-4" /> {inf.zona}
+                                <MapPin className="w-4 h-4" /> {p.zona}
                               </span>
                             )}
                           </div>
@@ -286,10 +286,10 @@ const DashboardPaziente = () => {
                     </Card>
                   );
                 })}
-                {infermieriFiltrati.length === 0 && (
+                {professionistiFiltrati.length === 0 && (
                   <div className="text-center py-12">
                     <p className="text-senior-base text-muted-foreground">
-                      Nessun infermiere disponibile per questa prestazione al momento.
+                      Nessun professionista disponibile per questa prestazione al momento.
                     </p>
                   </div>
                 )}
