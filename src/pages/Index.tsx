@@ -5,17 +5,16 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Heart, MapPin, Calendar, UserCheck } from "lucide-react";
 
-
 const features = [
   {
     icon: UserCheck,
     title: "Professionisti verificati",
-    description: "Infermieri iscritti all'OPI con documenti verificati dalla piattaforma.",
+    description: "Infermieri, OSS e fisioterapisti con documenti verificati dalla piattaforma.",
   },
   {
     icon: MapPin,
     title: "Vicino a te",
-    description: "Trova infermieri nella zona di Firenze, con calcolo della distanza dal tuo domicilio.",
+    description: "Trova professionisti sanitari nella tua zona, con calcolo della distanza dal tuo domicilio.",
   },
   {
     icon: Calendar,
@@ -38,7 +37,7 @@ const Index = () => {
       <section style={{ backgroundColor: 'hsl(195, 60%, 97%)' }} className="py-12 md:py-16">
         <div className="container mx-auto px-6 text-center">
           <h1 className="text-senior-3xl md:text-senior-4xl font-bold text-foreground mb-6 max-w-3xl mx-auto leading-tight">
-            Assistenza infermieristica a <span style={{ color: '#0097B2' }}>domicilio</span>
+            Assistenza sanitaria a <span style={{ color: '#0097B2' }}>domicilio</span>
           </h1>
           <p className="text-senior-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Trova il professionista sanitario più vicino a te, prenota online e ricevi cure di qualità direttamente a casa tua.
@@ -51,7 +50,7 @@ const Index = () => {
             </Link>
             <Link to="/registrazione?ruolo=professionista">
               <Button variant="outline" size="lg" className="px-10 py-6 w-full sm:w-auto border-2">
-                Sono un infermiere
+                Sono un professionista
               </Button>
             </Link>
           </div>
@@ -100,7 +99,7 @@ const Index = () => {
             Pronto per iniziare?
           </h2>
           <p className="text-senior-base text-muted-foreground mb-8 max-w-lg mx-auto">
-            Registrati gratuitamente e accedi ai nostri servizi infermieristici a domicilio.
+            Registrati gratuitamente e accedi ai nostri servizi sanitari a domicilio.
           </p>
           <Link to="/registrazione">
             <Button size="lg" className="px-10 py-6">

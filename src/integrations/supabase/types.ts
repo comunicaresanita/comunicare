@@ -117,10 +117,12 @@ export type Database = {
           last_name: string
           lat: number | null
           lng: number | null
+          numero_fnofi: string | null
           numero_opi: string | null
           partita_iva: string | null
           phone: string | null
           photo_url: string | null
+          professional_type: string | null
           role: string
           user_id: string
           verified: boolean
@@ -139,10 +141,12 @@ export type Database = {
           last_name: string
           lat?: number | null
           lng?: number | null
+          numero_fnofi?: string | null
           numero_opi?: string | null
           partita_iva?: string | null
           phone?: string | null
           photo_url?: string | null
+          professional_type?: string | null
           role: string
           user_id: string
           verified?: boolean
@@ -161,10 +165,12 @@ export type Database = {
           last_name?: string
           lat?: number | null
           lng?: number | null
+          numero_fnofi?: string | null
           numero_opi?: string | null
           partita_iva?: string | null
           phone?: string | null
           photo_url?: string | null
+          professional_type?: string | null
           role?: string
           user_id?: string
           verified?: boolean

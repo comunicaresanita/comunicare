@@ -19,11 +19,12 @@ const Login = () => {
   const [isRecovery, setIsRecovery] = useState(false);
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { signIn, resetPassword } = useAuth();
 
-  // Load saved credentials on mount
+  // Load saved credentials on mount and auto-login if remembered
   useEffect(() => {
     const saved = localStorage.getItem("comunicare_remember");
     if (saved) {
@@ -31,6 +32,29 @@ const Login = () => {
       setEmail(savedEmail);
       setPassword(savedPassword);
       setRememberMe(true);
+
+      // Auto-login with saved credentials
+      if (!autoLoginAttempted) {
+        setAutoLoginAttempted(true);
+        (async () => {
+          setLoading(true);
+          const { error } = await signIn(savedEmail, savedPassword);
+          setLoading(false);
+          if (!error) {
+            setTimeout(async () => {
+              const { data: { user } } = await supabase.auth.getUser();
+              if (user) {
+                const { data: profile } = await supabase.from("profiles").select("role").eq("user_id", user.id).single();
+                if (profile?.role === "professionista") {
+                  navigate("/dashboard-professionista");
+                } else {
+                  navigate("/dashboard-paziente");
+                }
+              }
+            }, 300);
+          }
+        })();
+      }
     }
   }, []);
 
