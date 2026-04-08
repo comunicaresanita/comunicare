@@ -14,12 +14,14 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 
 type Ruolo = "paziente" | "professionista";
+type TipoProfessionista = "infermiere" | "oss" | "fisioterapista";
 
 const Registrazione = () => {
   const [searchParams] = useSearchParams();
   const ruoloParam = searchParams.get("ruolo");
   const initialRole = ruoloParam === "professionista" ? "professionista" : ruoloParam === "paziente" ? "paziente" : null;
   const [ruolo, setRuolo] = useState<Ruolo | null>(initialRole);
+  const [tipoProfessionista, setTipoProfessionista] = useState<TipoProfessionista | null>(null);
   const [consensoTermini, setConsensoTermini] = useState(false);
   const [consensoPrivacy, setConsensoPrivacy] = useState(false);
   const [consensoSanitario, setConsensoSanitario] = useState(false);
@@ -35,6 +37,7 @@ const Registrazione = () => {
   const [indirizzo, setIndirizzo] = useState("");
   const [bio, setBio] = useState("");
   const [numeroOpi, setNumeroOpi] = useState("");
+  const [numeroFnofi, setNumeroFnofi] = useState("");
   const [partitaIva, setPartitaIva] = useState("");
   const [partitaIvaError, setPartitaIvaError] = useState("");
   const [mapLat, setMapLat] = useState<number | null>(null);
@@ -44,9 +47,8 @@ const Registrazione = () => {
   const { signUp } = useAuth();
 
   const validatePartitaIva = (piva: string): boolean => {
-    if (!piva) return true; // optional
+    if (!piva) return true;
     if (!/^\d{11}$/.test(piva)) return false;
-    // Luhn algorithm for Italian P.IVA
     let sum = 0;
     for (let i = 0; i < 11; i++) {
       const digit = parseInt(piva[i], 10);
@@ -97,6 +99,16 @@ const Registrazione = () => {
       return;
     }
 
+    if (ruolo === "professionista" && tipoProfessionista === "infermiere" && !numeroOpi) {
+      toast({ title: "OPI obbligatorio", description: "Il numero di iscrizione OPI è obbligatorio per gli infermieri.", variant: "destructive" });
+      return;
+    }
+
+    if (ruolo === "professionista" && tipoProfessionista === "fisioterapista" && !numeroFnofi) {
+      toast({ title: "FNOFI obbligatorio", description: "Il numero di iscrizione FNOFI è obbligatorio per i fisioterapisti.", variant: "destructive" });
+      return;
+    }
+
     setLoading(true);
     const metadata: Record<string, string> = {
       role: ruolo!,
@@ -105,11 +117,15 @@ const Registrazione = () => {
       address: indirizzo,
       bio: bio || "",
       numero_opi: numeroOpi || "",
+      numero_fnofi: numeroFnofi || "",
       partita_iva: partitaIva || "",
     };
-    if (ruolo === "professionista" && mapLat && mapLng) {
-      metadata.lat = String(mapLat);
-      metadata.lng = String(mapLng);
+    if (ruolo === "professionista") {
+      metadata.professional_type = tipoProfessionista || "infermiere";
+      if (mapLat && mapLng) {
+        metadata.lat = String(mapLat);
+        metadata.lng = String(mapLng);
+      }
     }
     const { error } = await signUp(email, password, metadata);
     setLoading(false);
@@ -128,6 +144,7 @@ const Registrazione = () => {
     }
   };
 
+  // Step 1: Choose role
   if (!ruolo) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -147,7 +164,7 @@ const Registrazione = () => {
                     <User className="w-10 h-10 text-primary" />
                   </div>
                   <h3 className="text-senior-xl font-semibold mb-2">Utente</h3>
-                  <p className="text-senior-sm text-muted-foreground">Cerca e prenota servizi infermieristici a domicilio.</p>
+                  <p className="text-senior-sm text-muted-foreground">Cerca e prenota servizi sanitari a domicilio.</p>
                 </CardContent>
               </Card>
               <Card className="cursor-pointer border-2 hover:border-primary hover:shadow-lg transition-all" onClick={() => setRuolo("professionista")}>
@@ -156,7 +173,7 @@ const Registrazione = () => {
                     <Stethoscope className="w-10 h-10 text-primary" />
                   </div>
                   <h3 className="text-senior-xl font-semibold mb-2">Professionista</h3>
-                  <p className="text-senior-sm text-muted-foreground">Offri i tuoi servizi infermieristici sulla piattaforma.</p>
+                  <p className="text-senior-sm text-muted-foreground">Offri i tuoi servizi sanitari sulla piattaforma.</p>
                 </CardContent>
               </Card>
             </div>
@@ -167,18 +184,69 @@ const Registrazione = () => {
     );
   }
 
+  // Step 2: Choose professional type (only for professionista)
+  if (ruolo === "professionista" && !tipoProfessionista) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 bg-background py-16">
+          <div className="container mx-auto px-6 max-w-3xl">
+            <Button variant="ghost" className="mb-6 text-senior-sm" onClick={() => setRuolo(null)}>
+              ← Torna alla selezione
+            </Button>
+            <h1 className="text-senior-2xl md:text-senior-3xl font-bold text-center mb-4">
+              Che tipo di professionista sei?
+            </h1>
+            <p className="text-senior-base text-muted-foreground text-center mb-10">
+              Seleziona la tua categoria professionale.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <Card className="cursor-pointer border-2 hover:border-primary hover:shadow-lg transition-all" onClick={() => setTipoProfessionista("infermiere")}>
+                <CardContent className="p-6 text-center">
+                  <h3 className="text-senior-lg font-semibold mb-2">🩺 Infermiere</h3>
+                  <p className="text-sm text-muted-foreground">Iscritto all'OPI</p>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer border-2 hover:border-primary hover:shadow-lg transition-all" onClick={() => setTipoProfessionista("oss")}>
+                <CardContent className="p-6 text-center">
+                  <h3 className="text-senior-lg font-semibold mb-2">🤝 OSS</h3>
+                  <p className="text-sm text-muted-foreground">Operatore Socio Sanitario</p>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer border-2 hover:border-primary hover:shadow-lg transition-all" onClick={() => setTipoProfessionista("fisioterapista")}>
+                <CardContent className="p-6 text-center">
+                  <h3 className="text-senior-lg font-semibold mb-2">💪 Fisioterapista</h3>
+                  <p className="text-sm text-muted-foreground">Iscritto alla FNOFI</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  const tipoProfLabel = tipoProfessionista === "oss" ? "OSS" : tipoProfessionista === "fisioterapista" ? "fisioterapista" : "infermiere";
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-2xl">
-          <Button variant="ghost" className="mb-6 text-senior-sm" onClick={() => setRuolo(null)}>
-            ← Torna alla selezione
+          <Button variant="ghost" className="mb-6 text-senior-sm" onClick={() => {
+            if (ruolo === "professionista") {
+              setTipoProfessionista(null);
+            } else {
+              setRuolo(null);
+            }
+          }}>
+            ← Torna indietro
           </Button>
           <Card className="border-0 shadow-lg">
             <CardHeader className="pb-4">
               <CardTitle className="text-senior-xl">
-                Registrazione {ruolo === "paziente" ? "utente" : "professionista"}
+                Registrazione {ruolo === "paziente" ? "utente" : tipoProfLabel}
               </CardTitle>
               <CardDescription className="text-senior-sm">
                 {ruolo === "paziente" ? "Inserisci i tuoi dati per cercare e prenotare servizi." : "Inserisci i tuoi dati professionali per offrire servizi."}
@@ -231,11 +299,35 @@ const Registrazione = () => {
                   <>
                     <div className="border-t pt-6">
                       <h3 className="text-senior-lg font-semibold mb-4">Dati professionali</h3>
+
+                      <div className="p-4 rounded-lg border border-amber-300 bg-amber-50 mb-4">
+                        <p className="text-senior-sm text-amber-800">
+                          ⚠️ <strong>Assicurazione obbligatoria:</strong> per operare sulla piattaforma è necessario essere in possesso di un'assicurazione professionale valida.
+                        </p>
+                      </div>
+
                       <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="numero_opi" className="text-senior-sm">Numero iscrizione OPI *</Label>
-                          <Input id="numero_opi" value={numeroOpi} onChange={(e) => setNumeroOpi(e.target.value)} placeholder="Es. FI-12345" required className="text-senior-sm py-3" />
-                        </div>
+                        {/* OPI for infermiere */}
+                        {tipoProfessionista === "infermiere" && (
+                          <div className="space-y-2">
+                            <Label htmlFor="numero_opi" className="text-senior-sm">Numero iscrizione OPI *</Label>
+                            <Input id="numero_opi" value={numeroOpi} onChange={(e) => setNumeroOpi(e.target.value)} placeholder="Es. FI-12345" required className="text-senior-sm py-3" />
+                          </div>
+                        )}
+
+                        {/* FNOFI for fisioterapista */}
+                        {tipoProfessionista === "fisioterapista" && (
+                          <div className="space-y-2">
+                            <Label htmlFor="numero_fnofi" className="text-senior-sm">Numero iscrizione FNOFI *</Label>
+                            <Input id="numero_fnofi" value={numeroFnofi} onChange={(e) => setNumeroFnofi(e.target.value)} placeholder="Es. 12345" required className="text-senior-sm py-3" />
+                          </div>
+                        )}
+
+                        {/* No albo required for OSS */}
+                        {tipoProfessionista === "oss" && (
+                          <p className="text-sm text-muted-foreground italic">Per gli OSS non è richiesta iscrizione a un albo professionale.</p>
+                        )}
+
                         <div className="space-y-2">
                           <Label htmlFor="partita_iva" className="text-senior-sm">Partita IVA</Label>
                           <Input id="partita_iva" value={partitaIva} onChange={(e) => { setPartitaIva(e.target.value); setPartitaIvaError(""); }} placeholder="Es. 12345678901" maxLength={11} className="text-senior-sm py-3" />
@@ -267,13 +359,24 @@ const Registrazione = () => {
                             <Input id="doc_identita" type="file" accept=".pdf,.jpg,.jpeg,.png" required className="text-senior-sm" />
                           </div>
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="cert_opi" className="text-senior-sm">Certificato iscrizione OPI *</Label>
-                          <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
-                            <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                            <Input id="cert_opi" type="file" accept=".pdf,.jpg,.jpeg,.png" required className="text-senior-sm" />
+                        {tipoProfessionista === "infermiere" && (
+                          <div className="space-y-2">
+                            <Label htmlFor="cert_opi" className="text-senior-sm">Certificato iscrizione OPI *</Label>
+                            <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
+                              <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                              <Input id="cert_opi" type="file" accept=".pdf,.jpg,.jpeg,.png" required className="text-senior-sm" />
+                            </div>
                           </div>
-                        </div>
+                        )}
+                        {tipoProfessionista === "fisioterapista" && (
+                          <div className="space-y-2">
+                            <Label htmlFor="cert_fnofi" className="text-senior-sm">Certificato iscrizione FNOFI *</Label>
+                            <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
+                              <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                              <Input id="cert_fnofi" type="file" accept=".pdf,.jpg,.jpeg,.png" required className="text-senior-sm" />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </>
