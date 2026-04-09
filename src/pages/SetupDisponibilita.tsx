@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -6,12 +6,15 @@ import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { Calendar, Clock, Plus, Trash2, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SlotDisponibilita {
   id: string;
   giorno: string;
   oraInizio: string;
   oraFine: string;
+  dbId?: string;
 }
 
 const giorniSettimana = [
@@ -21,10 +24,36 @@ const giorniSettimana = [
 const SetupDisponibilita = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { profile } = useAuth();
   const [slots, setSlots] = useState<SlotDisponibilita[]>([]);
   const [giorno, setGiorno] = useState("Lunedì");
   const [oraInizio, setOraInizio] = useState("08:00");
   const [oraFine, setOraFine] = useState("12:00");
+  const [loadingData, setLoadingData] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  // Load existing availability from DB
+  useEffect(() => {
+    const loadAvailability = async () => {
+      if (!profile) return;
+      const { data } = await supabase
+        .from("availability")
+        .select("*")
+        .eq("professional_id", profile.id);
+
+      if (data && data.length > 0) {
+        setSlots(data.map((a) => ({
+          id: `slot-${a.id}`,
+          giorno: a.day_of_week,
+          oraInizio: a.start_time.substring(0, 5),
+          oraFine: a.end_time.substring(0, 5),
+          dbId: a.id,
+        })));
+      }
+      setLoadingData(false);
+    };
+    loadAvailability();
+  }, [profile]);
 
   const aggiungiSlot = () => {
     if (oraInizio >= oraFine) {
@@ -53,7 +82,8 @@ const SetupDisponibilita = () => {
     slots: slots.filter((s) => s.giorno === g),
   }));
 
-  const handleCompleta = () => {
+  const handleCompleta = async () => {
+    if (!profile) return;
     if (slots.length === 0) {
       toast({
         title: "Aggiungi disponibilità",
@@ -62,12 +92,42 @@ const SetupDisponibilita = () => {
       });
       return;
     }
-    toast({
-      title: "Setup completato!",
-      description: "Il tuo profilo professionale è stato configurato con successo.",
-    });
-    navigate("/dashboard-professionista");
+    setSaving(true);
+
+    // Delete all existing availability and re-insert
+    await supabase.from("availability").delete().eq("professional_id", profile.id);
+    
+    const toInsert = slots.map((s) => ({
+      professional_id: profile.id,
+      day_of_week: s.giorno,
+      start_time: s.oraInizio,
+      end_time: s.oraFine,
+    }));
+    const { error } = await supabase.from("availability").insert(toInsert);
+    setSaving(false);
+
+    if (error) {
+      toast({ title: "Errore", description: error.message, variant: "destructive" });
+    } else {
+      toast({
+        title: "Setup completato!",
+        description: "Il tuo profilo professionale è stato configurato con successo.",
+      });
+      navigate("/dashboard-professionista");
+    }
   };
+
+  if (loadingData) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <AuthHeader />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -76,7 +136,7 @@ const SetupDisponibilita = () => {
         <div className="container mx-auto px-6 max-w-3xl">
           <Button
             variant="ghost"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/dashboard-professionista")}
             className="mb-4 text-senior-sm gap-2"
           >
             <ArrowLeft className="w-4 h-4" /> Torna indietro
@@ -187,8 +247,8 @@ const SetupDisponibilita = () => {
             >
               ← Torna ai servizi
             </Button>
-            <Button size="lg" onClick={handleCompleta} className="px-10 py-6">
-              Completa setup ✓
+            <Button size="lg" onClick={handleCompleta} className="px-10 py-6" disabled={saving}>
+              {saving ? "Salvataggio..." : "Salva disponibilità ✓"}
             </Button>
           </div>
         </div>

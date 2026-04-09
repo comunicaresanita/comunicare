@@ -6,16 +6,27 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import GoogleMapPicker from "@/components/GoogleMapPicker";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Camera, ArrowLeft } from "lucide-react";
+import { Camera, ArrowLeft, Trash2 } from "lucide-react";
 
 const Profilo = () => {
-  const { user, profile, loading: authLoading, refreshProfile } = useAuth();
+  const { user, profile, loading: authLoading, refreshProfile, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -33,6 +44,7 @@ const Profilo = () => {
   const [isCaregiver, setIsCaregiver] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [mapLat, setMapLat] = useState<number | undefined>(undefined);
   const [mapLng, setMapLng] = useState<number | undefined>(undefined);
 
@@ -121,6 +133,27 @@ const Profilo = () => {
       await refreshProfile();
       toast({ title: "Profilo aggiornato" });
     }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const { data, error } = await supabase.functions.invoke("delete-account", {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      
+      await signOut();
+      navigate("/");
+      toast({ title: "Account eliminato", description: "Tutti i tuoi dati sono stati rimossi." });
+    } catch (err: any) {
+      toast({ title: "Errore", description: err.message || "Impossibile eliminare l'account.", variant: "destructive" });
+    }
+    setDeleting(false);
   };
 
   if (authLoading || !profile) {
@@ -258,6 +291,36 @@ const Profilo = () => {
               <Button onClick={handleSave} className="w-full py-5 text-primary-foreground" disabled={saving}>
                 {saving ? "Salvataggio..." : "Salva modifiche"}
               </Button>
+
+              {/* Delete account section */}
+              <div className="border-t pt-6 mt-6">
+                <h3 className="text-senior-lg font-semibold text-destructive mb-2">Elimina account</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Eliminando il tuo account, tutti i tuoi dati verranno rimossi permanentemente dal server, inclusi profilo, prenotazioni, recensioni e servizi. Questa azione è irreversibile.
+                </p>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" className="gap-2" disabled={deleting}>
+                      <Trash2 className="w-4 h-4" />
+                      {deleting ? "Eliminazione..." : "Elimina il mio account"}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Sei sicuro di voler eliminare il tuo account?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Tutti i tuoi dati verranno eliminati permanentemente dal server. Questa azione non può essere annullata.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Annulla</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        Elimina definitivamente
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </CardContent>
           </Card>
         </div>
