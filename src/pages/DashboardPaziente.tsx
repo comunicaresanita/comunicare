@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import { MapPin, Search, Star } from "lucide-react";
+import { MapPin, Search, Star, ShieldCheck, Stethoscope } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -41,6 +41,8 @@ interface ProfessionistaData {
   valutazione: number;
   recensioni: number;
   professionalType: string;
+  photoUrl: string | null;
+  verified: boolean;
 }
 
 const DashboardPaziente = () => {
@@ -112,7 +114,7 @@ const DashboardPaziente = () => {
     const fetchProfessionisti = async () => {
       const { data: professionals } = await supabase
         .from("profiles")
-        .select("id, first_name, last_name, bio, lat, lng, zona, professional_type")
+        .select("id, first_name, last_name, bio, lat, lng, zona, professional_type, photo_url, verified")
         .eq("role", "professionista");
 
       if (!professionals || professionals.length === 0) return;
@@ -144,6 +146,8 @@ const DashboardPaziente = () => {
             valutazione: avg,
             recensioni: profReviews.length,
             professionalType: (p as any).professional_type || "infermiere",
+            photoUrl: (p as any).photo_url || null,
+            verified: (p as any).verified || false,
           };
         });
 
