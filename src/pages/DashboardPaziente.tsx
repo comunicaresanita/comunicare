@@ -183,12 +183,11 @@ const DashboardPaziente = () => {
         map: mapInstanceRef.current,
         title: p.nome,
         icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 10,
-          fillColor: "#1a2744",
-          fillOpacity: 1,
-          strokeColor: "#ffffff",
-          strokeWeight: 2,
+          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="45" viewBox="0 0 30 45"><path d="M15 0C6.716 0 0 6.716 0 15c0 10.969 15 30 15 30s15-19.031 15-30C30 6.716 23.284 0 15 0z" fill="%232d4a7a"/><circle cx="15" cy="14" r="6" fill="white"/></svg>'
+          )}`,
+          scaledSize: new google.maps.Size(30, 45),
+          anchor: new google.maps.Point(15, 45),
         },
       });
 
