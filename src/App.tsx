@@ -19,6 +19,7 @@ import ResetPassword from "./pages/ResetPassword.tsx";
 import PagamentoSuccesso from "./pages/PagamentoSuccesso.tsx";
 import AuthCallback from "./pages/AuthCallback.tsx";
 import Profilo from "./pages/Profilo.tsx";
+import SetupPosizione from "./pages/SetupPosizione.tsx";
 
 const queryClient = new QueryClient();
 
