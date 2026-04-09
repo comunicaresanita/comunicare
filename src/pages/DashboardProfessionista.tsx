@@ -47,7 +47,7 @@ const DashboardProfessionista = () => {
           <Card>
             <CardContent className="p-8 text-center">
               <p className="text-senior-base text-muted-foreground">
-                Le prenotazioni ricevute appariranno qui.
+                Le prenotazioni ricevute appariranno qui
               </p>
             </CardContent>
           </Card>
