@@ -244,7 +244,9 @@ const SetupProfessionista = () => {
       toast({ title: "Errore", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Servizi salvati" });
-      navigate("/setup-professionista/disponibilita");
+      if (isFirstSetup) {
+        navigate("/setup-professionista/disponibilita");
+      }
     }
   };
 
@@ -349,7 +351,7 @@ const SetupProfessionista = () => {
 
           <div className="flex justify-end">
             <Button size="lg" onClick={handleSalva} className="px-10 py-6" disabled={saving}>
-              {saving ? "Salvataggio..." : "Salva e continua → disponibilità"}
+              {saving ? "Salvataggio..." : isFirstSetup ? "Salva e continua → disponibilità" : "Salva servizi"}
             </Button>
           </div>
         </div>
