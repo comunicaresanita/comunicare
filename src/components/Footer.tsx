@@ -10,7 +10,7 @@ const Footer = () => {
           <div>
             <img src={logo} alt="ComuniCARE" className="h-14 mb-4" />
             <p className="text-senior-sm opacity-80">
-              Servizi infermieristici a domicilio a Firenze. Qualità, professionalità e cura.
+              Servizi sanitari a domicilio a Firenze. Qualità, professionalità e cura.
             </p>
           </div>
           <div>

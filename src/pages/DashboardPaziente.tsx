@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
 const prestazioniDisponibili = [
+  // Infermieristici
   "Iniezione intramuscolare", "Iniezione sottocutanea", "Prelievo ematico a domicilio",
   "Medicazione semplice", "Medicazione complessa", "Rimozione punti di sutura",
   "Cateterismo vescicale", "Gestione catetere vescicale", "Clistere evacuativo",
@@ -17,8 +18,16 @@ const prestazioniDisponibili = [
   "Educazione sanitaria al paziente", "Somministrazione terapia orale",
   "Gestione nutrizione enterale (SNG/PEG)", "Bendaggio compressivo",
   "Assistenza domiciliare continuativa", "ECG a domicilio",
-  "Fisioterapia a domicilio", "Riabilitazione motoria", "Massoterapia",
-  "Igiene personale assistita", "Mobilizzazione paziente",
+  // Fisioterapia
+  "Fisioterapia a domicilio", "Riabilitazione motoria", "Riabilitazione post-operatoria",
+  "Riabilitazione neurologica", "Riabilitazione respiratoria", "Massoterapia",
+  "Linfodrenaggio manuale", "Terapia manuale ortopedica", "Ginnastica posturale",
+  "Rieducazione funzionale", "Mobilizzazione articolare", "Esercizio terapeutico",
+  // OSS
+  "Igiene personale assistita", "Mobilizzazione paziente", "Assistenza alla deambulazione",
+  "Assistenza ai pasti", "Vestizione e svestizione assistita", "Cambio pannolone",
+  "Compagnia e sorveglianza", "Supporto nelle attività quotidiane",
+  "Accompagnamento a visite mediche", "Preparazione e somministrazione pasti",
 ];
 
 interface ProfessionistaData {
