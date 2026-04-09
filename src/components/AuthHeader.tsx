@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/comunicare-logo.png";
@@ -12,6 +12,12 @@ import {
 
 const AuthHeader = () => {
   const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <header className="bg-card shadow-sm sticky top-0 z-50">
@@ -31,7 +37,7 @@ const AuthHeader = () => {
               <DropdownMenuItem asChild>
                 <Link to="/profilo" className="cursor-pointer">Il mio profilo</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={signOut} className="cursor-pointer text-destructive">
+              <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
                 <LogOut className="w-4 h-4 mr-2" />
                 Esci
               </DropdownMenuItem>
