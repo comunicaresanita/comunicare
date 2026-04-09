@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import { Info, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Servizio {
   id: string;
@@ -16,6 +17,7 @@ interface Servizio {
   prezzo: number;
   prezzoConsigliato: number;
   attivo: boolean;
+  dbId?: string; // id from database if already saved
 }
 
 const serviziInfermiere: Omit<Servizio, "id" | "attivo">[] = [
@@ -165,6 +167,33 @@ const SetupProfessionista = () => {
   const [servizi, setServizi] = useState<Servizio[]>(
     serviziBase.map((s, i) => ({ ...s, id: `srv-${i}`, attivo: false }))
   );
+  const [loadingData, setLoadingData] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  // Load existing services from DB
+  useEffect(() => {
+    const loadServices = async () => {
+      if (!profile) return;
+      const { data: savedServices } = await supabase
+        .from("services")
+        .select("*")
+        .eq("professional_id", profile.id);
+
+      if (savedServices && savedServices.length > 0) {
+        setServizi((prev) =>
+          prev.map((s) => {
+            const saved = savedServices.find((ss) => ss.name === s.nome);
+            if (saved) {
+              return { ...s, attivo: true, prezzo: saved.price, dbId: saved.id };
+            }
+            return s;
+          })
+        );
+      }
+      setLoadingData(false);
+    };
+    loadServices();
+  }, [profile]);
 
   const toggleServizio = (id: string) => {
     setServizi((prev) =>
@@ -186,7 +215,8 @@ const SetupProfessionista = () => {
 
   const serviziAttivi = servizi.filter((s) => s.attivo);
 
-  const handleContinua = () => {
+  const handleSalva = async () => {
+    if (!profile) return;
     if (serviziAttivi.length === 0) {
       toast({
         title: "Seleziona almeno un servizio",
@@ -195,8 +225,38 @@ const SetupProfessionista = () => {
       });
       return;
     }
-    navigate("/setup-professionista/disponibilita");
+    setSaving(true);
+
+    // Delete all existing services for this professional then re-insert active ones
+    await supabase.from("services").delete().eq("professional_id", profile.id);
+    
+    const toInsert = serviziAttivi.map((s) => ({
+      professional_id: profile.id,
+      name: s.nome,
+      price: s.prezzo,
+    }));
+    const { error } = await supabase.from("services").insert(toInsert);
+    setSaving(false);
+
+    if (error) {
+      toast({ title: "Errore", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Servizi salvati" });
+      navigate("/setup-professionista/disponibilita");
+    }
   };
+
+  if (loadingData) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <AuthHeader />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -205,7 +265,7 @@ const SetupProfessionista = () => {
         <div className="container mx-auto px-6 max-w-3xl">
           <Button
             variant="ghost"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/dashboard-professionista")}
             className="mb-4 text-senior-sm gap-2"
           >
             <ArrowLeft className="w-4 h-4" /> Torna indietro
@@ -286,8 +346,8 @@ const SetupProfessionista = () => {
           )}
 
           <div className="flex justify-end">
-            <Button size="lg" onClick={handleContinua} className="px-10 py-6">
-              Continua → disponibilità
+            <Button size="lg" onClick={handleSalva} className="px-10 py-6" disabled={saving}>
+              {saving ? "Salvataggio..." : "Salva e continua → disponibilità"}
             </Button>
           </div>
         </div>
