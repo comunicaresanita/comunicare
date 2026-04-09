@@ -182,17 +182,11 @@ const DashboardPaziente = () => {
         position: { lat: p.lat, lng: p.lng },
         map: mapInstanceRef.current,
         title: p.nome,
-        icon: {
-          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
-            '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="45" viewBox="0 0 30 45"><path d="M15 0C6.716 0 0 6.716 0 15c0 10.969 15 30 15 30s15-19.031 15-30C30 6.716 23.284 0 15 0z" fill="%232d4a7a"/><circle cx="15" cy="14" r="6" fill="white"/></svg>'
-          )}`,
-          scaledSize: new google.maps.Size(30, 45),
-          anchor: new google.maps.Point(15, 45),
-        },
       });
 
       marker.addListener("click", () => {
-        navigate(`/profilo-infermiere/${p.profileId}`);
+        const el = document.getElementById(`prof-card-${p.profileId}`);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
       });
       markersRef.current.push(marker);
     });
@@ -263,7 +257,7 @@ const DashboardPaziente = () => {
                   const servizio = p.servizi.find((s) => s.name === prestazioneSelezionata);
                   const typeLabel = p.professionalType === "oss" ? "OSS" : p.professionalType === "fisioterapista" ? "Fisioterapista" : "Infermiere";
                   return (
-                    <Card key={p.profileId} className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
+                    <Card id={`prof-card-${p.profileId}`} key={p.profileId} className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
                       onClick={() => navigate(`/profilo-infermiere/${p.profileId}`)}
                     >
                       <CardContent className="p-6 flex items-center gap-6">
