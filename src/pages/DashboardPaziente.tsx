@@ -178,23 +178,23 @@ const DashboardPaziente = () => {
     markersRef.current = [];
 
     professionistiFiltrati.forEach((p) => {
-      const typeLabel = p.professionalType === "oss" ? "OSS" : p.professionalType === "fisioterapista" ? "Fisiot." : "Inf.";
       const marker = new google.maps.Marker({
         position: { lat: p.lat, lng: p.lng },
         map: mapInstanceRef.current,
         title: p.nome,
-        label: { text: `${typeLabel} ${p.nome.split(" ")[0]}`, color: "white", fontSize: "11px" },
-      });
-
-      const infoWindow = new google.maps.InfoWindow({
-        content: `<div style="padding:8px"><strong>${p.nome}</strong><br/><span>⭐ ${p.valutazione}</span><br/><span>${p.zona}</span></div>`,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillColor: "#1a2744",
+          fillOpacity: 1,
+          strokeColor: "#ffffff",
+          strokeWeight: 2,
+        },
       });
 
       marker.addListener("click", () => {
         navigate(`/profilo-infermiere/${p.profileId}`);
       });
-      marker.addListener("mouseover", () => infoWindow.open(mapInstanceRef.current, marker));
-      marker.addListener("mouseout", () => infoWindow.close());
       markersRef.current.push(marker);
     });
 
