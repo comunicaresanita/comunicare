@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import { Plus, Trash2, Info, Save } from "lucide-react";
+import { Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Servizio {
   id: string;
@@ -16,65 +16,155 @@ interface Servizio {
   prezzo: number;
   prezzoConsigliato: number;
   attivo: boolean;
-  personalizzato?: boolean;
 }
 
-const serviziPredefiniti: Omit<Servizio, "id" | "attivo">[] = [
-  // Infermieristici
-  { nome: "Iniezione intramuscolare", prezzo: 15, prezzoConsigliato: 15, personalizzato: false },
-  { nome: "Iniezione sottocutanea", prezzo: 15, prezzoConsigliato: 15, personalizzato: false },
-  { nome: "Prelievo ematico a domicilio", prezzo: 25, prezzoConsigliato: 25, personalizzato: false },
-  { nome: "Medicazione semplice", prezzo: 20, prezzoConsigliato: 20, personalizzato: false },
-  { nome: "Medicazione complessa", prezzo: 35, prezzoConsigliato: 35, personalizzato: false },
-  { nome: "Rimozione punti di sutura", prezzo: 25, prezzoConsigliato: 25, personalizzato: false },
-  { nome: "Cateterismo vescicale", prezzo: 40, prezzoConsigliato: 40, personalizzato: false },
-  { nome: "Gestione catetere vescicale", prezzo: 30, prezzoConsigliato: 30, personalizzato: false },
-  { nome: "Clistere evacuativo", prezzo: 25, prezzoConsigliato: 25, personalizzato: false },
-  { nome: "Infusione endovenosa (flebo)", prezzo: 40, prezzoConsigliato: 40, personalizzato: false },
-  { nome: "Terapia infusionale sottocutanea", prezzo: 35, prezzoConsigliato: 35, personalizzato: false },
-  { nome: "Misurazione parametri vitali", prezzo: 15, prezzoConsigliato: 15, personalizzato: false },
-  { nome: "Gestione stomie", prezzo: 35, prezzoConsigliato: 35, personalizzato: false },
-  { nome: "Assistenza post-operatoria", prezzo: 45, prezzoConsigliato: 45, personalizzato: false },
-  { nome: "Educazione sanitaria al paziente", prezzo: 30, prezzoConsigliato: 30, personalizzato: false },
-  { nome: "Somministrazione terapia orale", prezzo: 12, prezzoConsigliato: 12, personalizzato: false },
-  { nome: "Gestione nutrizione enterale (SNG/PEG)", prezzo: 40, prezzoConsigliato: 40, personalizzato: false },
-  { nome: "Bendaggio compressivo", prezzo: 25, prezzoConsigliato: 25, personalizzato: false },
-  { nome: "Assistenza domiciliare continuativa (per ora)", prezzo: 30, prezzoConsigliato: 30, personalizzato: false },
-  { nome: "ECG a domicilio", prezzo: 50, prezzoConsigliato: 50, personalizzato: false },
-  // Fisioterapia
-  { nome: "Fisioterapia a domicilio", prezzo: 50, prezzoConsigliato: 50, personalizzato: false },
-  { nome: "Riabilitazione motoria", prezzo: 50, prezzoConsigliato: 50, personalizzato: false },
-  { nome: "Riabilitazione post-operatoria", prezzo: 55, prezzoConsigliato: 55, personalizzato: false },
-  { nome: "Riabilitazione neurologica", prezzo: 60, prezzoConsigliato: 60, personalizzato: false },
-  { nome: "Riabilitazione respiratoria", prezzo: 50, prezzoConsigliato: 50, personalizzato: false },
-  { nome: "Massoterapia", prezzo: 45, prezzoConsigliato: 45, personalizzato: false },
-  { nome: "Linfodrenaggio manuale", prezzo: 50, prezzoConsigliato: 50, personalizzato: false },
-  { nome: "Terapia manuale ortopedica", prezzo: 55, prezzoConsigliato: 55, personalizzato: false },
-  { nome: "Ginnastica posturale", prezzo: 40, prezzoConsigliato: 40, personalizzato: false },
-  { nome: "Rieducazione funzionale", prezzo: 50, prezzoConsigliato: 50, personalizzato: false },
-  { nome: "Mobilizzazione articolare", prezzo: 45, prezzoConsigliato: 45, personalizzato: false },
-  { nome: "Esercizio terapeutico", prezzo: 45, prezzoConsigliato: 45, personalizzato: false },
-  // OSS
-  { nome: "Igiene personale assistita", prezzo: 25, prezzoConsigliato: 25, personalizzato: false },
-  { nome: "Mobilizzazione paziente", prezzo: 25, prezzoConsigliato: 25, personalizzato: false },
-  { nome: "Assistenza alla deambulazione", prezzo: 20, prezzoConsigliato: 20, personalizzato: false },
-  { nome: "Assistenza ai pasti", prezzo: 20, prezzoConsigliato: 20, personalizzato: false },
-  { nome: "Vestizione e svestizione assistita", prezzo: 20, prezzoConsigliato: 20, personalizzato: false },
-  { nome: "Cambio pannolone", prezzo: 15, prezzoConsigliato: 15, personalizzato: false },
-  { nome: "Compagnia e sorveglianza", prezzo: 15, prezzoConsigliato: 15, personalizzato: false },
-  { nome: "Supporto nelle attività quotidiane", prezzo: 20, prezzoConsigliato: 20, personalizzato: false },
-  { nome: "Accompagnamento a visite mediche", prezzo: 25, prezzoConsigliato: 25, personalizzato: false },
-  { nome: "Preparazione e somministrazione pasti", prezzo: 20, prezzoConsigliato: 20, personalizzato: false },
+const serviziInfermiere: Omit<Servizio, "id" | "attivo">[] = [
+  { nome: "Iniezione intramuscolare", prezzo: 15, prezzoConsigliato: 15 },
+  { nome: "Iniezione sottocutanea", prezzo: 15, prezzoConsigliato: 15 },
+  { nome: "Iniezione endovenosa", prezzo: 20, prezzoConsigliato: 20 },
+  { nome: "Prelievo ematico a domicilio", prezzo: 25, prezzoConsigliato: 25 },
+  { nome: "Medicazione semplice", prezzo: 20, prezzoConsigliato: 20 },
+  { nome: "Medicazione complessa", prezzo: 35, prezzoConsigliato: 35 },
+  { nome: "Medicazione ferita chirurgica", prezzo: 30, prezzoConsigliato: 30 },
+  { nome: "Medicazione ulcera da pressione", prezzo: 35, prezzoConsigliato: 35 },
+  { nome: "Medicazione ulcera venosa", prezzo: 35, prezzoConsigliato: 35 },
+  { nome: "Rimozione punti di sutura", prezzo: 25, prezzoConsigliato: 25 },
+  { nome: "Rimozione graffette chirurgiche", prezzo: 25, prezzoConsigliato: 25 },
+  { nome: "Cateterismo vescicale maschile", prezzo: 45, prezzoConsigliato: 45 },
+  { nome: "Cateterismo vescicale femminile", prezzo: 40, prezzoConsigliato: 40 },
+  { nome: "Gestione e sostituzione catetere vescicale", prezzo: 35, prezzoConsigliato: 35 },
+  { nome: "Clistere evacuativo", prezzo: 25, prezzoConsigliato: 25 },
+  { nome: "Infusione endovenosa (flebo)", prezzo: 40, prezzoConsigliato: 40 },
+  { nome: "Terapia infusionale sottocutanea", prezzo: 35, prezzoConsigliato: 35 },
+  { nome: "Somministrazione terapia intramuscolare", prezzo: 15, prezzoConsigliato: 15 },
+  { nome: "Somministrazione terapia orale", prezzo: 12, prezzoConsigliato: 12 },
+  { nome: "Somministrazione insulina", prezzo: 15, prezzoConsigliato: 15 },
+  { nome: "Misurazione glicemia capillare", prezzo: 10, prezzoConsigliato: 10 },
+  { nome: "Misurazione parametri vitali completa", prezzo: 15, prezzoConsigliato: 15 },
+  { nome: "Misurazione pressione arteriosa", prezzo: 10, prezzoConsigliato: 10 },
+  { nome: "ECG a domicilio", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Gestione stomie (colostomia, ileostomia, urostomia)", prezzo: 35, prezzoConsigliato: 35 },
+  { nome: "Sostituzione sacca stomia", prezzo: 25, prezzoConsigliato: 25 },
+  { nome: "Gestione nutrizione enterale (SNG/PEG)", prezzo: 40, prezzoConsigliato: 40 },
+  { nome: "Gestione nutrizione parenterale", prezzo: 45, prezzoConsigliato: 45 },
+  { nome: "Aspirazione tracheale", prezzo: 30, prezzoConsigliato: 30 },
+  { nome: "Gestione tracheostomia", prezzo: 40, prezzoConsigliato: 40 },
+  { nome: "Gestione drenaggi", prezzo: 30, prezzoConsigliato: 30 },
+  { nome: "Bendaggio compressivo", prezzo: 25, prezzoConsigliato: 25 },
+  { nome: "Bendaggio elastocompressivo arti inferiori", prezzo: 30, prezzoConsigliato: 30 },
+  { nome: "Assistenza post-operatoria a domicilio", prezzo: 45, prezzoConsigliato: 45 },
+  { nome: "Assistenza post-dimissione ospedaliera", prezzo: 40, prezzoConsigliato: 40 },
+  { nome: "Educazione sanitaria al paziente e caregiver", prezzo: 30, prezzoConsigliato: 30 },
+  { nome: "Educazione alla gestione del diabete", prezzo: 30, prezzoConsigliato: 30 },
+  { nome: "Prelievo per test rapido (tampone, urine)", prezzo: 20, prezzoConsigliato: 20 },
+  { nome: "Lavaggio auricolare", prezzo: 25, prezzoConsigliato: 25 },
+  { nome: "Aerosolterapia a domicilio", prezzo: 15, prezzoConsigliato: 15 },
+  { nome: "Ossigenoterapia domiciliare - avvio e monitoraggio", prezzo: 35, prezzoConsigliato: 35 },
+  { nome: "Assistenza domiciliare continuativa (per ora)", prezzo: 30, prezzoConsigliato: 30 },
+  { nome: "Assistenza infermieristica notturna (per ora)", prezzo: 35, prezzoConsigliato: 35 },
+  { nome: "Assistenza infermieristica diurna (per ora)", prezzo: 30, prezzoConsigliato: 30 },
 ];
+
+const serviziFisioterapista: Omit<Servizio, "id" | "attivo">[] = [
+  { nome: "Valutazione fisioterapica iniziale", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Fisioterapia a domicilio (seduta)", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Riabilitazione motoria", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Riabilitazione post-operatoria (protesi anca/ginocchio)", prezzo: 55, prezzoConsigliato: 55 },
+  { nome: "Riabilitazione post-frattura", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Riabilitazione post-ictus", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Riabilitazione neurologica", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Riabilitazione respiratoria", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Riabilitazione cardiologica", prezzo: 55, prezzoConsigliato: 55 },
+  { nome: "Riabilitazione del pavimento pelvico", prezzo: 55, prezzoConsigliato: 55 },
+  { nome: "Riabilitazione vestibolare (vertigini)", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Riabilitazione della spalla", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Riabilitazione della mano", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Riabilitazione del ginocchio", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Riabilitazione della colonna vertebrale", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Massoterapia decontratturante", prezzo: 45, prezzoConsigliato: 45 },
+  { nome: "Massoterapia rilassante", prezzo: 40, prezzoConsigliato: 40 },
+  { nome: "Linfodrenaggio manuale (metodo Vodder)", prezzo: 55, prezzoConsigliato: 55 },
+  { nome: "Terapia manuale ortopedica", prezzo: 55, prezzoConsigliato: 55 },
+  { nome: "Mobilizzazione articolare passiva", prezzo: 45, prezzoConsigliato: 45 },
+  { nome: "Mobilizzazione articolare attiva assistita", prezzo: 45, prezzoConsigliato: 45 },
+  { nome: "Ginnastica posturale", prezzo: 40, prezzoConsigliato: 40 },
+  { nome: "Ginnastica dolce per anziani", prezzo: 35, prezzoConsigliato: 35 },
+  { nome: "Rieducazione funzionale", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Rieducazione alla deambulazione", prezzo: 45, prezzoConsigliato: 45 },
+  { nome: "Esercizio terapeutico personalizzato", prezzo: 45, prezzoConsigliato: 45 },
+  { nome: "Stretching terapeutico", prezzo: 35, prezzoConsigliato: 35 },
+  { nome: "Kinesio taping", prezzo: 25, prezzoConsigliato: 25 },
+  { nome: "Trattamento trigger point", prezzo: 45, prezzoConsigliato: 45 },
+  { nome: "Trattamento cervicalgia", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Trattamento lombalgia", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Trattamento sciatalgia", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Trattamento sindrome del tunnel carpale", prezzo: 45, prezzoConsigliato: 45 },
+  { nome: "Elettrostimolazione muscolare (se con attrezzatura)", prezzo: 40, prezzoConsigliato: 40 },
+  { nome: "TENS antalgica (se con attrezzatura)", prezzo: 35, prezzoConsigliato: 35 },
+];
+
+const serviziOSS: Omit<Servizio, "id" | "attivo">[] = [
+  { nome: "Igiene personale completa a letto", prezzo: 25, prezzoConsigliato: 25 },
+  { nome: "Igiene personale parziale (viso, mani, zona intima)", prezzo: 18, prezzoConsigliato: 18 },
+  { nome: "Bagno assistito in vasca/doccia", prezzo: 25, prezzoConsigliato: 25 },
+  { nome: "Shampoo e cura dei capelli a letto", prezzo: 15, prezzoConsigliato: 15 },
+  { nome: "Cura delle unghie (mani e piedi)", prezzo: 12, prezzoConsigliato: 12 },
+  { nome: "Rasatura e cura del viso", prezzo: 10, prezzoConsigliato: 10 },
+  { nome: "Vestizione e svestizione assistita", prezzo: 18, prezzoConsigliato: 18 },
+  { nome: "Cambio pannolone", prezzo: 15, prezzoConsigliato: 15 },
+  { nome: "Cambio biancheria del letto con paziente allettato", prezzo: 18, prezzoConsigliato: 18 },
+  { nome: "Mobilizzazione paziente a letto", prezzo: 20, prezzoConsigliato: 20 },
+  { nome: "Posizionamento e riposizionamento (prevenzione decubiti)", prezzo: 20, prezzoConsigliato: 20 },
+  { nome: "Trasferimento letto-carrozzina", prezzo: 20, prezzoConsigliato: 20 },
+  { nome: "Trasferimento letto-poltrona", prezzo: 18, prezzoConsigliato: 18 },
+  { nome: "Assistenza alla deambulazione", prezzo: 20, prezzoConsigliato: 20 },
+  { nome: "Assistenza nell'uso di ausili (deambulatore, stampelle)", prezzo: 18, prezzoConsigliato: 18 },
+  { nome: "Assistenza ai pasti (imboccamento)", prezzo: 20, prezzoConsigliato: 20 },
+  { nome: "Preparazione pasti", prezzo: 18, prezzoConsigliato: 18 },
+  { nome: "Somministrazione pasti frullati/omogeneizzati", prezzo: 20, prezzoConsigliato: 20 },
+  { nome: "Idratazione assistita", prezzo: 12, prezzoConsigliato: 12 },
+  { nome: "Compagnia e sorveglianza (per ora)", prezzo: 15, prezzoConsigliato: 15 },
+  { nome: "Compagnia notturna (per ora)", prezzo: 18, prezzoConsigliato: 18 },
+  { nome: "Supporto nelle attività quotidiane (per ora)", prezzo: 18, prezzoConsigliato: 18 },
+  { nome: "Accompagnamento a visite mediche", prezzo: 25, prezzoConsigliato: 25 },
+  { nome: "Accompagnamento a passeggiate", prezzo: 18, prezzoConsigliato: 18 },
+  { nome: "Piccola spesa e commissioni", prezzo: 15, prezzoConsigliato: 15 },
+  { nome: "Ritiro referti e ricette", prezzo: 12, prezzoConsigliato: 12 },
+  { nome: "Gestione della casa leggera (riordino, pulizia stanza)", prezzo: 18, prezzoConsigliato: 18 },
+  { nome: "Lavaggio e gestione biancheria", prezzo: 15, prezzoConsigliato: 15 },
+  { nome: "Stimolazione cognitiva (giochi, lettura, conversazione)", prezzo: 20, prezzoConsigliato: 20 },
+  { nome: "Sorveglianza paziente con demenza (per ora)", prezzo: 18, prezzoConsigliato: 18 },
+  { nome: "Assistenza diurna continuativa (per ora)", prezzo: 18, prezzoConsigliato: 18 },
+  { nome: "Assistenza notturna continuativa (per ora)", prezzo: 22, prezzoConsigliato: 22 },
+];
+
+function getServiziPerTipo(tipo?: string): Omit<Servizio, "id" | "attivo">[] {
+  switch (tipo) {
+    case "fisioterapista": return serviziFisioterapista;
+    case "oss": return serviziOSS;
+    case "infermiere":
+    default: return serviziInfermiere;
+  }
+}
+
+function getTitoloRuolo(tipo?: string): string {
+  switch (tipo) {
+    case "fisioterapista": return "Fisioterapista";
+    case "oss": return "OSS";
+    default: return "Infermiere";
+  }
+}
 
 const SetupProfessionista = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { profile } = useAuth();
+  const tipo = profile?.professional_type;
+  const serviziBase = getServiziPerTipo(tipo);
+
   const [servizi, setServizi] = useState<Servizio[]>(
-    serviziPredefiniti.map((s, i) => ({ ...s, id: `srv-${i}`, attivo: false }))
+    serviziBase.map((s, i) => ({ ...s, id: `srv-${i}`, attivo: false }))
   );
-  const [nuovoServizio, setNuovoServizio] = useState("");
-  const [nuovoPrezzo, setNuovoPrezzo] = useState("");
 
   const toggleServizio = (id: string) => {
     setServizi((prev) =>
@@ -84,27 +174,14 @@ const SetupProfessionista = () => {
 
   const updatePrezzo = (id: string, prezzo: number) => {
     setServizi((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, prezzo } : s))
+      prev.map((s) => {
+        if (s.id !== id) return s;
+        const min = Math.round(s.prezzoConsigliato * 0.7);
+        const max = Math.round(s.prezzoConsigliato * 1.3);
+        const clampedPrezzo = Math.min(max, Math.max(min, prezzo));
+        return { ...s, prezzo: clampedPrezzo };
+      })
     );
-  };
-
-  const aggiungiServizio = () => {
-    if (!nuovoServizio.trim() || !nuovoPrezzo) return;
-    const nuovo: Servizio = {
-      id: `srv-custom-${Date.now()}`,
-      nome: nuovoServizio.trim(),
-      prezzo: Number(nuovoPrezzo),
-      prezzoConsigliato: Number(nuovoPrezzo),
-      attivo: true,
-      personalizzato: true,
-    };
-    setServizi((prev) => [...prev, nuovo]);
-    setNuovoServizio("");
-    setNuovoPrezzo("");
-  };
-
-  const rimuoviServizio = (id: string) => {
-    setServizi((prev) => prev.filter((s) => s.id !== id));
   };
 
   const serviziAttivi = servizi.filter((s) => s.attivo);
@@ -129,10 +206,10 @@ const SetupProfessionista = () => {
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">1</div>
-              <h1 className="text-senior-2xl font-bold">I Tuoi Servizi</h1>
+              <h1 className="text-senior-2xl font-bold">I Tuoi Servizi — {getTitoloRuolo(tipo)}</h1>
             </div>
             <p className="text-senior-base text-muted-foreground ml-[52px]">
-              Seleziona i servizi che offri e imposta i tuoi prezzi. I prezzi consigliati sono basati sulle tariffe medie di mercato.
+              Seleziona i servizi che offri e imposta i tuoi prezzi. Puoi variare il prezzo entro il ±30% rispetto al prezzo consigliato.
             </p>
           </div>
 
@@ -145,88 +222,45 @@ const SetupProfessionista = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {servizi.map((servizio) => (
-                  <div
-                    key={servizio.id}
-                    className={`flex items-center gap-4 p-4 rounded-lg border transition-colors ${
-                      servizio.attivo ? "border-primary bg-secondary/50" : "border-border"
-                    }`}
-                  >
-                    <Checkbox
-                      checked={servizio.attivo}
-                      onCheckedChange={() => toggleServizio(servizio.id)}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-senior-sm font-medium truncate">{servizio.nome}</p>
-                      {servizio.attivo && !servizio.personalizzato && (
-                        <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                          <Info className="w-3 h-3" />
-                          Consigliato: €{servizio.prezzoConsigliato}
-                        </p>
+                {servizi.map((servizio) => {
+                  const min = Math.round(servizio.prezzoConsigliato * 0.7);
+                  const max = Math.round(servizio.prezzoConsigliato * 1.3);
+                  return (
+                    <div
+                      key={servizio.id}
+                      className={`flex items-center gap-4 p-4 rounded-lg border transition-colors ${
+                        servizio.attivo ? "border-primary bg-secondary/50" : "border-border"
+                      }`}
+                    >
+                      <Checkbox
+                        checked={servizio.attivo}
+                        onCheckedChange={() => toggleServizio(servizio.id)}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-senior-sm font-medium truncate">{servizio.nome}</p>
+                        {servizio.attivo && (
+                          <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                            <Info className="w-3 h-3" />
+                            Consigliato: €{servizio.prezzoConsigliato} (min €{min} — max €{max})
+                          </p>
+                        )}
+                      </div>
+                      {servizio.attivo && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-senior-sm">€</span>
+                          <Input
+                            type="number"
+                            min={min}
+                            max={max}
+                            value={servizio.prezzo}
+                            onChange={(e) => updatePrezzo(servizio.id, Number(e.target.value))}
+                            className="w-20 text-center"
+                          />
+                        </div>
                       )}
                     </div>
-                    {servizio.attivo && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-senior-sm">€</span>
-                        <Input
-                          type="number"
-                          min="1"
-                          value={servizio.prezzo}
-                          onChange={(e) => updatePrezzo(servizio.id, Number(e.target.value))}
-                          className="w-20 text-center"
-                        />
-                      </div>
-                    )}
-                    {servizio.personalizzato && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => rimuoviServizio(servizio.id)}
-                        className="text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Aggiungi servizio personalizzato */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="text-senior-lg">Aggiungi Servizio Personalizzato</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1">
-                  <Label htmlFor="nuovo_servizio" className="text-senior-sm">Nome Servizio</Label>
-                  <Input
-                    id="nuovo_servizio"
-                    value={nuovoServizio}
-                    onChange={(e) => setNuovoServizio(e.target.value)}
-                    placeholder="Es. Assistenza notturna"
-                    className="mt-1"
-                  />
-                </div>
-                <div className="w-32">
-                  <Label htmlFor="nuovo_prezzo" className="text-senior-sm">Prezzo (€)</Label>
-                  <Input
-                    id="nuovo_prezzo"
-                    type="number"
-                    min="1"
-                    value={nuovoPrezzo}
-                    onChange={(e) => setNuovoPrezzo(e.target.value)}
-                    placeholder="€"
-                    className="mt-1"
-                  />
-                </div>
-                <div className="flex items-end">
-                  <Button onClick={aggiungiServizio} className="gap-2">
-                    <Plus className="w-4 h-4" /> Aggiungi
-                  </Button>
-                </div>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
