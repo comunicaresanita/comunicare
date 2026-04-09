@@ -167,7 +167,7 @@ const DashboardPaziente = () => {
     if (!mapInstanceRef.current) {
       mapInstanceRef.current = new google.maps.Map(mapRef.current, {
         center,
-        zoom: 13,
+        zoom: 11,
         styles: [{ featureType: "poi", stylers: [{ visibility: "simplified" }] }],
       });
     } else {
@@ -182,6 +182,15 @@ const DashboardPaziente = () => {
         position: { lat: p.lat, lng: p.lng },
         map: mapInstanceRef.current,
         title: p.nome,
+        icon: {
+          path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
+          fillColor: "#4A90D9",
+          fillOpacity: 1,
+          strokeColor: "#2a6cb6",
+          strokeWeight: 1.5,
+          scale: 1.8,
+          anchor: new google.maps.Point(12, 22),
+        },
       });
 
       marker.addListener("click", () => {
@@ -196,6 +205,11 @@ const DashboardPaziente = () => {
       professionistiFiltrati.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
       if (userCoords) bounds.extend(userCoords);
       mapInstanceRef.current.fitBounds(bounds);
+      // Zoom out a bit after fitBounds
+      google.maps.event.addListenerOnce(mapInstanceRef.current, "bounds_changed", () => {
+        const currentZoom = mapInstanceRef.current.getZoom();
+        if (currentZoom > 13) mapInstanceRef.current.setZoom(13);
+      });
     }
   }, [prestazioneSelezionata, professionistiFiltrati, navigate, mapsLoaded, userCoords]);
 
