@@ -64,8 +64,6 @@ const Profilo = () => {
       setAge((profile as any).age ? String((profile as any).age) : "");
       setAdditionalInfo((profile as any).additional_info || "");
       setIsCaregiver((profile as any).is_caregiver || false);
-      if (profile.lat) setMapLat(profile.lat);
-      if (profile.lng) setMapLng(profile.lng);
     }
   }, [profile]);
 
