@@ -37,6 +37,7 @@ const App = () => (
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/setup-professionista" element={<SetupProfessionista />} />
             <Route path="/setup-professionista/disponibilita" element={<SetupDisponibilita />} />
+            <Route path="/setup-professionista/posizione" element={<SetupPosizione />} />
             <Route path="/dashboard-professionista" element={<DashboardProfessionista />} />
             <Route path="/dashboard-paziente" element={<DashboardPaziente />} />
             <Route path="/profilo-infermiere/:id" element={<ProfiloInfermiere />} />

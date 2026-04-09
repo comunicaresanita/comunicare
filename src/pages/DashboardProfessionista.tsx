@@ -35,7 +35,7 @@ const DashboardProfessionista = () => {
                 <p className="text-sm text-muted-foreground mt-1">Gestisci il calendario</p>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/setup-professionista/disponibilita")}>
+            <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/setup-professionista/posizione")}>
               <CardContent className="p-6 text-center">
                 <MapPin className="w-8 h-8 text-primary mx-auto mb-3" />
                 <h3 className="text-senior-base font-semibold">Posizione</h3>
