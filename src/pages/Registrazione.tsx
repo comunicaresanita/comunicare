@@ -324,9 +324,6 @@ const Registrazione = () => {
                         )}
 
                         {/* No albo required for OSS */}
-                        {tipoProfessionista === "oss" && (
-                          <p className="text-sm text-muted-foreground italic">Per gli OSS non è richiesta iscrizione a un albo professionale.</p>
-                        )}
 
                         <div className="space-y-2">
                           <Label htmlFor="partita_iva" className="text-senior-sm">Partita IVA</Label>
@@ -359,24 +356,6 @@ const Registrazione = () => {
                             <Input id="doc_identita" type="file" accept=".pdf,.jpg,.jpeg,.png" required className="text-senior-sm" />
                           </div>
                         </div>
-                        {tipoProfessionista === "infermiere" && (
-                          <div className="space-y-2">
-                            <Label htmlFor="cert_opi" className="text-senior-sm">Certificato iscrizione OPI *</Label>
-                            <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
-                              <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                              <Input id="cert_opi" type="file" accept=".pdf,.jpg,.jpeg,.png" required className="text-senior-sm" />
-                            </div>
-                          </div>
-                        )}
-                        {tipoProfessionista === "fisioterapista" && (
-                          <div className="space-y-2">
-                            <Label htmlFor="cert_fnofi" className="text-senior-sm">Certificato iscrizione FNOFI *</Label>
-                            <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
-                              <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                              <Input id="cert_fnofi" type="file" accept=".pdf,.jpg,.jpeg,.png" required className="text-senior-sm" />
-                            </div>
-                          </div>
-                        )}
                       </div>
                     </div>
                   </>

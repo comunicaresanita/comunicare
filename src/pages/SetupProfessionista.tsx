@@ -20,6 +20,7 @@ interface Servizio {
 }
 
 const serviziPredefiniti: Omit<Servizio, "id" | "attivo">[] = [
+  // Infermieristici
   { nome: "Iniezione intramuscolare", prezzo: 15, prezzoConsigliato: 15, personalizzato: false },
   { nome: "Iniezione sottocutanea", prezzo: 15, prezzoConsigliato: 15, personalizzato: false },
   { nome: "Prelievo ematico a domicilio", prezzo: 25, prezzoConsigliato: 25, personalizzato: false },
@@ -40,6 +41,30 @@ const serviziPredefiniti: Omit<Servizio, "id" | "attivo">[] = [
   { nome: "Bendaggio compressivo", prezzo: 25, prezzoConsigliato: 25, personalizzato: false },
   { nome: "Assistenza domiciliare continuativa (per ora)", prezzo: 30, prezzoConsigliato: 30, personalizzato: false },
   { nome: "ECG a domicilio", prezzo: 50, prezzoConsigliato: 50, personalizzato: false },
+  // Fisioterapia
+  { nome: "Fisioterapia a domicilio", prezzo: 50, prezzoConsigliato: 50, personalizzato: false },
+  { nome: "Riabilitazione motoria", prezzo: 50, prezzoConsigliato: 50, personalizzato: false },
+  { nome: "Riabilitazione post-operatoria", prezzo: 55, prezzoConsigliato: 55, personalizzato: false },
+  { nome: "Riabilitazione neurologica", prezzo: 60, prezzoConsigliato: 60, personalizzato: false },
+  { nome: "Riabilitazione respiratoria", prezzo: 50, prezzoConsigliato: 50, personalizzato: false },
+  { nome: "Massoterapia", prezzo: 45, prezzoConsigliato: 45, personalizzato: false },
+  { nome: "Linfodrenaggio manuale", prezzo: 50, prezzoConsigliato: 50, personalizzato: false },
+  { nome: "Terapia manuale ortopedica", prezzo: 55, prezzoConsigliato: 55, personalizzato: false },
+  { nome: "Ginnastica posturale", prezzo: 40, prezzoConsigliato: 40, personalizzato: false },
+  { nome: "Rieducazione funzionale", prezzo: 50, prezzoConsigliato: 50, personalizzato: false },
+  { nome: "Mobilizzazione articolare", prezzo: 45, prezzoConsigliato: 45, personalizzato: false },
+  { nome: "Esercizio terapeutico", prezzo: 45, prezzoConsigliato: 45, personalizzato: false },
+  // OSS
+  { nome: "Igiene personale assistita", prezzo: 25, prezzoConsigliato: 25, personalizzato: false },
+  { nome: "Mobilizzazione paziente", prezzo: 25, prezzoConsigliato: 25, personalizzato: false },
+  { nome: "Assistenza alla deambulazione", prezzo: 20, prezzoConsigliato: 20, personalizzato: false },
+  { nome: "Assistenza ai pasti", prezzo: 20, prezzoConsigliato: 20, personalizzato: false },
+  { nome: "Vestizione e svestizione assistita", prezzo: 20, prezzoConsigliato: 20, personalizzato: false },
+  { nome: "Cambio pannolone", prezzo: 15, prezzoConsigliato: 15, personalizzato: false },
+  { nome: "Compagnia e sorveglianza", prezzo: 15, prezzoConsigliato: 15, personalizzato: false },
+  { nome: "Supporto nelle attività quotidiane", prezzo: 20, prezzoConsigliato: 20, personalizzato: false },
+  { nome: "Accompagnamento a visite mediche", prezzo: 25, prezzoConsigliato: 25, personalizzato: false },
+  { nome: "Preparazione e somministrazione pasti", prezzo: 20, prezzoConsigliato: 20, personalizzato: false },
 ];
 
 const SetupProfessionista = () => {
