@@ -16,7 +16,6 @@ const DashboardProfessionista = () => {
           <h1 className="text-senior-2xl md:text-senior-3xl font-bold mb-2">
             Dashboard professionista
           </h1>
-          </h1>
           <p className="text-senior-base text-muted-foreground mb-8">
             Gestisci il tuo profilo, i tuoi servizi e le tue disponibilità.
           </p>
