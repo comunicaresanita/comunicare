@@ -293,12 +293,15 @@ const SetupProfessionista = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {[...servizi].sort((a, b) => {
+              {(() => {
+                const sorted = [...servizi].sort((a, b) => {
                   if (a.attivo && !b.attivo) return -1;
                   if (!a.attivo && b.attivo) return 1;
                   return 0;
-                }).map((servizio) => {
+                });
+                const attivi = sorted.filter(s => s.attivo);
+                const nonAttivi = sorted.filter(s => !s.attivo);
+                const renderServizio = (servizio: typeof servizi[0]) => {
                   const min = Math.round(servizio.prezzoConsigliato * 0.7);
                   const max = Math.round(servizio.prezzoConsigliato * 1.3);
                   return (
@@ -336,8 +339,21 @@ const SetupProfessionista = () => {
                       )}
                     </div>
                   );
-                })}
-              </div>
+                };
+                return (
+                  <div className="space-y-3">
+                    {attivi.map(renderServizio)}
+                    {attivi.length > 0 && nonAttivi.length > 0 && (
+                      <div className="flex items-center gap-3 py-3">
+                        <div className="flex-1 h-px bg-border" />
+                        <span className="text-sm text-muted-foreground">Altri servizi disponibili</span>
+                        <div className="flex-1 h-px bg-border" />
+                      </div>
+                    )}
+                    {nonAttivi.map(renderServizio)}
+                  </div>
+                );
+              })()}
             </CardContent>
           </Card>
 

@@ -274,17 +274,17 @@ const Profilo = () => {
               </Button>
 
               {/* Spacer */}
-              <div className="h-16" />
+              <div className="h-32" />
 
               {/* Delete account section */}
-              <div className="border-t border-destructive/30 pt-6 mt-6">
-                <h3 className="text-senior-lg font-semibold text-red-800 dark:text-red-400 mb-2">Zona pericolosa</h3>
-                <p className="text-sm text-red-700/80 dark:text-red-400/80 mb-4">
+              <div className="border-t border-border pt-6 mt-6">
+                <h3 className="text-senior-lg font-semibold text-red-900 dark:text-red-400 mb-2">Cancella account</h3>
+                <p className="text-sm text-foreground mb-4">
                   Eliminando il tuo account, tutti i tuoi dati verranno rimossi permanentemente dal server, inclusi profilo, prenotazioni, recensioni e servizi. Questa azione è irreversibile.
                 </p>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" className="gap-2" disabled={deleting}>
+                    <Button variant="destructive" className="gap-2 bg-red-900 hover:bg-red-950 text-white" disabled={deleting}>
                       <Trash2 className="w-4 h-4" />
                       {deleting ? "Eliminazione..." : "Elimina il mio account"}
                     </Button>
@@ -298,7 +298,7 @@ const Profilo = () => {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>No, torna indietro</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      <AlertDialogAction onClick={handleDeleteAccount} className="bg-red-900 text-white hover:bg-red-950">
                         Sì, elimina definitivamente
                       </AlertDialogAction>
                     </AlertDialogFooter>
