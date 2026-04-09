@@ -240,14 +240,7 @@ const SetupDisponibilita = () => {
             </CardContent>
           </Card>
 
-          <div className="flex justify-between">
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/setup-professionista")}
-              className="text-senior-sm"
-            >
-              ← Torna ai servizi
-            </Button>
+          <div className="flex justify-end">
             <Button size="lg" onClick={handleCompleta} className="px-10 py-6" disabled={saving}>
               {saving ? "Salvataggio..." : "Salva"}
             </Button>
