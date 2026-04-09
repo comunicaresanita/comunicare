@@ -351,7 +351,7 @@ const SetupProfessionista = () => {
 
           <div className="flex justify-end">
             <Button size="lg" onClick={handleSalva} className="px-10 py-6" disabled={saving}>
-              {saving ? "Salvataggio..." : isFirstSetup ? "Salva e continua → disponibilità" : "Salva servizi"}
+              {saving ? "Salvataggio..." : isFirstSetup ? "Salva e continua" : "Salva"}
             </Button>
           </div>
         </div>
