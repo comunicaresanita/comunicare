@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Checkbox } from "@/components/ui/checkbox";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import { Info } from "lucide-react";
+import { Info, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -203,26 +203,38 @@ const SetupProfessionista = () => {
       <AuthHeader />
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-3xl">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(-1)}
+            className="mb-4 text-senior-sm gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" /> Torna indietro
+          </Button>
+
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">1</div>
-              <h1 className="text-senior-2xl font-bold">I Tuoi Servizi — {getTitoloRuolo(tipo)}</h1>
+              <h1 className="text-senior-2xl font-bold">I tuoi servizi — {getTitoloRuolo(tipo)}</h1>
             </div>
             <p className="text-senior-base text-muted-foreground ml-[52px]">
-              Seleziona i servizi che offri e imposta i tuoi prezzi. Puoi variare il prezzo entro il ±30% rispetto al prezzo consigliato.
+              Seleziona i servizi che offri e imposta i tuoi prezzi.
             </p>
           </div>
 
           <Card className="mb-8">
             <CardHeader>
-              <CardTitle className="text-senior-lg">Servizi Disponibili</CardTitle>
+              <CardTitle className="text-senior-lg">Servizi disponibili</CardTitle>
               <CardDescription className="text-senior-sm">
                 Attiva i servizi che desideri offrire e personalizza il prezzo.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {servizi.map((servizio) => {
+                {[...servizi].sort((a, b) => {
+                  if (a.attivo && !b.attivo) return -1;
+                  if (!a.attivo && b.attivo) return 1;
+                  return 0;
+                }).map((servizio) => {
                   const min = Math.round(servizio.prezzoConsigliato * 0.7);
                   const max = Math.round(servizio.prezzoConsigliato * 1.3);
                   return (
@@ -275,7 +287,7 @@ const SetupProfessionista = () => {
 
           <div className="flex justify-end">
             <Button size="lg" onClick={handleContinua} className="px-10 py-6">
-              Continua → Disponibilità
+              Continua → disponibilità
             </Button>
           </div>
         </div>

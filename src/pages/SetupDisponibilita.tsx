@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import { Calendar, Clock, Plus, Trash2 } from "lucide-react";
+import { Calendar, Clock, Plus, Trash2, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SlotDisponibilita {
@@ -74,6 +74,14 @@ const SetupDisponibilita = () => {
       <AuthHeader />
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-3xl">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(-1)}
+            className="mb-4 text-senior-sm gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" /> Torna indietro
+          </Button>
+
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">2</div>
@@ -87,7 +95,7 @@ const SetupDisponibilita = () => {
           <Card className="mb-8">
             <CardHeader>
               <CardTitle className="text-senior-lg flex items-center gap-2">
-                <Calendar className="w-5 h-5" /> Calendario Disponibilità
+                <Calendar className="w-5 h-5" /> Calendario disponibilità
               </CardTitle>
               <CardDescription className="text-senior-sm">
                 Aggiungi gli slot orari in cui sei disponibile per le visite.
@@ -177,10 +185,10 @@ const SetupDisponibilita = () => {
               onClick={() => navigate("/setup-professionista")}
               className="text-senior-sm"
             >
-              ← Torna ai Servizi
+              ← Torna ai servizi
             </Button>
             <Button size="lg" onClick={handleCompleta} className="px-10 py-6">
-              Completa Setup ✓
+              Completa setup ✓
             </Button>
           </div>
         </div>
