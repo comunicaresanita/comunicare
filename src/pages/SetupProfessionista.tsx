@@ -168,6 +168,7 @@ const SetupProfessionista = () => {
     serviziBase.map((s, i) => ({ ...s, id: `srv-${i}`, attivo: false }))
   );
   const [loadingData, setLoadingData] = useState(true);
+  const [isFirstSetup, setIsFirstSetup] = useState(true);
   const [saving, setSaving] = useState(false);
 
   // Load existing services from DB
