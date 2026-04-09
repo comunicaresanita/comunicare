@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import GoogleMapPicker from "@/components/GoogleMapPicker";
+
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
