@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import { MapPin, Search, Star } from "lucide-react";
+import { MapPin, Search, Star, ShieldCheck, Stethoscope } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -41,6 +41,8 @@ interface ProfessionistaData {
   valutazione: number;
   recensioni: number;
   professionalType: string;
+  photoUrl: string | null;
+  verified: boolean;
 }
 
 const DashboardPaziente = () => {
@@ -112,7 +114,7 @@ const DashboardPaziente = () => {
     const fetchProfessionisti = async () => {
       const { data: professionals } = await supabase
         .from("profiles")
-        .select("id, first_name, last_name, bio, lat, lng, zona, professional_type")
+        .select("id, first_name, last_name, bio, lat, lng, zona, professional_type, photo_url, verified")
         .eq("role", "professionista");
 
       if (!professionals || professionals.length === 0) return;
@@ -144,6 +146,8 @@ const DashboardPaziente = () => {
             valutazione: avg,
             recensioni: profReviews.length,
             professionalType: (p as any).professional_type || "infermiere",
+            photoUrl: (p as any).photo_url || null,
+            verified: (p as any).verified || false,
           };
         });
 
@@ -174,23 +178,23 @@ const DashboardPaziente = () => {
     markersRef.current = [];
 
     professionistiFiltrati.forEach((p) => {
-      const typeLabel = p.professionalType === "oss" ? "OSS" : p.professionalType === "fisioterapista" ? "Fisiot." : "Inf.";
       const marker = new google.maps.Marker({
         position: { lat: p.lat, lng: p.lng },
         map: mapInstanceRef.current,
         title: p.nome,
-        label: { text: `${typeLabel} ${p.nome.split(" ")[0]}`, color: "white", fontSize: "11px" },
-      });
-
-      const infoWindow = new google.maps.InfoWindow({
-        content: `<div style="padding:8px"><strong>${p.nome}</strong><br/><span>⭐ ${p.valutazione}</span><br/><span>${p.zona}</span></div>`,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillColor: "#1a2744",
+          fillOpacity: 1,
+          strokeColor: "#ffffff",
+          strokeWeight: 2,
+        },
       });
 
       marker.addListener("click", () => {
         navigate(`/profilo-infermiere/${p.profileId}`);
       });
-      marker.addListener("mouseover", () => infoWindow.open(mapInstanceRef.current, marker));
-      marker.addListener("mouseout", () => infoWindow.close());
       markersRef.current.push(marker);
     });
 
@@ -264,26 +268,37 @@ const DashboardPaziente = () => {
                       onClick={() => navigate(`/profilo-infermiere/${p.profileId}`)}
                     >
                       <CardContent className="p-6 flex items-center gap-6">
-                        <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-primary font-bold text-senior-xl flex-shrink-0">
-                          {p.nome[0]}
+                        <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
+                          {p.photoUrl ? (
+                            <img src={p.photoUrl} alt={p.nome} className="w-full h-full object-cover" />
+                          ) : (
+                            <Stethoscope className="w-8 h-8 text-primary" />
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-senior-lg font-semibold">{p.nome}</h3>
-                          <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">{typeLabel}</span>
-                          <p className="text-senior-sm text-muted-foreground truncate mt-1">{p.bio}</p>
-                          <div className="flex items-center gap-4 mt-2">
-                            {p.valutazione > 0 && (
-                              <span className="flex items-center gap-1 text-sm">
-                                <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                                {p.valutazione} ({p.recensioni} recensioni)
-                              </span>
-                            )}
-                            {p.zona && (
-                              <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                                <MapPin className="w-4 h-4" /> {p.zona}
+                          <div className="flex items-center gap-2">
+                            <h3 className="text-senior-lg font-semibold">{p.nome}</h3>
+                            {p.verified && (
+                              <span className="inline-flex items-center gap-0.5 text-white text-xs font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: "#0097B2" }}>
+                                <ShieldCheck className="w-3 h-3" /> Verificato
                               </span>
                             )}
                           </div>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">{typeLabel}</span>
+                            {p.valutazione > 0 && (
+                              <span className="flex items-center gap-0.5 text-sm">
+                                <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
+                                {p.valutazione}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-senior-sm text-muted-foreground truncate mt-1">{p.bio}</p>
+                          {p.zona && (
+                            <span className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                              <MapPin className="w-4 h-4" /> {p.zona}
+                            </span>
+                          )}
                         </div>
                         {servizio && (
                           <div className="text-right flex-shrink-0">
