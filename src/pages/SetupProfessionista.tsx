@@ -181,6 +181,7 @@ const SetupProfessionista = () => {
         .eq("professional_id", profile.id);
 
       if (savedServices && savedServices.length > 0) {
+        setIsFirstSetup(false);
         setServizi((prev) =>
           prev.map((s) => {
             const saved = savedServices.find((ss) => ss.name === s.nome);
