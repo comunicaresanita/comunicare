@@ -24,7 +24,7 @@ const DashboardProfessionista = () => {
             <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/setup-professionista")}>
               <CardContent className="p-6 text-center">
                 <Settings className="w-8 h-8 text-primary mx-auto mb-3" />
-                <h3 className="text-senior-base font-semibold">Servizi e Prezzi</h3>
+                <h3 className="text-senior-base font-semibold">Servizi e prezzi</h3>
                 <p className="text-sm text-muted-foreground mt-1">Modifica i tuoi servizi</p>
               </CardContent>
             </Card>
