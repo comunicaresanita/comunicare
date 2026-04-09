@@ -168,6 +168,7 @@ const SetupProfessionista = () => {
     serviziBase.map((s, i) => ({ ...s, id: `srv-${i}`, attivo: false }))
   );
   const [loadingData, setLoadingData] = useState(true);
+  const [isFirstSetup, setIsFirstSetup] = useState(true);
   const [saving, setSaving] = useState(false);
 
   // Load existing services from DB
@@ -180,6 +181,7 @@ const SetupProfessionista = () => {
         .eq("professional_id", profile.id);
 
       if (savedServices && savedServices.length > 0) {
+        setIsFirstSetup(false);
         setServizi((prev) =>
           prev.map((s) => {
             const saved = savedServices.find((ss) => ss.name === s.nome);
@@ -242,7 +244,9 @@ const SetupProfessionista = () => {
       toast({ title: "Errore", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Servizi salvati" });
-      navigate("/setup-professionista/disponibilita");
+      if (isFirstSetup) {
+        navigate("/setup-professionista/disponibilita");
+      }
     }
   };
 
@@ -347,7 +351,7 @@ const SetupProfessionista = () => {
 
           <div className="flex justify-end">
             <Button size="lg" onClick={handleSalva} className="px-10 py-6" disabled={saving}>
-              {saving ? "Salvataggio..." : "Salva e continua → disponibilità"}
+              {saving ? "Salvataggio..." : isFirstSetup ? "Salva e continua → disponibilità" : "Salva servizi"}
             </Button>
           </div>
         </div>

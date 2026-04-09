@@ -31,6 +31,7 @@ const SetupDisponibilita = () => {
   const [oraFine, setOraFine] = useState("12:00");
   const [loadingData, setLoadingData] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isFirstSetup, setIsFirstSetup] = useState(true);
 
   // Load existing availability from DB
   useEffect(() => {
@@ -42,6 +43,7 @@ const SetupDisponibilita = () => {
         .eq("professional_id", profile.id);
 
       if (data && data.length > 0) {
+        setIsFirstSetup(false);
         setSlots(data.map((a) => ({
           id: `slot-${a.id}`,
           giorno: a.day_of_week,
@@ -109,11 +111,10 @@ const SetupDisponibilita = () => {
     if (error) {
       toast({ title: "Errore", description: error.message, variant: "destructive" });
     } else {
-      toast({
-        title: "Setup completato!",
-        description: "Il tuo profilo professionale è stato configurato con successo.",
-      });
-      navigate("/dashboard-professionista");
+      toast({ title: "Disponibilità salvata" });
+      if (isFirstSetup) {
+        navigate("/dashboard-professionista");
+      }
     }
   };
 

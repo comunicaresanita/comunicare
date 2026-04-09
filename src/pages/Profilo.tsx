@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import GoogleMapPicker from "@/components/GoogleMapPicker";
+
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -45,8 +45,6 @@ const Profilo = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [mapLat, setMapLat] = useState<number | undefined>(undefined);
-  const [mapLng, setMapLng] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/login");
@@ -66,8 +64,6 @@ const Profilo = () => {
       setAge((profile as any).age ? String((profile as any).age) : "");
       setAdditionalInfo((profile as any).additional_info || "");
       setIsCaregiver((profile as any).is_caregiver || false);
-      if (profile.lat) setMapLat(profile.lat);
-      if (profile.lng) setMapLng(profile.lng);
     }
   }, [profile]);
 
@@ -114,10 +110,6 @@ const Profilo = () => {
       updates.numero_opi = numeroOpi;
       updates.numero_fnofi = numeroFnofi;
       updates.partita_iva = partitaIva;
-      if (mapLat && mapLng) {
-        updates.lat = mapLat;
-        updates.lng = mapLng;
-      }
     }
     if (profile.role === "paziente") {
       updates.phone = phone;
@@ -274,17 +266,6 @@ const Profilo = () => {
                     <Label className="text-senior-sm">Bio / specializzazioni</Label>
                     <Textarea value={bio} onChange={(e) => setBio(e.target.value)} className="text-senior-sm" rows={3} />
                   </div>
-                  <div className="border-t pt-6">
-                    <h3 className="text-senior-lg font-semibold mb-4">Posizione sulla mappa</h3>
-                    <GoogleMapPicker
-                      onLocationSelect={(lat, lng) => {
-                        setMapLat(lat);
-                        setMapLng(lng);
-                      }}
-                      initialLat={mapLat}
-                      initialLng={mapLng}
-                    />
-                  </div>
                 </>
               )}
 
@@ -292,10 +273,13 @@ const Profilo = () => {
                 {saving ? "Salvataggio..." : "Salva modifiche"}
               </Button>
 
+              {/* Spacer */}
+              <div className="h-16" />
+
               {/* Delete account section */}
-              <div className="border-t pt-6 mt-6">
-                <h3 className="text-senior-lg font-semibold text-destructive mb-2">Elimina account</h3>
-                <p className="text-sm text-muted-foreground mb-4">
+              <div className="border-t border-destructive/30 pt-6 mt-6">
+                <h3 className="text-senior-lg font-semibold text-red-800 dark:text-red-400 mb-2">Zona pericolosa</h3>
+                <p className="text-sm text-red-700/80 dark:text-red-400/80 mb-4">
                   Eliminando il tuo account, tutti i tuoi dati verranno rimossi permanentemente dal server, inclusi profilo, prenotazioni, recensioni e servizi. Questa azione è irreversibile.
                 </p>
                 <AlertDialog>
@@ -307,15 +291,15 @@ const Profilo = () => {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Sei sicuro di voler eliminare il tuo account?</AlertDialogTitle>
+                      <AlertDialogTitle>Sei sicuro?</AlertDialogTitle>
                       <AlertDialogDescription>
                         Tutti i tuoi dati verranno eliminati permanentemente dal server. Questa azione non può essere annullata.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Annulla</AlertDialogCancel>
+                      <AlertDialogCancel>No, torna indietro</AlertDialogCancel>
                       <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                        Elimina definitivamente
+                        Sì, elimina definitivamente
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

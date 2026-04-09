@@ -14,7 +14,7 @@ const DashboardProfessionista = () => {
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-3xl">
           <h1 className="text-senior-2xl md:text-senior-3xl font-bold mb-2">
-            Dashboard Professionista
+            Dashboard professionista
           </h1>
           <p className="text-senior-base text-muted-foreground mb-8">
             Gestisci il tuo profilo, i tuoi servizi e le tue disponibilità.
