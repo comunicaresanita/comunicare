@@ -249,7 +249,7 @@ const SetupDisponibilita = () => {
               ← Torna ai servizi
             </Button>
             <Button size="lg" onClick={handleCompleta} className="px-10 py-6" disabled={saving}>
-              {saving ? "Salvataggio..." : "Salva disponibilità ✓"}
+              {saving ? "Salvataggio..." : "Salva"}
             </Button>
           </div>
         </div>
