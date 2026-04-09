@@ -45,8 +45,6 @@ const Profilo = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [mapLat, setMapLat] = useState<number | undefined>(undefined);
-  const [mapLng, setMapLng] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/login");
