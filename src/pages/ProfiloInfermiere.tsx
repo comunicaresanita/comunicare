@@ -284,13 +284,20 @@ const ProfiloInfermiere = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {services.map(s => (
+                  {[...services].sort((a, b) => {
+                    if (a.name === servizioFromQuery) return -1;
+                    if (b.name === servizioFromQuery) return 1;
+                    return 0;
+                  }).map(s => (
                     <button key={s.id} onClick={() => setServizioSelezionato(s.name)}
                       className={`w-full flex items-center justify-between p-3 md:p-4 rounded-lg border transition-colors text-left ${
                         servizioSelezionato === s.name ? "border-primary bg-secondary" : "border-border hover:border-primary/50"
                       }`}
                     >
-                      <span className="text-sm md:text-senior-sm font-medium">{s.name}</span>
+                      <div className="flex flex-col">
+                        <span className="text-sm md:text-senior-sm font-medium">{s.name}</span>
+                        <span className="text-xs text-muted-foreground">Durata: max 1 ora</span>
+                      </div>
                       <span className="text-base md:text-senior-base font-bold text-primary">€{s.price}</span>
                     </button>
                   ))}
