@@ -294,10 +294,7 @@ const ProfiloInfermiere = () => {
                         servizioSelezionato === s.name ? "border-primary bg-secondary" : "border-border hover:border-primary/50"
                       }`}
                     >
-                      <div className="flex flex-col">
-                        <span className="text-sm md:text-senior-sm font-medium">{s.name}</span>
-                        <span className="text-xs text-muted-foreground">Durata: max 1 ora</span>
-                      </div>
+                      <span className="text-sm md:text-senior-sm font-medium">{s.name}</span>
                       <span className="text-base md:text-senior-base font-bold text-primary">€{s.price}</span>
                     </button>
                   ))}

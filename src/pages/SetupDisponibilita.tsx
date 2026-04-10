@@ -28,7 +28,6 @@ const SetupDisponibilita = () => {
   const [slots, setSlots] = useState<SlotDisponibilita[]>([]);
   const [giorno, setGiorno] = useState("Lunedì");
   const [oraInizio, setOraInizio] = useState("08:00");
-  const [oraFine, setOraFine] = useState("12:00");
   const [loadingData, setLoadingData] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isFirstSetup, setIsFirstSetup] = useState(true);
@@ -58,12 +57,20 @@ const SetupDisponibilita = () => {
   }, [profile]);
 
   const aggiungiSlot = () => {
-    if (oraInizio >= oraFine) {
+    const [h, m] = oraInizio.split(":").map(Number);
+    const endH = h + 1;
+    if (endH > 23) {
       toast({
         title: "Orario non valido",
-        description: "L'ora di inizio deve essere precedente all'ora di fine.",
+        description: "Non puoi aggiungere uno slot dopo le 23:00.",
         variant: "destructive",
       });
+      return;
+    }
+    const oraFine = `${String(endH).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+    const duplicato = slots.some(s => s.giorno === giorno && s.oraInizio === oraInizio);
+    if (duplicato) {
+      toast({ title: "Slot già presente", description: "Hai già aggiunto questo orario.", variant: "destructive" });
       return;
     }
     const nuovo: SlotDisponibilita = {
@@ -177,27 +184,19 @@ const SetupDisponibilita = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="text-senior-sm font-medium block mb-1">Dalle</label>
+                  <label className="text-senior-sm font-medium block mb-1">Ora</label>
                   <div className="flex items-center gap-1">
                     <Clock className="w-4 h-4 text-muted-foreground" />
-                    <input
-                      type="time"
+                    <select
                       value={oraInizio}
                       onChange={(e) => setOraInizio(e.target.value)}
                       className="border rounded-md p-2 text-senior-sm bg-background"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-senior-sm font-medium block mb-1">Alle</label>
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4 text-muted-foreground" />
-                    <input
-                      type="time"
-                      value={oraFine}
-                      onChange={(e) => setOraFine(e.target.value)}
-                      className="border rounded-md p-2 text-senior-sm bg-background"
-                    />
+                    >
+                      {Array.from({ length: 16 }, (_, i) => i + 7).map(h => {
+                        const val = `${String(h).padStart(2, "0")}:00`;
+                        return <option key={val} value={val}>{val} - {String(h + 1).padStart(2, "0")}:00</option>;
+                      })}
+                    </select>
                   </div>
                 </div>
                 <div className="flex items-end">
