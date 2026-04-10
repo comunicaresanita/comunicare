@@ -273,7 +273,7 @@ const DashboardPaziente = () => {
                   const typeLabel = p.professionalType === "oss" ? "OSS" : p.professionalType === "fisioterapista" ? "Fisioterapista" : "Infermiere";
                   return (
                     <Card id={`prof-card-${p.profileId}`} key={p.profileId} className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
-                      onClick={() => navigate(`/profilo-infermiere/${p.profileId}`)}
+                      onClick={() => navigate(`/profilo-infermiere/${p.profileId}?servizio=${encodeURIComponent(prestazioneSelezionata)}`)}
                     >
                       <CardContent className="p-6 flex items-center gap-6">
                         <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
