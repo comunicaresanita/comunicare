@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { MapPin, Search, Star, ShieldCheck, Stethoscope } from "lucide-react";
+import ChatbotWidget from "@/components/ChatbotWidget";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -310,7 +311,7 @@ const DashboardPaziente = () => {
                         {servizio && (
                           <div className="text-right flex-shrink-0">
                             <p className="text-senior-lg font-bold text-primary">€{servizio.price}</p>
-                            <p className="text-sm text-muted-foreground">per prestazione</p>
+                            <p className="text-sm text-muted-foreground">per questa prestazione</p>
                           </div>
                         )}
                       </CardContent>
@@ -329,6 +330,7 @@ const DashboardPaziente = () => {
           )}
         </div>
       </main>
+      <ChatbotWidget />
       <Footer />
     </div>
   );
