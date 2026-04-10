@@ -28,7 +28,6 @@ const SetupDisponibilita = () => {
   const [slots, setSlots] = useState<SlotDisponibilita[]>([]);
   const [giorno, setGiorno] = useState("Lunedì");
   const [oraInizio, setOraInizio] = useState("08:00");
-  const [oraFine, setOraFine] = useState("12:00");
   const [loadingData, setLoadingData] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isFirstSetup, setIsFirstSetup] = useState(true);
