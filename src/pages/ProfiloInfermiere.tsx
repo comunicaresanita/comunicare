@@ -52,6 +52,7 @@ const dayOrder: Record<string, number> = {
 
 const ProfiloInfermiere = () => {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, profile: userProfile } = useAuth();
@@ -62,7 +63,8 @@ const ProfiloInfermiere = () => {
   const [availability, setAvailability] = useState<Availability[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
 
-  const [servizioSelezionato, setServizioSelezionato] = useState<string | null>(null);
+  const servizioFromQuery = searchParams.get("servizio");
+  const [servizioSelezionato, setServizioSelezionato] = useState<string | null>(servizioFromQuery);
   const [slotSelezionato, setSlotSelezionato] = useState<string | null>(null);
   const [giornoSelezionato, setGiornoSelezionato] = useState<string | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
