@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -52,6 +52,7 @@ const dayOrder: Record<string, number> = {
 
 const ProfiloInfermiere = () => {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, profile: userProfile } = useAuth();
@@ -62,7 +63,8 @@ const ProfiloInfermiere = () => {
   const [availability, setAvailability] = useState<Availability[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
 
-  const [servizioSelezionato, setServizioSelezionato] = useState<string | null>(null);
+  const servizioFromQuery = searchParams.get("servizio");
+  const [servizioSelezionato, setServizioSelezionato] = useState<string | null>(servizioFromQuery);
   const [slotSelezionato, setSlotSelezionato] = useState<string | null>(null);
   const [giornoSelezionato, setGiornoSelezionato] = useState<string | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
@@ -231,7 +233,7 @@ const ProfiloInfermiere = () => {
       <AuthHeader />
       <main className="flex-1 bg-background py-6 md:py-12">
         <div className="container mx-auto px-4 md:px-6 max-w-3xl">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4 md:mb-6 gap-2">
+          <Button variant="ghost" onClick={() => navigate("/dashboard-paziente")} className="mb-4 md:mb-6 gap-2">
             <ArrowLeft className="w-4 h-4" /> Torna alla ricerca
           </Button>
 
@@ -282,13 +284,20 @@ const ProfiloInfermiere = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {services.map(s => (
+                  {[...services].sort((a, b) => {
+                    if (a.name === servizioFromQuery) return -1;
+                    if (b.name === servizioFromQuery) return 1;
+                    return 0;
+                  }).map(s => (
                     <button key={s.id} onClick={() => setServizioSelezionato(s.name)}
                       className={`w-full flex items-center justify-between p-3 md:p-4 rounded-lg border transition-colors text-left ${
                         servizioSelezionato === s.name ? "border-primary bg-secondary" : "border-border hover:border-primary/50"
                       }`}
                     >
-                      <span className="text-sm md:text-senior-sm font-medium">{s.name}</span>
+                      <div className="flex flex-col">
+                        <span className="text-sm md:text-senior-sm font-medium">{s.name}</span>
+                        <span className="text-xs text-muted-foreground">Durata: max 1 ora</span>
+                      </div>
                       <span className="text-base md:text-senior-base font-bold text-primary">€{s.price}</span>
                     </button>
                   ))}
