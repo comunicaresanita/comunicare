@@ -330,6 +330,7 @@ const DashboardPaziente = () => {
           )}
         </div>
       </main>
+      <ChatbotWidget />
       <Footer />
     </div>
   );
