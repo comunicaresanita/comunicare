@@ -161,7 +161,7 @@ const ProfiloInfermiere = () => {
   };
 
   const selectedDayName = selectedDate ? weekdayToDayName[selectedDate.getDay()] : null;
-  const slotsForSelectedDay = selectedDayName ? getSlotsForDay(selectedDayName) : [];
+  const slotsForSelectedDay = selectedDate ? getSlotsForDate(selectedDate) : [];
 
   const prevMonth = () => {
     if (calendarMonth === 0) { setCalendarMonth(11); setCalendarYear(y => y - 1); }
