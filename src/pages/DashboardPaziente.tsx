@@ -360,10 +360,19 @@ const DashboardPaziente = () => {
                             )}
                           </div>
                           <p className="text-senior-sm text-muted-foreground truncate mt-1">{p.bio}</p>
-                          {p.zona && (
-                            <span className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-                              <MapPin className="w-4 h-4" /> {p.zona}
-                            </span>
+                          {(p.zona || distKm !== undefined) && (
+                            <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
+                              {p.zona && (
+                                <span className="flex items-center gap-1">
+                                  <MapPin className="w-4 h-4" /> {p.zona}
+                                </span>
+                              )}
+                              {distKm !== undefined && (
+                                <span className="flex items-center gap-1 font-medium text-primary">
+                                  <Navigation className="w-3.5 h-3.5" /> ~{distKm < 1 ? `${Math.round(distKm * 1000)}m` : `${Math.round(distKm)} km`}
+                                </span>
+                              )}
+                            </div>
                           )}
                         </div>
                         {servizio && (
