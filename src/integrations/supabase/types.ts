@@ -49,6 +49,44 @@ export type Database = {
           },
         ]
       }
+      availability_overrides: {
+        Row: {
+          created_at: string
+          end_time: string
+          id: string
+          is_unavailable: boolean
+          professional_id: string
+          specific_date: string
+          start_time: string
+        }
+        Insert: {
+          created_at?: string
+          end_time: string
+          id?: string
+          is_unavailable?: boolean
+          professional_id: string
+          specific_date: string
+          start_time: string
+        }
+        Update: {
+          created_at?: string
+          end_time?: string
+          id?: string
+          is_unavailable?: boolean
+          professional_id?: string
+          specific_date?: string
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "availability_overrides_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           created_at: string

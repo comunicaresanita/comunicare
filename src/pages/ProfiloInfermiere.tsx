@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { MapPin, Star, Clock, ArrowLeft, BadgeCheck, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -82,53 +82,75 @@ const ProfiloInfermiere = () => {
   const [calendarMonth, setCalendarMonth] = useState(today.getMonth());
   const [calendarYear, setCalendarYear] = useState(today.getFullYear());
 
+  const [overrides, setOverrides] = useState<{ specific_date: string; start_time: string; end_time: string; is_unavailable: boolean }[]>([]);
+
   useEffect(() => {
     if (!id) return;
     const fetchData = async () => {
       setLoading(true);
-      const [profileRes, servicesRes, availRes, reviewsRes] = await Promise.all([
+      const [profileRes, servicesRes, availRes, reviewsRes, overridesRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", id).single(),
         supabase.from("services").select("*").eq("professional_id", id),
         supabase.from("availability").select("*").eq("professional_id", id),
         supabase.from("reviews").select("*").eq("professional_id", id).order("created_at", { ascending: false }),
+        supabase.from("availability_overrides").select("*").eq("professional_id", id),
       ]);
 
       if (profileRes.data) setProfessional(profileRes.data as ProfessionalProfile);
       if (servicesRes.data) setServices(servicesRes.data);
       if (availRes.data) setAvailability(availRes.data);
       if (reviewsRes.data) setReviews(reviewsRes.data);
+      if (overridesRes.data) setOverrides(overridesRes.data);
 
       setLoading(false);
     };
     fetchData();
   }, [id]);
 
-  // Available day names from availability
-  const availableDayNames = useMemo(() => {
-    const days = new Set(availability.map(a => a.day_of_week));
-    return days;
-  }, [availability]);
-
-  // Get slots for a specific day name
-  const getSlotsForDay = (dayName: string) => {
-    return availability
-      .filter(a => a.day_of_week === dayName)
-      .map(a => `${a.start_time.slice(0, 5)}-${a.end_time.slice(0, 5)}`)
-      .sort();
-  };
-
   // Calendar helpers
   const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(calendarYear, calendarMonth, 1).getDay();
-  // Adjust so Monday=0
   const startOffset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+
+  // Get slots for a specific date (considering overrides)
+  const getSlotsForDate = (date: Date) => {
+    const dayName = weekdayToDayName[date.getDay()];
+    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    const dateOverrides = overrides.filter(o => o.specific_date === dateStr);
+
+    // Start with weekly slots
+    const weeklySlots = availability
+      .filter(a => a.day_of_week === dayName)
+      .map(a => ({ start: a.start_time.slice(0, 5), end: a.end_time.slice(0, 5) }));
+
+    // Apply overrides
+    const result: string[] = [];
+    const allHours = new Set<number>();
+
+    // Add weekly hours
+    weeklySlots.forEach(s => {
+      const h = parseInt(s.start.substring(0, 2));
+      allHours.add(h);
+    });
+
+    // Process overrides
+    dateOverrides.forEach(o => {
+      const h = parseInt(o.start_time.substring(0, 2));
+      if (o.is_unavailable) {
+        allHours.delete(h);
+      } else {
+        allHours.add(h);
+      }
+    });
+
+    const sorted = Array.from(allHours).sort((a, b) => a - b);
+    return sorted.map(h => `${String(h).padStart(2, "0")}:00-${String(h + 1).padStart(2, "0")}:00`);
+  };
 
   const isDateAvailable = (day: number) => {
     const date = new Date(calendarYear, calendarMonth, day);
     if (date < new Date(today.getFullYear(), today.getMonth(), today.getDate())) return false;
-    const weekday = date.getDay();
-    const dayName = weekdayToDayName[weekday];
-    return availableDayNames.has(dayName);
+    return getSlotsForDate(date).length > 0;
   };
 
   const handleDateClick = (day: number) => {
@@ -138,8 +160,8 @@ const ProfiloInfermiere = () => {
     setSlotSelezionato(null);
   };
 
-  const selectedDayName = selectedDate ? weekdayToDayName[selectedDate.getDay()] : null;
-  const slotsForSelectedDay = selectedDayName ? getSlotsForDay(selectedDayName) : [];
+  
+  const slotsForSelectedDay = selectedDate ? getSlotsForDate(selectedDate) : [];
 
   const prevMonth = () => {
     if (calendarMonth === 0) { setCalendarMonth(11); setCalendarYear(y => y - 1); }
