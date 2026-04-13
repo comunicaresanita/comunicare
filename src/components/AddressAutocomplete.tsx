@@ -92,29 +92,21 @@ const AddressAutocomplete = ({
       });
       if (!error && data?.result) {
         const result = data.result;
-        let street = "";
-        let streetNumber = "";
-        let cap = "";
-        let city = "";
-        let province = "";
-
-        for (const comp of result.address_components || []) {
-          const types: string[] = comp.types;
-          if (types.includes("route")) street = comp.long_name;
-          if (types.includes("street_number")) streetNumber = comp.long_name;
-          if (types.includes("postal_code")) cap = comp.long_name;
-          if (types.includes("locality")) city = comp.long_name;
-          if (types.includes("administrative_area_level_2")) province = comp.short_name;
-          if (!city && types.includes("administrative_area_level_3")) city = comp.long_name;
-        }
-
+        const ac = result.address_components || {};
         const fullAddress = result.formatted_address || prediction.description;
         onChange(fullAddress);
 
         if (onPlaceSelect) {
-          const lat = result.geometry?.location?.lat || 0;
-          const lng = result.geometry?.location?.lng || 0;
-          onPlaceSelect({ fullAddress, street, streetNumber, cap, city, province, lat, lng });
+          onPlaceSelect({
+            fullAddress,
+            street: ac.street || "",
+            streetNumber: ac.streetNumber || "",
+            cap: ac.cap || "",
+            city: ac.city || "",
+            province: ac.province || "",
+            lat: result.geometry?.location?.lat || 0,
+            lng: result.geometry?.location?.lng || 0,
+          });
         }
       }
     } catch {

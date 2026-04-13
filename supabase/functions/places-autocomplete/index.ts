@@ -22,19 +22,67 @@ serve(async (req) => {
     const { action, input, placeId } = await req.json();
 
     if (action === "autocomplete") {
-      const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&types=address&components=country:it&language=it&key=${apiKey}`;
-      const res = await fetch(url);
+      const res = await fetch("https://places.googleapis.com/v1/places:autocomplete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-Api-Key": apiKey,
+        },
+        body: JSON.stringify({
+          input,
+          includedRegionCodes: ["it"],
+          includedPrimaryTypes: ["street_address", "subpremise", "premise", "route"],
+          languageCode: "it",
+        }),
+      });
       const data = await res.json();
-      return new Response(JSON.stringify(data), {
+      
+      // Transform to a simple format for the client
+      const predictions = (data.suggestions || [])
+        .filter((s: any) => s.placePrediction)
+        .map((s: any) => ({
+          place_id: s.placePrediction.placeId,
+          description: s.placePrediction.text?.text || "",
+        }));
+
+      return new Response(JSON.stringify({ predictions }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     if (action === "details") {
-      const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId)}&fields=address_components,formatted_address,geometry&language=it&key=${apiKey}`;
-      const res = await fetch(url);
+      const res = await fetch(`https://places.googleapis.com/v1/places/${placeId}`, {
+        headers: {
+          "X-Goog-Api-Key": apiKey,
+          "X-Goog-FieldMask": "formattedAddress,location,addressComponents",
+        },
+      });
       const data = await res.json();
-      return new Response(JSON.stringify(data), {
+
+      // Transform to match our client expectations
+      let street = "", streetNumber = "", cap = "", city = "", province = "";
+      for (const comp of data.addressComponents || []) {
+        const types: string[] = comp.types || [];
+        if (types.includes("route")) street = comp.longText || "";
+        if (types.includes("street_number")) streetNumber = comp.longText || "";
+        if (types.includes("postal_code")) cap = comp.longText || "";
+        if (types.includes("locality")) city = comp.longText || "";
+        if (types.includes("administrative_area_level_2")) province = comp.shortText || "";
+        if (!city && types.includes("administrative_area_level_3")) city = comp.longText || "";
+      }
+
+      return new Response(JSON.stringify({
+        result: {
+          formatted_address: data.formattedAddress || "",
+          geometry: {
+            location: {
+              lat: data.location?.latitude || 0,
+              lng: data.location?.longitude || 0,
+            },
+          },
+          address_components: { street, streetNumber, cap, city, province },
+        },
+      }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
