@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { MapPin, Star, Clock, ArrowLeft, BadgeCheck, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -160,7 +160,7 @@ const ProfiloInfermiere = () => {
     setSlotSelezionato(null);
   };
 
-  const selectedDayName = selectedDate ? weekdayToDayName[selectedDate.getDay()] : null;
+  
   const slotsForSelectedDay = selectedDate ? getSlotsForDate(selectedDate) : [];
 
   const prevMonth = () => {
