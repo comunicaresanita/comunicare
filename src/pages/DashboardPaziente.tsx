@@ -11,24 +11,45 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const prestazioniDisponibili = [
   // Infermieristici
-  "Iniezione intramuscolare", "Iniezione sottocutanea", "Prelievo ematico a domicilio",
-  "Medicazione semplice", "Medicazione complessa", "Rimozione punti di sutura",
-  "Cateterismo vescicale", "Gestione catetere vescicale", "Clistere evacuativo",
+  "Iniezione intramuscolare", "Iniezione sottocutanea", "Iniezione endovenosa",
+  "Prelievo ematico a domicilio", "Medicazione semplice", "Medicazione complessa",
+  "Medicazione ferita chirurgica", "Medicazione ulcera da pressione", "Medicazione ulcera venosa",
+  "Rimozione punti di sutura", "Rimozione graffette chirurgiche",
+  "Cateterismo vescicale maschile", "Cateterismo vescicale femminile",
+  "Gestione e sostituzione catetere vescicale", "Clistere evacuativo",
   "Infusione endovenosa (flebo)", "Terapia infusionale sottocutanea",
-  "Misurazione parametri vitali", "Gestione stomie", "Assistenza post-operatoria",
-  "Educazione sanitaria al paziente", "Somministrazione terapia orale",
-  "Gestione nutrizione enterale (SNG/PEG)", "Bendaggio compressivo",
-  "Assistenza domiciliare continuativa", "ECG a domicilio",
+  "Somministrazione terapia intramuscolare", "Somministrazione terapia orale",
+  "Somministrazione insulina", "Misurazione glicemia capillare",
+  "Misurazione parametri vitali completa", "Misurazione pressione arteriosa",
+  "ECG a domicilio", "Gestione stomie (colostomia, ileostomia, urostomia)",
+  "Sostituzione sacca stomia", "Gestione nutrizione enterale (SNG/PEG)",
+  "Gestione nutrizione parenterale", "Aspirazione tracheale", "Gestione tracheostomia",
+  "Gestione drenaggi", "Bendaggio compressivo", "Bendaggio elastocompressivo arti inferiori",
+  "Assistenza post-operatoria a domicilio", "Assistenza post-dimissione ospedaliera",
+  "Educazione sanitaria al paziente e caregiver", "Educazione alla gestione del diabete",
+  "Prelievo per test rapido (tampone, urine)", "Lavaggio auricolare",
+  "Aerosolterapia a domicilio", "Ossigenoterapia domiciliare - avvio e monitoraggio",
+  "Assistenza domiciliare continuativa (per ora)", "Assistenza infermieristica notturna (per ora)",
+  "Assistenza infermieristica diurna (per ora)",
   // Fisioterapia
-  "Fisioterapia a domicilio", "Riabilitazione motoria", "Riabilitazione post-operatoria",
-  "Riabilitazione neurologica", "Riabilitazione respiratoria", "Massoterapia",
-  "Linfodrenaggio manuale", "Terapia manuale ortopedica", "Ginnastica posturale",
-  "Rieducazione funzionale", "Mobilizzazione articolare", "Esercizio terapeutico",
+  "Riabilitazione motoria a domicilio", "Riabilitazione post-operatoria (protesi anca/ginocchio)",
+  "Riabilitazione post-frattura", "Riabilitazione post-ictus", "Riabilitazione neurologica",
+  "Riabilitazione respiratoria", "Riabilitazione pavimento pelvico",
+  "Linfodrenaggio manuale", "Massoterapia decontratturante", "Terapia manuale ortopedica",
+  "Ginnastica posturale a domicilio", "Ginnastica dolce per anziani",
+  "Rieducazione alla deambulazione", "Mobilizzazione articolare",
+  "Trattamento cervicalgia/lombalgia", "Kinesio taping",
+  "Esercizio terapeutico personalizzato", "Stretching terapeutico",
   // OSS
-  "Igiene personale assistita", "Mobilizzazione paziente", "Assistenza alla deambulazione",
-  "Assistenza ai pasti", "Vestizione e svestizione assistita", "Cambio pannolone",
-  "Compagnia e sorveglianza", "Supporto nelle attività quotidiane",
-  "Accompagnamento a visite mediche", "Preparazione e somministrazione pasti",
+  "Igiene personale completa a letto", "Bagno assistito in vasca/doccia",
+  "Vestizione e svestizione assistita", "Cambio pannolone e igiene intima",
+  "Mobilizzazione e cambio postura a letto", "Trasferimento letto-carrozzina/poltrona",
+  "Assistenza alla deambulazione", "Assistenza ai pasti e imboccamento",
+  "Preparazione pasti a domicilio", "Compagnia e sorveglianza diurna (per ora)",
+  "Sorveglianza notturna (per ora)", "Accompagnamento a visite mediche",
+  "Accompagnamento a passeggiate", "Piccola spesa e commissioni",
+  "Stimolazione cognitiva e attività ricreative", "Supporto nella gestione della casa leggera",
+  "Assistenza continuativa diurna (per ora)", "Assistenza continuativa notturna (per ora)",
 ];
 
 interface ProfessionistaData {
@@ -58,9 +79,13 @@ const DashboardPaziente = () => {
   const [professionisti, setProfessionisti] = useState<ProfessionistaData[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
 
-  const prestazioniFiltrate = prestazioniDisponibili.filter((p) =>
-    p.toLowerCase().includes(ricerca.toLowerCase())
-  );
+  // Fuzzy search: match if all words in the search appear in the service name (in any order)
+  const prestazioniFiltrate = prestazioniDisponibili.filter((p) => {
+    if (!ricerca.trim()) return true;
+    const normalizedP = p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const words = ricerca.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/\s+/).filter(Boolean);
+    return words.every(word => normalizedP.includes(word));
+  });
 
   const professionistiFiltrati = prestazioneSelezionata
     ? professionisti.filter((p) => p.servizi.some((s) => s.name === prestazioneSelezionata))

@@ -295,7 +295,7 @@ const SetupDisponibilita = () => {
                       {oreDisponibili.map(ora => (
                         <tr key={ora}>
                           <td className="p-1 md:p-2 font-mono text-muted-foreground sticky left-0 bg-background z-10 whitespace-nowrap">
-                            {String(ora).padStart(2, "0")}:00
+                            {ora}-{ora + 1}
                           </td>
                           {giorniSettimana.map(g => {
                             const active = isWeeklySlotActive(g, ora);
@@ -424,7 +424,7 @@ const SetupDisponibilita = () => {
                               "bg-secondary hover:bg-secondary/80"
                             }`}
                           >
-                            {String(ora).padStart(2, "0")}:00
+                            {ora}-{ora + 1}
                           </button>
                         );
                       })}
