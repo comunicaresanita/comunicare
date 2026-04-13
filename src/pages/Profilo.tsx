@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
+import AddressAutocomplete from "@/components/AddressAutocomplete";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -210,7 +211,11 @@ const Profilo = () => {
 
               <div className="space-y-2">
                 <Label className="text-senior-sm">Indirizzo</Label>
-                <Input value={address} onChange={(e) => setAddress(e.target.value)} className="text-senior-sm py-3" />
+                <AddressAutocomplete
+                  value={address}
+                  onChange={(val) => setAddress(val)}
+                  onPlaceSelect={(details) => setAddress(details.fullAddress)}
+                />
               </div>
 
               {profile.role === "paziente" && (
