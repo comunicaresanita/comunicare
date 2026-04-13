@@ -149,8 +149,6 @@ const ProfiloInfermiere = () => {
     const sorted = Array.from(allHours).sort((a, b) => a - b);
 
     // Filter out booked slots
-    const dayName = weekdayToDayName[date.getDay()];
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
     const formatDateLabel = (d: Date) => {
       const dn = weekdayToDayName[d.getDay()];
       return `${dn} ${d.getDate()} ${monthNames[d.getMonth()]} ${d.getFullYear()}`;
