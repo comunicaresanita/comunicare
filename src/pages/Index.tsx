@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import Header from "@/components/Header";
+import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { Heart, MapPin, Calendar, UserCheck } from "lucide-react";
 
@@ -31,7 +31,7 @@ const features = [
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <AuthHeader />
 
       {/* Hero Section */}
       <section style={{ backgroundColor: 'hsl(195, 60%, 97%)' }} className="py-12 md:py-16">
