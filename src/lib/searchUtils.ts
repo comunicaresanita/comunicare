@@ -127,7 +127,7 @@ export function fuzzySearchServices(query: string, services: string[]): string[]
         expanded.push(...values.map(v => normalize(v)));
       }
     }
-    return [...new Set(expanded)];
+    return Array.from(new Set(expanded));
   });
 
   // Score each service
