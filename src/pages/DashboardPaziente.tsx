@@ -80,17 +80,26 @@ const DashboardPaziente = () => {
   const [professionisti, setProfessionisti] = useState<ProfessionistaData[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
 
-  // Fuzzy search: match if all words in the search appear in the service name (in any order)
-  const prestazioniFiltrate = prestazioniDisponibili.filter((p) => {
-    if (!ricerca.trim()) return true;
-    const normalizedP = p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const words = ricerca.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/\s+/).filter(Boolean);
-    return words.every(word => normalizedP.includes(word));
-  });
+  // Fuzzy search with typo tolerance and synonyms
+  const prestazioniFiltrate = useMemo(
+    () => fuzzySearchServices(ricerca, prestazioniDisponibili),
+    [ricerca]
+  );
 
-  const professionistiFiltrati = prestazioneSelezionata
-    ? professionisti.filter((p) => p.servizi.some((s) => s.name === prestazioneSelezionata))
-    : [];
+  // Filter professionals and calculate distance, sort by nearest
+  const professionistiFiltrati = useMemo(() => {
+    if (!prestazioneSelezionata) return [];
+    const filtered = professionisti.filter((p) =>
+      p.servizi.some((s) => s.name === prestazioneSelezionata)
+    );
+    if (userCoords) {
+      filtered.forEach((p: any) => {
+        p._distKm = haversineKm(userCoords.lat, userCoords.lng, p.lat, p.lng);
+      });
+      filtered.sort((a: any, b: any) => (a._distKm ?? 999) - (b._distKm ?? 999));
+    }
+    return filtered;
+  }, [prestazioneSelezionata, professionisti, userCoords]);
 
   useEffect(() => {
     if ((window as any).google?.maps) {
