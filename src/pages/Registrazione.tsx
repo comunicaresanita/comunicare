@@ -39,17 +39,13 @@ const Registrazione = () => {
   const [numeroOpi, setNumeroOpi] = useState("");
   const [numeroFnofi, setNumeroFnofi] = useState("");
   const [partitaIva, setPartitaIva] = useState("");
-  const [partitaIvaError, setPartitaIvaError] = useState("");
+  
   const [mapLat, setMapLat] = useState<number | null>(null);
   const [mapLng, setMapLng] = useState<number | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   const { signUp } = useAuth();
 
-  const validatePartitaIva = (piva: string): boolean => {
-    if (!piva) return true;
-    return /^\d{11}$/.test(piva);
-  };
 
   const validateEmail = (value: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -78,10 +74,6 @@ const Registrazione = () => {
       return;
     }
 
-    if (ruolo === "professionista" && partitaIva && !validatePartitaIva(partitaIva)) {
-      setPartitaIvaError("La partita IVA deve essere di 11 cifre.");
-      return;
-    }
 
     if (ruolo === "professionista" && (!mapLat || !mapLng)) {
       toast({ title: "Posizione obbligatoria", description: "Indica sulla mappa il punto in cui vuoi essere visibile.", variant: "destructive" });
@@ -316,8 +308,7 @@ const Registrazione = () => {
 
                         <div className="space-y-2">
                           <Label htmlFor="partita_iva" className="text-senior-sm">Partita IVA</Label>
-                          <Input id="partita_iva" value={partitaIva} onChange={(e) => { setPartitaIva(e.target.value); setPartitaIvaError(""); }} placeholder="Es. 12345678901" maxLength={11} className="text-senior-sm py-3" />
-                          {partitaIvaError && <p className="text-sm text-destructive">{partitaIvaError}</p>}
+                          <Input id="partita_iva" value={partitaIva} onChange={(e) => setPartitaIva(e.target.value)} placeholder="Es. 12345678901" className="text-senior-sm py-3" />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="bio" className="text-senior-sm">Bio / specializzazioni</Label>
