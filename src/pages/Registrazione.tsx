@@ -74,10 +74,6 @@ const Registrazione = () => {
       return;
     }
 
-    if (ruolo === "professionista" && partitaIva && !validatePartitaIva(partitaIva)) {
-      setPartitaIvaError("La partita IVA deve essere di 11 cifre.");
-      return;
-    }
 
     if (ruolo === "professionista" && (!mapLat || !mapLng)) {
       toast({ title: "Posizione obbligatoria", description: "Indica sulla mappa il punto in cui vuoi essere visibile.", variant: "destructive" });
