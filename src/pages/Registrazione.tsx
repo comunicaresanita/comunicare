@@ -46,10 +46,6 @@ const Registrazione = () => {
   const navigate = useNavigate();
   const { signUp } = useAuth();
 
-  const validatePartitaIva = (piva: string): boolean => {
-    if (!piva) return true;
-    return /^\d{11}$/.test(piva);
-  };
 
   const validateEmail = (value: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
