@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GoogleMapPicker from "@/components/GoogleMapPicker";
+import AddressAutocomplete from "@/components/AddressAutocomplete";
 import { User, Stethoscope, Upload, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -273,7 +274,18 @@ const Registrazione = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="indirizzo" className="text-senior-sm">Indirizzo *</Label>
-                  <Input id="indirizzo" value={indirizzo} onChange={(e) => setIndirizzo(e.target.value)} placeholder="Via, numero civico" required className="text-senior-sm py-3" />
+                  <AddressAutocomplete
+                    value={indirizzo}
+                    onChange={(val) => setIndirizzo(val)}
+                    onPlaceSelect={(details) => {
+                      setIndirizzo(details.fullAddress);
+                      if (ruolo === "professionista" && details.lat && details.lng) {
+                        setMapLat(details.lat);
+                        setMapLng(details.lng);
+                      }
+                    }}
+                    required
+                  />
                 </div>
 
                 {ruolo === "professionista" && (
