@@ -48,18 +48,7 @@ const Registrazione = () => {
 
   const validatePartitaIva = (piva: string): boolean => {
     if (!piva) return true;
-    if (!/^\d{11}$/.test(piva)) return false;
-    let sum = 0;
-    for (let i = 0; i < 11; i++) {
-      const digit = parseInt(piva[i], 10);
-      if (i % 2 === 0) {
-        sum += digit;
-      } else {
-        const doubled = digit * 2;
-        sum += doubled > 9 ? doubled - 9 : doubled;
-      }
-    }
-    return sum % 10 === 0;
+    return /^\d{11}$/.test(piva);
   };
 
   const validateEmail = (value: string): boolean => {
@@ -90,7 +79,7 @@ const Registrazione = () => {
     }
 
     if (ruolo === "professionista" && partitaIva && !validatePartitaIva(partitaIva)) {
-      setPartitaIvaError("La partita IVA deve essere di 11 cifre e rispettare l'algoritmo di Luhn.");
+      setPartitaIvaError("La partita IVA deve essere di 11 cifre.");
       return;
     }
 
