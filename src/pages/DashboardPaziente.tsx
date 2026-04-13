@@ -236,16 +236,38 @@ const DashboardPaziente = () => {
       markersRef.current.push(marker);
     });
 
-    if (professionistiFiltrati.length > 0) {
+    if (professionistiFiltrati.length > 0 && userCoords) {
+      const nearest = professionistiFiltrati[0];
       const bounds = new google.maps.LatLngBounds();
-      professionistiFiltrati.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
-      if (userCoords) bounds.extend(userCoords);
+      bounds.extend(userCoords);
+      bounds.extend({ lat: nearest.lat, lng: nearest.lng });
+      professionistiFiltrati.slice(0, 3).forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
       mapInstanceRef.current.fitBounds(bounds);
-      // Zoom out a bit after fitBounds
       google.maps.event.addListenerOnce(mapInstanceRef.current, "bounds_changed", () => {
         const currentZoom = mapInstanceRef.current.getZoom();
-        if (currentZoom > 13) mapInstanceRef.current.setZoom(13);
+        if (currentZoom > 14) mapInstanceRef.current.setZoom(14);
       });
+    } else if (professionistiFiltrati.length > 0) {
+      const bounds = new google.maps.LatLngBounds();
+      professionistiFiltrati.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
+      mapInstanceRef.current.fitBounds(bounds);
+    }
+
+    if (userCoords) {
+      const userMarker = new google.maps.Marker({
+        position: userCoords,
+        map: mapInstanceRef.current,
+        title: "La tua posizione",
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: "#22c55e",
+          fillOpacity: 1,
+          strokeColor: "#16a34a",
+          strokeWeight: 2,
+          scale: 8,
+        },
+      });
+      markersRef.current.push(userMarker);
     }
   }, [prestazioneSelezionata, professionistiFiltrati, navigate, mapsLoaded, userCoords]);
 
