@@ -1,11 +1,10 @@
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import { MapPin, Star, Calendar, Clock, ArrowLeft, BadgeCheck, Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { MapPin, Star, Clock, ArrowLeft, BadgeCheck, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,13 +41,22 @@ interface Review {
   text: string | null;
   created_at: string;
   patient_id: string;
-  patient_name?: string;
 }
 
-const dayOrder: Record<string, number> = {
-  "Lunedì": 1, "Martedì": 2, "Mercoledì": 3, "Giovedì": 4,
-  "Venerdì": 5, "Sabato": 6, "Domenica": 7,
+const dayNameToWeekday: Record<string, number> = {
+  "Domenica": 0, "Lunedì": 1, "Martedì": 2, "Mercoledì": 3,
+  "Giovedì": 4, "Venerdì": 5, "Sabato": 6,
 };
+
+const weekdayToDayName: Record<number, string> = {
+  0: "Domenica", 1: "Lunedì", 2: "Martedì", 3: "Mercoledì",
+  4: "Giovedì", 5: "Venerdì", 6: "Sabato",
+};
+
+const monthNames = [
+  "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+  "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre",
+];
 
 const ProfiloInfermiere = () => {
   const { id } = useParams<{ id: string }>();
@@ -65,12 +73,14 @@ const ProfiloInfermiere = () => {
 
   const servizioFromQuery = searchParams.get("servizio");
   const [servizioSelezionato, setServizioSelezionato] = useState<string | null>(servizioFromQuery);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [slotSelezionato, setSlotSelezionato] = useState<string | null>(null);
-  const [giornoSelezionato, setGiornoSelezionato] = useState<string | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviewText, setReviewText] = useState("");
-  const [showReviewForm, setShowReviewForm] = useState(false);
+
+  // Calendar state
+  const today = new Date();
+  const [calendarMonth, setCalendarMonth] = useState(today.getMonth());
+  const [calendarYear, setCalendarYear] = useState(today.getFullYear());
 
   useEffect(() => {
     if (!id) return;
@@ -86,28 +96,61 @@ const ProfiloInfermiere = () => {
       if (profileRes.data) setProfessional(profileRes.data as ProfessionalProfile);
       if (servicesRes.data) setServices(servicesRes.data);
       if (availRes.data) setAvailability(availRes.data);
-
-      if (reviewsRes.data && reviewsRes.data.length > 0) {
-        const patientIds = [...new Set(reviewsRes.data.map(r => r.patient_id))];
-        const { data: patients } = await supabase
-          .from("profiles")
-          .select("id, first_name, last_name")
-          .in("id", patientIds);
-
-        const patientMap = new Map(
-          (patients || []).map(p => [p.id, `${p.first_name} ${p.last_name?.charAt(0)}.`])
-        );
-
-        setReviews(reviewsRes.data.map(r => ({
-          ...r,
-          patient_name: patientMap.get(r.patient_id) || "Utente",
-        })));
-      }
+      if (reviewsRes.data) setReviews(reviewsRes.data);
 
       setLoading(false);
     };
     fetchData();
   }, [id]);
+
+  // Available day names from availability
+  const availableDayNames = useMemo(() => {
+    const days = new Set(availability.map(a => a.day_of_week));
+    return days;
+  }, [availability]);
+
+  // Get slots for a specific day name
+  const getSlotsForDay = (dayName: string) => {
+    return availability
+      .filter(a => a.day_of_week === dayName)
+      .map(a => `${a.start_time.slice(0, 5)}-${a.end_time.slice(0, 5)}`)
+      .sort();
+  };
+
+  // Calendar helpers
+  const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+  const firstDayOfMonth = new Date(calendarYear, calendarMonth, 1).getDay();
+  // Adjust so Monday=0
+  const startOffset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+
+  const isDateAvailable = (day: number) => {
+    const date = new Date(calendarYear, calendarMonth, day);
+    if (date < new Date(today.getFullYear(), today.getMonth(), today.getDate())) return false;
+    const weekday = date.getDay();
+    const dayName = weekdayToDayName[weekday];
+    return availableDayNames.has(dayName);
+  };
+
+  const handleDateClick = (day: number) => {
+    if (!isDateAvailable(day)) return;
+    const date = new Date(calendarYear, calendarMonth, day);
+    setSelectedDate(date);
+    setSlotSelezionato(null);
+  };
+
+  const selectedDayName = selectedDate ? weekdayToDayName[selectedDate.getDay()] : null;
+  const slotsForSelectedDay = selectedDayName ? getSlotsForDay(selectedDayName) : [];
+
+  const prevMonth = () => {
+    if (calendarMonth === 0) { setCalendarMonth(11); setCalendarYear(y => y - 1); }
+    else setCalendarMonth(m => m - 1);
+  };
+  const nextMonth = () => {
+    if (calendarMonth === 11) { setCalendarMonth(0); setCalendarYear(y => y + 1); }
+    else setCalendarMonth(m => m + 1);
+  };
+
+  const canGoPrev = calendarYear > today.getFullYear() || (calendarYear === today.getFullYear() && calendarMonth > today.getMonth());
 
   if (loading) {
     return (
@@ -148,21 +191,16 @@ const ProfiloInfermiere = () => {
 
   const registrationNumber = professional.professional_type === "fisioterapista"
     ? professional.numero_fnofi : professional.numero_opi;
-
   const registrationLabel = professional.professional_type === "fisioterapista" ? "FNOFI" : "OPI";
 
-  // Group availability by day
-  const availByDay = availability.reduce<Record<string, string[]>>((acc, a) => {
-    if (!acc[a.day_of_week]) acc[a.day_of_week] = [];
-    acc[a.day_of_week].push(`${a.start_time.slice(0, 5)}-${a.end_time.slice(0, 5)}`);
-    return acc;
-  }, {});
-
-  const sortedDays = Object.keys(availByDay).sort((a, b) => (dayOrder[a] || 99) - (dayOrder[b] || 99));
+  const formatSelectedDate = (date: Date) => {
+    const dayName = weekdayToDayName[date.getDay()];
+    return `${dayName} ${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+  };
 
   const handlePrenota = async () => {
-    if (!servizioSelezionato || !slotSelezionato || !giornoSelezionato) {
-      toast({ title: "Seleziona tutti i campi", description: "Scegli un servizio, un giorno e uno slot orario.", variant: "destructive" });
+    if (!servizioSelezionato || !slotSelezionato || !selectedDate) {
+      toast({ title: "Seleziona tutti i campi", description: "Scegli un giorno e uno slot orario.", variant: "destructive" });
       return;
     }
     if (!user) {
@@ -173,6 +211,7 @@ const ProfiloInfermiere = () => {
 
     setPaymentLoading(true);
     try {
+      const dayStr = formatSelectedDate(selectedDate);
       const { data: booking, error: bookingError } = await supabase
         .from("bookings")
         .insert({
@@ -180,7 +219,7 @@ const ProfiloInfermiere = () => {
           professional_id: professional.id,
           service_name: servizioSelezionato,
           price: selectedService?.price || 0,
-          day: giornoSelezionato,
+          day: dayStr,
           time_slot: slotSelezionato,
           status: "pending",
         })
@@ -205,27 +244,6 @@ const ProfiloInfermiere = () => {
     } finally {
       setPaymentLoading(false);
     }
-  };
-
-  const handleSubmitReview = async () => {
-    if (!user) {
-      toast({ title: "Accedi per recensire", description: "Devi effettuare l'accesso.", variant: "destructive" });
-      return;
-    }
-    toast({ title: "Recensione inviata", description: "Grazie per il tuo feedback!" });
-    setShowReviewForm(false);
-    setReviewText("");
-  };
-
-  const formatDate = (dateStr: string) => {
-    const d = new Date(dateStr);
-    const diff = Date.now() - d.getTime();
-    const days = Math.floor(diff / 86400000);
-    if (days === 0) return "Oggi";
-    if (days === 1) return "Ieri";
-    if (days < 7) return `${days} giorni fa`;
-    if (days < 30) return `${Math.floor(days / 7)} settimane fa`;
-    return `${Math.floor(days / 30)} mesi fa`;
   };
 
   return (
@@ -276,82 +294,118 @@ const ProfiloInfermiere = () => {
             </CardContent>
           </Card>
 
-          {/* Servizi */}
-          {services.length > 0 && (
+          {/* Servizio selezionato (solo quello ricercato) */}
+          {selectedService && (
             <Card className="mb-6 md:mb-8">
               <CardHeader>
-                <CardTitle className="text-base md:text-senior-lg">Servizi e prezzi</CardTitle>
+                <CardTitle className="text-base md:text-senior-lg">Prestazione selezionata</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  {[...services].sort((a, b) => {
-                    if (a.name === servizioFromQuery) return -1;
-                    if (b.name === servizioFromQuery) return 1;
-                    return 0;
-                  }).map(s => (
-                    <button key={s.id} onClick={() => setServizioSelezionato(s.name)}
-                      className={`w-full flex items-center justify-between p-3 md:p-4 rounded-lg border transition-colors text-left ${
-                        servizioSelezionato === s.name ? "border-primary bg-secondary" : "border-border hover:border-primary/50"
-                      }`}
+                <div className="flex items-center justify-between p-3 md:p-4 rounded-lg border border-primary bg-secondary">
+                  <span className="text-sm md:text-senior-sm font-medium">{selectedService.name}</span>
+                  <span className="text-base md:text-senior-base font-bold text-primary">€{selectedService.price}</span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Calendario disponibilità */}
+          <Card className="mb-6 md:mb-8">
+            <CardHeader>
+              <CardTitle className="text-base md:text-senior-lg">Scegli data e orario</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* Month navigation */}
+              <div className="flex items-center justify-between mb-4">
+                <Button variant="outline" size="icon" onClick={prevMonth} disabled={!canGoPrev} className="h-8 w-8">
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="text-sm font-semibold">{monthNames[calendarMonth]} {calendarYear}</span>
+                <Button variant="outline" size="icon" onClick={nextMonth} className="h-8 w-8">
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Day headers */}
+              <div className="grid grid-cols-7 gap-1 mb-1">
+                {["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"].map(d => (
+                  <div key={d} className="text-center text-xs font-medium text-muted-foreground py-1">{d}</div>
+                ))}
+              </div>
+
+              {/* Calendar grid */}
+              <div className="grid grid-cols-7 gap-1">
+                {Array.from({ length: startOffset }).map((_, i) => (
+                  <div key={`empty-${i}`} />
+                ))}
+                {Array.from({ length: daysInMonth }).map((_, i) => {
+                  const day = i + 1;
+                  const available = isDateAvailable(day);
+                  const isSelected = selectedDate &&
+                    selectedDate.getDate() === day &&
+                    selectedDate.getMonth() === calendarMonth &&
+                    selectedDate.getFullYear() === calendarYear;
+                  const isToday = day === today.getDate() && calendarMonth === today.getMonth() && calendarYear === today.getFullYear();
+
+                  return (
+                    <button
+                      key={day}
+                      onClick={() => handleDateClick(day)}
+                      disabled={!available}
+                      className={`aspect-square flex items-center justify-center rounded-md text-sm transition-colors
+                        ${isSelected ? "bg-primary text-primary-foreground font-bold" : ""}
+                        ${!isSelected && available ? "hover:bg-secondary cursor-pointer font-medium" : ""}
+                        ${!available ? "text-muted-foreground/40 cursor-default" : ""}
+                        ${isToday && !isSelected ? "border border-primary" : ""}
+                      `}
                     >
-                      <span className="text-sm md:text-senior-sm font-medium">{s.name}</span>
-                      <span className="text-base md:text-senior-base font-bold text-primary">€{s.price}</span>
+                      {day}
                     </button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                  );
+                })}
+              </div>
 
-          {/* Disponibilità */}
-          {sortedDays.length > 0 && (
-            <Card className="mb-6 md:mb-8">
-              <CardHeader>
-                <CardTitle className="text-base md:text-senior-lg flex items-center gap-2">
-                  <Calendar className="w-5 h-5" /> Disponibilità
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {sortedDays.map(day => (
-                    <div key={day} className="border rounded-lg p-3 md:p-4">
-                      <h4 className="text-sm md:text-senior-sm font-semibold mb-2">{day}</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {availByDay[day].map(slot => (
-                          <button key={`${day}-${slot}`}
-                            onClick={() => { setGiornoSelezionato(day); setSlotSelezionato(slot); }}
-                            className={`flex items-center gap-1 px-3 md:px-4 py-2 rounded-full text-xs md:text-sm transition-colors ${
-                              giornoSelezionato === day && slotSelezionato === slot
-                                ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-secondary/80"
-                            }`}
-                          >
-                            <Clock className="w-3 h-3" />{slot}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+              {/* Time slots for selected date */}
+              {selectedDate && slotsForSelectedDay.length > 0 && (
+                <div className="mt-4 pt-4 border-t">
+                  <p className="text-sm font-medium mb-2">
+                    Orari disponibili per {formatSelectedDate(selectedDate)}:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {slotsForSelectedDay.map(slot => (
+                      <button
+                        key={slot}
+                        onClick={() => setSlotSelezionato(slot)}
+                        className={`flex items-center gap-1 px-3 md:px-4 py-2 rounded-full text-xs md:text-sm transition-colors ${
+                          slotSelezionato === slot
+                            ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-secondary/80"
+                        }`}
+                      >
+                        <Clock className="w-3 h-3" />{slot}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              )}
 
-          {sortedDays.length === 0 && (
-            <Card className="mb-6 md:mb-8">
-              <CardContent className="p-6 text-center">
-                <p className="text-muted-foreground">Nessuna disponibilità impostata al momento.</p>
-              </CardContent>
-            </Card>
-          )}
+              {selectedDate && slotsForSelectedDay.length === 0 && (
+                <p className="mt-4 text-sm text-muted-foreground text-center">Nessuno slot disponibile per questa data.</p>
+              )}
+
+              {availability.length === 0 && (
+                <p className="text-muted-foreground text-center py-4">Nessuna disponibilità impostata al momento.</p>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Riepilogo e pagamento */}
-          {servizioSelezionato && slotSelezionato && (
+          {servizioSelezionato && slotSelezionato && selectedDate && (
             <Card className="mb-6 md:mb-8 border-primary border-2">
               <CardContent className="p-4 md:p-6">
                 <h3 className="text-base md:text-senior-lg font-semibold mb-3">Riepilogo prenotazione</h3>
                 <div className="space-y-2 text-sm md:text-senior-sm mb-4">
                   <p><strong>Servizio:</strong> {servizioSelezionato}</p>
-                  <p><strong>Giorno:</strong> {giornoSelezionato}</p>
+                  <p><strong>Giorno:</strong> {formatSelectedDate(selectedDate)}</p>
                   <p><strong>Orario:</strong> {slotSelezionato}</p>
                   <p><strong>Prezzo:</strong> €{selectedService?.price}</p>
                 </div>
@@ -364,55 +418,6 @@ const ProfiloInfermiere = () => {
               </CardContent>
             </Card>
           )}
-
-          {/* Recensioni */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-base md:text-senior-lg flex items-center gap-2">
-                <Star className="w-5 h-5" /> Recensioni
-              </CardTitle>
-              {user && (
-                <Button variant="outline" size="sm" onClick={() => setShowReviewForm(!showReviewForm)}>
-                  Scrivi una recensione
-                </Button>
-              )}
-            </CardHeader>
-            <CardContent>
-              {showReviewForm && (
-                <div className="border rounded-lg p-4 mb-4 space-y-3">
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <button key={star} onClick={() => setReviewRating(star)}>
-                        <Star className={`w-6 h-6 ${star <= reviewRating ? "fill-yellow-500 text-yellow-500" : "text-muted-foreground"}`} />
-                      </button>
-                    ))}
-                  </div>
-                  <Textarea placeholder="Racconta la tua esperienza..." value={reviewText} onChange={(e) => setReviewText(e.target.value)} rows={3} />
-                  <Button onClick={handleSubmitReview}>Invia recensione</Button>
-                </div>
-              )}
-              {reviews.length > 0 ? (
-                <div className="space-y-4">
-                  {reviews.map(r => (
-                    <div key={r.id} className="border-b last:border-0 pb-4 last:pb-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm md:text-senior-sm font-medium">{r.patient_name}</span>
-                        <span className="text-xs md:text-sm text-muted-foreground">{formatDate(r.created_at)}</span>
-                      </div>
-                      <div className="flex gap-0.5 mb-2">
-                        {Array.from({ length: r.rating }).map((_, j) => (
-                          <Star key={j} className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                        ))}
-                      </div>
-                      {r.text && <p className="text-sm md:text-senior-sm text-muted-foreground">{r.text}</p>}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">Nessuna recensione ancora.</p>
-              )}
-            </CardContent>
-          </Card>
         </div>
       </main>
       <Footer />
