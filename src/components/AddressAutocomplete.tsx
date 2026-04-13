@@ -1,63 +1,33 @@
 /// <reference types="google.maps" />
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { MapPin } from "lucide-react";
+
+interface PlaceDetails {
+  fullAddress: string;
+  street: string;
+  streetNumber: string;
+  cap: string;
+  city: string;
+  province: string;
+  lat: number;
+  lng: number;
+}
+
+interface Prediction {
+  place_id: string;
+  description: string;
+}
 
 interface AddressAutocompleteProps {
   value: string;
   onChange: (fullAddress: string) => void;
-  onPlaceSelect?: (details: {
-    fullAddress: string;
-    street: string;
-    streetNumber: string;
-    cap: string;
-    city: string;
-    province: string;
-    lat: number;
-    lng: number;
-  }) => void;
+  onPlaceSelect?: (details: PlaceDetails) => void;
   placeholder?: string;
   required?: boolean;
   className?: string;
 }
-
-const loadGoogleMaps = (): Promise<void> => {
-  return new Promise(async (resolve, reject) => {
-    if ((window as any).google?.maps?.places) {
-      resolve();
-      return;
-    }
-
-    if (document.getElementById("google-maps-picker-script")) {
-      const interval = setInterval(() => {
-        if ((window as any).google?.maps?.places) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, 200);
-      return;
-    }
-
-    try {
-      const { data } = await supabase.functions.invoke("get-maps-key");
-      if (!data?.apiKey) {
-        reject(new Error("No API key"));
-        return;
-      }
-
-      const script = document.createElement("script");
-      script.id = "google-maps-picker-script";
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${data.apiKey}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error("Failed to load Google Maps"));
-      document.head.appendChild(script);
-    } catch {
-      reject(new Error("Failed to load Google Maps"));
-    }
-  });
-};
 
 const AddressAutocomplete = ({
   value,
@@ -67,68 +37,121 @@ const AddressAutocomplete = ({
   required = false,
   className = "",
 }: AddressAutocompleteProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const [ready, setReady] = useState(false);
+  const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  // Close dropdown on outside click
   useEffect(() => {
-    loadGoogleMaps()
-      .then(() => setReady(true))
-      .catch(() => {});
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  useEffect(() => {
-    if (!ready || !inputRef.current || autocompleteRef.current) return;
-
-    const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
-      types: ["address"],
-      componentRestrictions: { country: "it" },
-      fields: ["address_components", "formatted_address", "geometry"],
-    });
-
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
-      if (!place.address_components) return;
-
-      let street = "";
-      let streetNumber = "";
-      let cap = "";
-      let city = "";
-      let province = "";
-
-      for (const comp of place.address_components) {
-        const types = comp.types;
-        if (types.includes("route")) street = comp.long_name;
-        if (types.includes("street_number")) streetNumber = comp.long_name;
-        if (types.includes("postal_code")) cap = comp.long_name;
-        if (types.includes("locality")) city = comp.long_name;
-        if (types.includes("administrative_area_level_2")) province = comp.short_name;
-        if (!city && types.includes("administrative_area_level_3")) city = comp.long_name;
+  const fetchPredictions = useCallback(async (input: string) => {
+    if (input.length < 3) {
+      setPredictions([]);
+      setShowDropdown(false);
+      return;
+    }
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("places-autocomplete", {
+        body: { action: "autocomplete", input },
+      });
+      if (!error && data?.predictions) {
+        setPredictions(data.predictions);
+        setShowDropdown(data.predictions.length > 0);
       }
+    } catch {
+      // silently fail
+    }
+    setLoading(false);
+  }, []);
 
-      const fullAddress = place.formatted_address || "";
-      onChange(fullAddress);
+  const handleInputChange = (val: string) => {
+    onChange(val);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => fetchPredictions(val), 300);
+  };
 
-      if (onPlaceSelect) {
-        const lat = place.geometry?.location?.lat() || 0;
-        const lng = place.geometry?.location?.lng() || 0;
-        onPlaceSelect({ fullAddress, street, streetNumber, cap, city, province, lat, lng });
+  const handleSelect = async (prediction: Prediction) => {
+    setShowDropdown(false);
+    onChange(prediction.description);
+    setPredictions([]);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("places-autocomplete", {
+        body: { action: "details", placeId: prediction.place_id },
+      });
+      if (!error && data?.result) {
+        const result = data.result;
+        let street = "";
+        let streetNumber = "";
+        let cap = "";
+        let city = "";
+        let province = "";
+
+        for (const comp of result.address_components || []) {
+          const types: string[] = comp.types;
+          if (types.includes("route")) street = comp.long_name;
+          if (types.includes("street_number")) streetNumber = comp.long_name;
+          if (types.includes("postal_code")) cap = comp.long_name;
+          if (types.includes("locality")) city = comp.long_name;
+          if (types.includes("administrative_area_level_2")) province = comp.short_name;
+          if (!city && types.includes("administrative_area_level_3")) city = comp.long_name;
+        }
+
+        const fullAddress = result.formatted_address || prediction.description;
+        onChange(fullAddress);
+
+        if (onPlaceSelect) {
+          const lat = result.geometry?.location?.lat || 0;
+          const lng = result.geometry?.location?.lng || 0;
+          onPlaceSelect({ fullAddress, street, streetNumber, cap, city, province, lat, lng });
+        }
       }
-    });
-
-    autocompleteRef.current = autocomplete;
-  }, [ready]);
+    } catch {
+      // keep the description as-is
+    }
+  };
 
   return (
-    <Input
-      ref={inputRef}
-      type="text"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      required={required}
-      className={`text-senior-sm py-3 ${className}`}
-    />
+    <div ref={containerRef} className="relative">
+      <Input
+        type="text"
+        value={value}
+        onChange={(e) => handleInputChange(e.target.value)}
+        onFocus={() => predictions.length > 0 && setShowDropdown(true)}
+        placeholder={placeholder}
+        required={required}
+        className={`text-senior-sm py-3 ${className}`}
+        autoComplete="off"
+      />
+      {showDropdown && (
+        <ul className="absolute z-50 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+          {predictions.map((p) => (
+            <li
+              key={p.place_id}
+              className="flex items-center gap-2 px-3 py-2.5 cursor-pointer hover:bg-muted transition-colors text-sm"
+              onMouseDown={() => handleSelect(p)}
+            >
+              <MapPin className="w-4 h-4 text-muted-foreground shrink-0" />
+              <span>{p.description}</span>
+            </li>
+          ))}
+          {loading && (
+            <li className="px-3 py-2.5 text-sm text-muted-foreground">Ricerca in corso...</li>
+          )}
+        </ul>
+      )}
+    </div>
   );
 };
 
