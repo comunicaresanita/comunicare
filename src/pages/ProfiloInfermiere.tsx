@@ -107,11 +107,10 @@ const ProfiloInfermiere = () => {
     fetchData();
   }, [id]);
 
-  // Available day names from availability
-  const availableDayNames = useMemo(() => {
-    const days = new Set(availability.map(a => a.day_of_week));
-    return days;
-  }, [availability]);
+  // Calendar helpers
+  const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+  const firstDayOfMonth = new Date(calendarYear, calendarMonth, 1).getDay();
+  const startOffset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
 
   // Get slots for a specific date (considering overrides)
   const getSlotsForDate = (date: Date) => {
