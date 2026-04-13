@@ -83,17 +83,19 @@ const ProfiloInfermiere = () => {
   const [calendarYear, setCalendarYear] = useState(today.getFullYear());
 
   const [overrides, setOverrides] = useState<{ specific_date: string; start_time: string; end_time: string; is_unavailable: boolean }[]>([]);
+  const [bookedSlots, setBookedSlots] = useState<{ day: string; time_slot: string }[]>([]);
 
   useEffect(() => {
     if (!id) return;
     const fetchData = async () => {
       setLoading(true);
-      const [profileRes, servicesRes, availRes, reviewsRes, overridesRes] = await Promise.all([
+      const [profileRes, servicesRes, availRes, reviewsRes, overridesRes, bookingsRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", id).single(),
         supabase.from("services").select("*").eq("professional_id", id),
         supabase.from("availability").select("*").eq("professional_id", id),
         supabase.from("reviews").select("*").eq("professional_id", id).order("created_at", { ascending: false }),
         supabase.from("availability_overrides").select("*").eq("professional_id", id),
+        supabase.from("bookings").select("day, time_slot").eq("professional_id", id).in("status", ["pending", "confirmed"]),
       ]);
 
       if (profileRes.data) setProfessional(profileRes.data as ProfessionalProfile);
@@ -101,6 +103,7 @@ const ProfiloInfermiere = () => {
       if (availRes.data) setAvailability(availRes.data);
       if (reviewsRes.data) setReviews(reviewsRes.data);
       if (overridesRes.data) setOverrides(overridesRes.data);
+      if (bookingsRes.data) setBookedSlots(bookingsRes.data);
 
       setLoading(false);
     };
@@ -144,7 +147,19 @@ const ProfiloInfermiere = () => {
     });
 
     const sorted = Array.from(allHours).sort((a, b) => a - b);
-    return sorted.map(h => `${String(h).padStart(2, "0")}:00-${String(h + 1).padStart(2, "0")}:00`);
+
+    // Filter out booked slots
+    const dayName = weekdayToDayName[date.getDay()];
+    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    const formatDateLabel = (d: Date) => {
+      const dn = weekdayToDayName[d.getDay()];
+      return `${dn} ${d.getDate()} ${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+    };
+    const dayLabel = formatDateLabel(date);
+
+    return sorted
+      .map(h => `${h}-${h + 1}`)
+      .filter(slot => !bookedSlots.some(b => b.day === dayLabel && b.time_slot === slot));
   };
 
   const isDateAvailable = (day: number) => {
