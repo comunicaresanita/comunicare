@@ -39,7 +39,7 @@ const Registrazione = () => {
   const [numeroOpi, setNumeroOpi] = useState("");
   const [numeroFnofi, setNumeroFnofi] = useState("");
   const [partitaIva, setPartitaIva] = useState("");
-  const [partitaIvaError, setPartitaIvaError] = useState("");
+  
   const [mapLat, setMapLat] = useState<number | null>(null);
   const [mapLng, setMapLng] = useState<number | null>(null);
   const { toast } = useToast();
@@ -308,8 +308,7 @@ const Registrazione = () => {
 
                         <div className="space-y-2">
                           <Label htmlFor="partita_iva" className="text-senior-sm">Partita IVA</Label>
-                          <Input id="partita_iva" value={partitaIva} onChange={(e) => { setPartitaIva(e.target.value); setPartitaIvaError(""); }} placeholder="Es. 12345678901" maxLength={11} className="text-senior-sm py-3" />
-                          {partitaIvaError && <p className="text-sm text-destructive">{partitaIvaError}</p>}
+                          <Input id="partita_iva" value={partitaIva} onChange={(e) => setPartitaIva(e.target.value)} placeholder="Es. 12345678901" className="text-senior-sm py-3" />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="bio" className="text-senior-sm">Bio / specializzazioni</Label>
