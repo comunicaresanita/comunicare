@@ -113,26 +113,45 @@ const ProfiloInfermiere = () => {
     return days;
   }, [availability]);
 
-  // Get slots for a specific day name
-  const getSlotsForDay = (dayName: string) => {
-    return availability
-      .filter(a => a.day_of_week === dayName)
-      .map(a => `${a.start_time.slice(0, 5)}-${a.end_time.slice(0, 5)}`)
-      .sort();
-  };
+  // Get slots for a specific date (considering overrides)
+  const getSlotsForDate = (date: Date) => {
+    const dayName = weekdayToDayName[date.getDay()];
+    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    const dateOverrides = overrides.filter(o => o.specific_date === dateStr);
 
-  // Calendar helpers
-  const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
-  const firstDayOfMonth = new Date(calendarYear, calendarMonth, 1).getDay();
-  // Adjust so Monday=0
-  const startOffset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+    // Start with weekly slots
+    const weeklySlots = availability
+      .filter(a => a.day_of_week === dayName)
+      .map(a => ({ start: a.start_time.slice(0, 5), end: a.end_time.slice(0, 5) }));
+
+    // Apply overrides
+    const result: string[] = [];
+    const allHours = new Set<number>();
+
+    // Add weekly hours
+    weeklySlots.forEach(s => {
+      const h = parseInt(s.start.substring(0, 2));
+      allHours.add(h);
+    });
+
+    // Process overrides
+    dateOverrides.forEach(o => {
+      const h = parseInt(o.start_time.substring(0, 2));
+      if (o.is_unavailable) {
+        allHours.delete(h);
+      } else {
+        allHours.add(h);
+      }
+    });
+
+    const sorted = Array.from(allHours).sort((a, b) => a - b);
+    return sorted.map(h => `${String(h).padStart(2, "0")}:00-${String(h + 1).padStart(2, "0")}:00`);
+  };
 
   const isDateAvailable = (day: number) => {
     const date = new Date(calendarYear, calendarMonth, day);
     if (date < new Date(today.getFullYear(), today.getMonth(), today.getDate())) return false;
-    const weekday = date.getDay();
-    const dayName = weekdayToDayName[weekday];
-    return availableDayNames.has(dayName);
+    return getSlotsForDate(date).length > 0;
   };
 
   const handleDateClick = (day: number) => {
