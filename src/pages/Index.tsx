@@ -31,7 +31,7 @@ const features = [
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <AuthHeader />
 
       {/* Hero Section */}
       <section style={{ backgroundColor: 'hsl(195, 60%, 97%)' }} className="py-12 md:py-16">
