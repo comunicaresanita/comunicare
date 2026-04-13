@@ -79,9 +79,13 @@ const DashboardPaziente = () => {
   const [professionisti, setProfessionisti] = useState<ProfessionistaData[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
 
-  const prestazioniFiltrate = prestazioniDisponibili.filter((p) =>
-    p.toLowerCase().includes(ricerca.toLowerCase())
-  );
+  // Fuzzy search: match if all words in the search appear in the service name (in any order)
+  const prestazioniFiltrate = prestazioniDisponibili.filter((p) => {
+    if (!ricerca.trim()) return true;
+    const normalizedP = p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const words = ricerca.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/\s+/).filter(Boolean);
+    return words.every(word => normalizedP.includes(word));
+  });
 
   const professionistiFiltrati = prestazioneSelezionata
     ? professionisti.filter((p) => p.servizi.some((s) => s.name === prestazioneSelezionata))
