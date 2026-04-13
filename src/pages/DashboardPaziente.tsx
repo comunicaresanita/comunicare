@@ -328,6 +328,7 @@ const DashboardPaziente = () => {
                 {professionistiFiltrati.map((p) => {
                   const servizio = p.servizi.find((s) => s.name === prestazioneSelezionata);
                   const typeLabel = p.professionalType === "oss" ? "OSS" : p.professionalType === "fisioterapista" ? "Fisioterapista" : "Infermiere";
+                  const distKm = (p as any)._distKm as number | undefined;
                   return (
                     <Card id={`prof-card-${p.profileId}`} key={p.profileId} className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
                       onClick={() => navigate(`/profilo-infermiere/${p.profileId}?servizio=${encodeURIComponent(prestazioneSelezionata)}`)}
