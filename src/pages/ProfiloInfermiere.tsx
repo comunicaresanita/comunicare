@@ -82,21 +82,25 @@ const ProfiloInfermiere = () => {
   const [calendarMonth, setCalendarMonth] = useState(today.getMonth());
   const [calendarYear, setCalendarYear] = useState(today.getFullYear());
 
+  const [overrides, setOverrides] = useState<{ specific_date: string; start_time: string; end_time: string; is_unavailable: boolean }[]>([]);
+
   useEffect(() => {
     if (!id) return;
     const fetchData = async () => {
       setLoading(true);
-      const [profileRes, servicesRes, availRes, reviewsRes] = await Promise.all([
+      const [profileRes, servicesRes, availRes, reviewsRes, overridesRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", id).single(),
         supabase.from("services").select("*").eq("professional_id", id),
         supabase.from("availability").select("*").eq("professional_id", id),
         supabase.from("reviews").select("*").eq("professional_id", id).order("created_at", { ascending: false }),
+        supabase.from("availability_overrides").select("*").eq("professional_id", id),
       ]);
 
       if (profileRes.data) setProfessional(profileRes.data as ProfessionalProfile);
       if (servicesRes.data) setServices(servicesRes.data);
       if (availRes.data) setAvailability(availRes.data);
       if (reviewsRes.data) setReviews(reviewsRes.data);
+      if (overridesRes.data) setOverrides(overridesRes.data);
 
       setLoading(false);
     };
