@@ -1,13 +1,14 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import { MapPin, Search, Star, ShieldCheck, Stethoscope } from "lucide-react";
+import { MapPin, Search, Star, ShieldCheck, Stethoscope, Navigation } from "lucide-react";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { fuzzySearchServices, haversineKm } from "@/lib/searchUtils";
 
 const prestazioniDisponibili = [
   // Infermieristici
@@ -79,17 +80,26 @@ const DashboardPaziente = () => {
   const [professionisti, setProfessionisti] = useState<ProfessionistaData[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
 
-  // Fuzzy search: match if all words in the search appear in the service name (in any order)
-  const prestazioniFiltrate = prestazioniDisponibili.filter((p) => {
-    if (!ricerca.trim()) return true;
-    const normalizedP = p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const words = ricerca.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/\s+/).filter(Boolean);
-    return words.every(word => normalizedP.includes(word));
-  });
+  // Fuzzy search with typo tolerance and synonyms
+  const prestazioniFiltrate = useMemo(
+    () => fuzzySearchServices(ricerca, prestazioniDisponibili),
+    [ricerca]
+  );
 
-  const professionistiFiltrati = prestazioneSelezionata
-    ? professionisti.filter((p) => p.servizi.some((s) => s.name === prestazioneSelezionata))
-    : [];
+  // Filter professionals and calculate distance, sort by nearest
+  const professionistiFiltrati = useMemo(() => {
+    if (!prestazioneSelezionata) return [];
+    const filtered = professionisti.filter((p) =>
+      p.servizi.some((s) => s.name === prestazioneSelezionata)
+    );
+    if (userCoords) {
+      filtered.forEach((p: any) => {
+        p._distKm = haversineKm(userCoords.lat, userCoords.lng, p.lat, p.lng);
+      });
+      filtered.sort((a: any, b: any) => (a._distKm ?? 999) - (b._distKm ?? 999));
+    }
+    return filtered;
+  }, [prestazioneSelezionata, professionisti, userCoords]);
 
   useEffect(() => {
     if ((window as any).google?.maps) {
@@ -226,16 +236,38 @@ const DashboardPaziente = () => {
       markersRef.current.push(marker);
     });
 
-    if (professionistiFiltrati.length > 0) {
+    if (professionistiFiltrati.length > 0 && userCoords) {
+      const nearest = professionistiFiltrati[0];
       const bounds = new google.maps.LatLngBounds();
-      professionistiFiltrati.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
-      if (userCoords) bounds.extend(userCoords);
+      bounds.extend(userCoords);
+      bounds.extend({ lat: nearest.lat, lng: nearest.lng });
+      professionistiFiltrati.slice(0, 3).forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
       mapInstanceRef.current.fitBounds(bounds);
-      // Zoom out a bit after fitBounds
       google.maps.event.addListenerOnce(mapInstanceRef.current, "bounds_changed", () => {
         const currentZoom = mapInstanceRef.current.getZoom();
-        if (currentZoom > 13) mapInstanceRef.current.setZoom(13);
+        if (currentZoom > 14) mapInstanceRef.current.setZoom(14);
       });
+    } else if (professionistiFiltrati.length > 0) {
+      const bounds = new google.maps.LatLngBounds();
+      professionistiFiltrati.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
+      mapInstanceRef.current.fitBounds(bounds);
+    }
+
+    if (userCoords) {
+      const userMarker = new google.maps.Marker({
+        position: userCoords,
+        map: mapInstanceRef.current,
+        title: "La tua posizione",
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: "#22c55e",
+          fillOpacity: 1,
+          strokeColor: "#16a34a",
+          strokeWeight: 2,
+          scale: 8,
+        },
+      });
+      markersRef.current.push(userMarker);
     }
   }, [prestazioneSelezionata, professionistiFiltrati, navigate, mapsLoaded, userCoords]);
 
@@ -296,6 +328,7 @@ const DashboardPaziente = () => {
                 {professionistiFiltrati.map((p) => {
                   const servizio = p.servizi.find((s) => s.name === prestazioneSelezionata);
                   const typeLabel = p.professionalType === "oss" ? "OSS" : p.professionalType === "fisioterapista" ? "Fisioterapista" : "Infermiere";
+                  const distKm = (p as any)._distKm as number | undefined;
                   return (
                     <Card id={`prof-card-${p.profileId}`} key={p.profileId} className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
                       onClick={() => navigate(`/profilo-infermiere/${p.profileId}?servizio=${encodeURIComponent(prestazioneSelezionata)}`)}
@@ -327,10 +360,19 @@ const DashboardPaziente = () => {
                             )}
                           </div>
                           <p className="text-senior-sm text-muted-foreground truncate mt-1">{p.bio}</p>
-                          {p.zona && (
-                            <span className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-                              <MapPin className="w-4 h-4" /> {p.zona}
-                            </span>
+                          {(p.zona || distKm !== undefined) && (
+                            <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
+                              {p.zona && (
+                                <span className="flex items-center gap-1">
+                                  <MapPin className="w-4 h-4" /> {p.zona}
+                                </span>
+                              )}
+                              {distKm !== undefined && (
+                                <span className="flex items-center gap-1 font-medium text-primary">
+                                  <Navigation className="w-3.5 h-3.5" /> ~{distKm < 1 ? `${Math.round(distKm * 1000)}m` : `${Math.round(distKm)} km`}
+                                </span>
+                              )}
+                            </div>
                           )}
                         </div>
                         {servizio && (
