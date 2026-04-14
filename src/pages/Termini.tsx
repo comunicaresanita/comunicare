@@ -1,10 +1,10 @@
-import Header from "@/components/Header";
+import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 
 const Termini = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <AuthHeader />
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-3xl">
           <h1 className="text-senior-2xl md:text-senior-3xl font-bold mb-8">Termini e Condizioni</h1>

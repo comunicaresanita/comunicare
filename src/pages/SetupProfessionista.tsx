@@ -174,12 +174,18 @@ const SetupProfessionista = () => {
 
   const updatePrezzo = (id: string, prezzo: number) => {
     setServizi((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, prezzo } : s))
+    );
+  };
+
+  const clampPrezzo = (id: string) => {
+    setServizi((prev) =>
       prev.map((s) => {
         if (s.id !== id) return s;
         const min = Math.round(s.prezzoConsigliato * 0.7);
         const max = Math.round(s.prezzoConsigliato * 1.3);
-        const clampedPrezzo = Math.min(max, Math.max(min, prezzo));
-        return { ...s, prezzo: clampedPrezzo };
+        const clamped = Math.min(max, Math.max(min, s.prezzo));
+        return { ...s, prezzo: clamped };
       })
     );
   };
@@ -249,7 +255,7 @@ const SetupProfessionista = () => {
               <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm md:text-base">1</div>
               <h1 className="text-lg md:text-senior-2xl font-bold">I tuoi servizi — {getTitoloRuolo(tipo)}</h1>
             </div>
-            <p className="text-sm md:text-senior-base text-muted-foreground ml-11 md:ml-[52px]">
+            <p className="text-base md:text-senior-base text-muted-foreground ml-11 md:ml-[52px]">
               Seleziona i servizi che offri e imposta i tuoi prezzi.
             </p>
           </div>
@@ -257,7 +263,7 @@ const SetupProfessionista = () => {
           <Card className="mb-6 md:mb-8">
             <CardHeader className="p-4 md:p-6">
               <CardTitle className="text-base md:text-senior-lg">Servizi disponibili</CardTitle>
-              <CardDescription className="text-xs md:text-senior-sm">
+              <CardDescription className="text-sm md:text-senior-sm">
                 Attiva i servizi che desideri offrire e personalizza il prezzo.
               </CardDescription>
             </CardHeader>
@@ -285,7 +291,7 @@ const SetupProfessionista = () => {
                         onCheckedChange={() => toggleServizio(servizio.id)}
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs md:text-senior-sm font-medium truncate">{servizio.nome}</p>
+                        <p className="text-sm md:text-senior-sm font-medium truncate">{servizio.nome}</p>
                         {servizio.attivo && (
                           <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
                             <Info className="w-3 h-3" />
@@ -302,6 +308,7 @@ const SetupProfessionista = () => {
                             max={max}
                             value={servizio.prezzo}
                             onChange={(e) => updatePrezzo(servizio.id, Number(e.target.value))}
+                            onBlur={() => clampPrezzo(servizio.id)}
                             className="w-20 text-center"
                           />
                         </div>
