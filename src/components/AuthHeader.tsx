@@ -35,7 +35,7 @@ const AuthHeader = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {profile?.role === "professional" && (
+              {profile?.role === "professionista" && (
                 <DropdownMenuItem asChild>
                   <Link to="/dashboard-professionista" className="cursor-pointer">Dashboard</Link>
                 </DropdownMenuItem>
