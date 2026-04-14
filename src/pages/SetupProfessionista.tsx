@@ -172,9 +172,12 @@ const SetupProfessionista = () => {
     );
   };
 
-  const updatePrezzo = (id: string, prezzo: number) => {
+  const updatePrezzo = (id: string, rawValue: string) => {
+    // Allow only digits, strip leading zeros
+    const cleaned = rawValue.replace(/[^0-9]/g, '').replace(/^0+/, '') || '';
+    const numValue = cleaned === '' ? 0 : parseInt(cleaned, 10);
     setServizi((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, prezzo } : s))
+      prev.map((s) => (s.id === id ? { ...s, prezzo: numValue } : s))
     );
   };
 
@@ -303,11 +306,11 @@ const SetupProfessionista = () => {
                         <div className="flex items-center gap-2">
                           <span className="text-senior-sm">€</span>
                           <Input
-                            type="number"
-                            min={min}
-                            max={max}
-                            value={servizio.prezzo}
-                            onChange={(e) => updatePrezzo(servizio.id, Number(e.target.value))}
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            value={servizio.prezzo === 0 ? '' : String(servizio.prezzo)}
+                            onChange={(e) => updatePrezzo(servizio.id, e.target.value)}
                             onBlur={() => clampPrezzo(servizio.id)}
                             className="w-20 text-center"
                           />
