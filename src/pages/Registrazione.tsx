@@ -131,31 +131,31 @@ const Registrazione = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 bg-background py-16">
-          <div className="container mx-auto px-6 max-w-2xl">
-            <h1 className="text-senior-2xl md:text-senior-3xl font-bold text-center mb-4">
+        <main className="flex-1 bg-background py-8 md:py-16">
+          <div className="container mx-auto px-4 md:px-6 max-w-2xl">
+            <h1 className="text-xl md:text-senior-3xl font-bold text-center mb-3 md:mb-4">
               Crea il tuo account
             </h1>
-            <p className="text-senior-base text-muted-foreground text-center mb-10">
+            <p className="text-sm md:text-senior-base text-muted-foreground text-center mb-6 md:mb-10">
               Seleziona il tuo profilo per iniziare la registrazione.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
               <Card className="cursor-pointer border-2 hover:border-primary hover:shadow-lg transition-all" onClick={() => setRuolo("paziente")}>
-                <CardContent className="p-8 text-center">
-                  <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center mx-auto mb-5">
-                    <User className="w-10 h-10 text-primary" />
+                <CardContent className="p-5 md:p-8 text-center">
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4 md:mb-5">
+                    <User className="w-8 h-8 md:w-10 md:h-10 text-primary" />
                   </div>
-                  <h3 className="text-senior-xl font-semibold mb-2">Utente</h3>
-                  <p className="text-senior-sm text-muted-foreground">Cerca e prenota servizi sanitari a domicilio.</p>
+                  <h3 className="text-base md:text-senior-xl font-semibold mb-2">Utente</h3>
+                  <p className="text-xs md:text-senior-sm text-muted-foreground">Cerca e prenota servizi sanitari a domicilio.</p>
                 </CardContent>
               </Card>
               <Card className="cursor-pointer border-2 hover:border-primary hover:shadow-lg transition-all" onClick={() => setRuolo("professionista")}>
-                <CardContent className="p-8 text-center">
-                  <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center mx-auto mb-5">
-                    <Stethoscope className="w-10 h-10 text-primary" />
+                <CardContent className="p-5 md:p-8 text-center">
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4 md:mb-5">
+                    <Stethoscope className="w-8 h-8 md:w-10 md:h-10 text-primary" />
                   </div>
-                  <h3 className="text-senior-xl font-semibold mb-2">Professionista</h3>
-                  <p className="text-senior-sm text-muted-foreground">Offri i tuoi servizi sanitari sulla piattaforma.</p>
+                  <h3 className="text-base md:text-senior-xl font-semibold mb-2">Professionista</h3>
+                  <p className="text-xs md:text-senior-sm text-muted-foreground">Offri i tuoi servizi sanitari sulla piattaforma.</p>
                 </CardContent>
               </Card>
             </div>
@@ -171,18 +171,18 @@ const Registrazione = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 bg-background py-16">
-          <div className="container mx-auto px-6 max-w-3xl">
-            <Button variant="ghost" className="mb-6 text-senior-sm" onClick={() => setRuolo(null)}>
+        <main className="flex-1 bg-background py-8 md:py-16">
+          <div className="container mx-auto px-4 md:px-6 max-w-3xl">
+            <Button variant="ghost" className="mb-4 md:mb-6 text-sm md:text-senior-sm" onClick={() => setRuolo(null)}>
               ← Torna alla selezione
             </Button>
-            <h1 className="text-senior-2xl md:text-senior-3xl font-bold text-center mb-4">
+            <h1 className="text-xl md:text-senior-3xl font-bold text-center mb-3 md:mb-4">
               Che tipo di professionista sei?
             </h1>
-            <p className="text-senior-base text-muted-foreground text-center mb-10">
+            <p className="text-sm md:text-senior-base text-muted-foreground text-center mb-6 md:mb-10">
               Seleziona la tua categoria professionale.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
               <Card className="cursor-pointer border-2 hover:border-primary hover:shadow-lg transition-all" onClick={() => setTipoProfessionista("infermiere")}>
                 <CardContent className="p-6 text-center">
                   <h3 className="text-senior-lg font-semibold mb-2">🩺 Infermiere</h3>
@@ -214,8 +214,8 @@ const Registrazione = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 bg-background py-12">
-        <div className="container mx-auto px-6 max-w-2xl">
+      <main className="flex-1 bg-background py-6 md:py-12">
+        <div className="container mx-auto px-4 md:px-6 max-w-2xl">
           <Button variant="ghost" className="mb-6 text-senior-sm" onClick={() => {
             if (ruolo === "professionista") {
               setTipoProfessionista(null);
