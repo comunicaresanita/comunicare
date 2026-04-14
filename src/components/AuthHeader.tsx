@@ -21,16 +21,17 @@ const AuthHeader = () => {
 
   return (
     <header className="bg-card shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center">
-          <img src={logo} alt="ComuniCARE" className="h-14 md:h-16" />
+          <img src={logo} alt="ComuniCARE" className="h-10 md:h-16" />
         </Link>
         {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-1.5 md:gap-2 text-xs md:text-sm px-3 md:px-4">
                 <User className="w-4 h-4" />
-                Il tuo profilo
+                <span className="hidden sm:inline">Il tuo profilo</span>
+                <span className="sm:hidden">Profilo</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -45,7 +46,7 @@ const AuthHeader = () => {
           </DropdownMenu>
         ) : (
           <Link to="/login">
-            <Button className="px-8 py-5">Accedi</Button>
+            <Button className="px-5 py-3 md:px-8 md:py-5 text-sm md:text-base">Accedi</Button>
           </Link>
         )}
       </div>
