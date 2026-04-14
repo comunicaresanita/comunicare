@@ -308,17 +308,41 @@ const SetupProfessionista = () => {
                         )}
                       </div>
                       {servizio.attivo && (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
                           <span className="text-senior-sm">€</span>
-                          <Input
-                            type="text"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            value={servizio.prezzo === 0 ? '' : String(servizio.prezzo)}
-                            onChange={(e) => updatePrezzo(servizio.id, e.target.value)}
-                            onBlur={() => clampPrezzo(servizio.id)}
-                            className="w-20 text-center"
-                          />
+                          <div className="flex flex-col">
+                            <button
+                              type="button"
+                              className="h-5 w-8 flex items-center justify-center rounded-t border border-b-0 border-input bg-muted hover:bg-accent text-xs leading-none"
+                              onClick={() => {
+                                const max = Math.round(servizio.prezzoConsigliato * 1.3);
+                                if (servizio.prezzo < max) {
+                                  setServizi(prev => prev.map(s => s.id === servizio.id ? { ...s, prezzo: s.prezzo + 1 } : s));
+                                }
+                              }}
+                              aria-label="Aumenta prezzo"
+                            >▲</button>
+                            <Input
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]*"
+                              value={servizio.prezzo === 0 ? '' : String(servizio.prezzo)}
+                              onChange={(e) => updatePrezzo(servizio.id, e.target.value)}
+                              onBlur={() => clampPrezzo(servizio.id)}
+                              className="w-16 md:w-20 text-center rounded-none h-8 text-sm"
+                            />
+                            <button
+                              type="button"
+                              className="h-5 w-8 flex items-center justify-center rounded-b border border-t-0 border-input bg-muted hover:bg-accent text-xs leading-none"
+                              onClick={() => {
+                                const min = Math.round(servizio.prezzoConsigliato * 0.7);
+                                if (servizio.prezzo > min) {
+                                  setServizi(prev => prev.map(s => s.id === servizio.id ? { ...s, prezzo: s.prezzo - 1 } : s));
+                                }
+                              }}
+                              aria-label="Diminuisci prezzo"
+                            >▼</button>
+                          </div>
                         </div>
                       )}
                     </div>
