@@ -274,31 +274,31 @@ const DashboardPaziente = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <AuthHeader />
-      <main className="flex-1 bg-background py-12">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <h1 className="text-senior-2xl md:text-senior-3xl font-bold mb-2">
+      <main className="flex-1 bg-background py-6 md:py-12">
+        <div className="container mx-auto px-4 md:px-6 max-w-4xl">
+          <h1 className="text-xl md:text-senior-3xl font-bold mb-2">
             Trova il tuo professionista
           </h1>
-          <p className="text-senior-base text-muted-foreground mb-8">
+          <p className="text-sm md:text-senior-base text-muted-foreground mb-6 md:mb-8">
             Seleziona la prestazione di cui hai bisogno per trovare i professionisti più vicini a te.
           </p>
 
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="text-senior-lg flex items-center gap-2">
+          <Card className="mb-6 md:mb-8">
+            <CardHeader className="p-4 md:p-6">
+              <CardTitle className="text-base md:text-senior-lg flex items-center gap-2">
                 <Search className="w-5 h-5" /> Scegli la prestazione
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 md:p-6 pt-0 md:pt-0">
               <input
                 type="text" value={ricerca} onChange={(e) => setRicerca(e.target.value)}
                 placeholder="Cerca una prestazione..."
-                className="w-full border rounded-md p-3 text-senior-sm bg-background mb-4"
+                className="w-full border rounded-md p-3 text-sm md:text-senior-sm bg-background mb-4"
               />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 md:max-h-64 overflow-y-auto">
                 {prestazioniFiltrate.map((p) => (
                   <button key={p} onClick={() => setPrestazioneSelezionata(p)}
-                    className={`text-left p-3 rounded-lg border transition-colors text-senior-sm ${
+                    className={`text-left p-2.5 md:p-3 rounded-lg border transition-colors text-xs md:text-senior-sm ${
                       prestazioneSelezionata === p ? "border-primary bg-secondary text-primary font-medium" : "border-border hover:border-primary/50"
                     }`}
                   >{p}</button>
@@ -309,11 +309,11 @@ const DashboardPaziente = () => {
 
           {prestazioneSelezionata && (
             <>
-              <h2 className="text-senior-xl font-semibold mb-4">
+              <h2 className="text-base md:text-senior-xl font-semibold mb-4">
                 Professionisti disponibili per: <span className="text-primary">{prestazioneSelezionata}</span>
               </h2>
 
-              <div ref={mapRef} className="w-full h-80 rounded-lg overflow-hidden border mb-6 bg-secondary">
+              <div ref={mapRef} className="w-full h-56 md:h-80 rounded-lg overflow-hidden border mb-4 md:mb-6 bg-secondary">
                 {!mapsLoaded && (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center">
@@ -333,17 +333,17 @@ const DashboardPaziente = () => {
                     <Card id={`prof-card-${p.profileId}`} key={p.profileId} className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
                       onClick={() => navigate(`/profilo-infermiere/${p.profileId}?servizio=${encodeURIComponent(prestazioneSelezionata)}`)}
                     >
-                      <CardContent className="p-6 flex items-center gap-6">
-                        <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      <CardContent className="p-4 md:p-6 flex items-start md:items-center gap-3 md:gap-6">
+                        <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
                           {p.photoUrl ? (
                             <img src={p.photoUrl} alt={p.nome} className="w-full h-full object-cover" />
                           ) : (
-                            <Stethoscope className="w-8 h-8 text-primary" />
+                            <Stethoscope className="w-6 h-6 md:w-8 md:h-8 text-primary" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <h3 className="text-senior-lg font-semibold">{p.nome}</h3>
+                            <h3 className="text-sm md:text-senior-lg font-semibold">{p.nome}</h3>
                             {p.verified && (
                               <span className="inline-flex items-center gap-0.5 text-white text-xs font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: "#0097B2" }}>
                                 <ShieldCheck className="w-3 h-3" /> Verificato
@@ -359,7 +359,7 @@ const DashboardPaziente = () => {
                               </span>
                             )}
                           </div>
-                          <p className="text-senior-sm text-muted-foreground truncate mt-1">{p.bio}</p>
+                          <p className="text-xs md:text-senior-sm text-muted-foreground truncate mt-1">{p.bio}</p>
                           {(p.zona || distKm !== undefined) && (
                             <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
                               {p.zona && (
@@ -377,8 +377,8 @@ const DashboardPaziente = () => {
                         </div>
                         {servizio && (
                           <div className="text-right flex-shrink-0">
-                            <p className="text-senior-lg font-bold text-primary">€{servizio.price}</p>
-                            <p className="text-sm text-muted-foreground">per questa prestazione</p>
+                            <p className="text-base md:text-senior-lg font-bold text-primary">€{servizio.price}</p>
+                            <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">per questa prestazione</p>
                           </div>
                         )}
                       </CardContent>
