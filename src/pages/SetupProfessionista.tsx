@@ -174,12 +174,18 @@ const SetupProfessionista = () => {
 
   const updatePrezzo = (id: string, prezzo: number) => {
     setServizi((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, prezzo } : s))
+    );
+  };
+
+  const clampPrezzo = (id: string) => {
+    setServizi((prev) =>
       prev.map((s) => {
         if (s.id !== id) return s;
         const min = Math.round(s.prezzoConsigliato * 0.7);
         const max = Math.round(s.prezzoConsigliato * 1.3);
-        const clampedPrezzo = Math.min(max, Math.max(min, prezzo));
-        return { ...s, prezzo: clampedPrezzo };
+        const clamped = Math.min(max, Math.max(min, s.prezzo));
+        return { ...s, prezzo: clamped };
       })
     );
   };
@@ -302,6 +308,7 @@ const SetupProfessionista = () => {
                             max={max}
                             value={servizio.prezzo}
                             onChange={(e) => updatePrezzo(servizio.id, Number(e.target.value))}
+                            onBlur={() => clampPrezzo(servizio.id)}
                             className="w-20 text-center"
                           />
                         </div>
