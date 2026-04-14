@@ -15,7 +15,6 @@ interface Servizio {
   id: string;
   nome: string;
   prezzo: number;
-  prezzoInput: string;
   prezzoConsigliato: number;
   attivo: boolean;
   dbId?: string;
