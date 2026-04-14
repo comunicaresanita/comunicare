@@ -166,8 +166,8 @@ const Profilo = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <AuthHeader />
-      <main className="flex-1 bg-background py-12">
-        <div className="container mx-auto px-6 max-w-2xl">
+      <main className="flex-1 bg-background py-6 md:py-12">
+        <div className="container mx-auto px-4 md:px-6 max-w-2xl">
           <Button variant="ghost" onClick={handleBack} className="mb-4 gap-2">
             <ArrowLeft className="w-4 h-4" />
             Torna indietro

@@ -11,35 +11,35 @@ const DashboardProfessionista = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <AuthHeader />
-      <main className="flex-1 bg-background py-12">
-        <div className="container mx-auto px-6 max-w-3xl">
-          <h1 className="text-senior-2xl md:text-senior-3xl font-bold mb-2">
+      <main className="flex-1 bg-background py-6 md:py-12">
+        <div className="container mx-auto px-4 md:px-6 max-w-3xl">
+          <h1 className="text-xl md:text-senior-3xl font-bold mb-2">
             Dashboard professionista
           </h1>
-          <p className="text-senior-base text-muted-foreground mb-8">
+          <p className="text-sm md:text-senior-base text-muted-foreground mb-6 md:mb-8">
             Gestisci il tuo profilo, i tuoi servizi e le tue disponibilità.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
             <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/setup-professionista")}>
-              <CardContent className="p-6 text-center">
-                <Settings className="w-8 h-8 text-primary mx-auto mb-3" />
-                <h3 className="text-senior-base font-semibold">Servizi e prezzi</h3>
-                <p className="text-sm text-muted-foreground mt-1">Modifica i tuoi servizi</p>
+              <CardContent className="p-4 md:p-6 text-center">
+                <Settings className="w-7 h-7 md:w-8 md:h-8 text-primary mx-auto mb-2 md:mb-3" />
+                <h3 className="text-sm md:text-senior-base font-semibold">Servizi e prezzi</h3>
+                <p className="text-xs md:text-sm text-muted-foreground mt-1">Modifica i tuoi servizi</p>
               </CardContent>
             </Card>
             <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/setup-professionista/disponibilita")}>
-              <CardContent className="p-6 text-center">
-                <Calendar className="w-8 h-8 text-primary mx-auto mb-3" />
-                <h3 className="text-senior-base font-semibold">Disponibilità</h3>
-                <p className="text-sm text-muted-foreground mt-1">Gestisci il calendario</p>
+              <CardContent className="p-4 md:p-6 text-center">
+                <Calendar className="w-7 h-7 md:w-8 md:h-8 text-primary mx-auto mb-2 md:mb-3" />
+                <h3 className="text-sm md:text-senior-base font-semibold">Disponibilità</h3>
+                <p className="text-xs md:text-sm text-muted-foreground mt-1">Gestisci il calendario</p>
               </CardContent>
             </Card>
             <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate("/setup-professionista/posizione")}>
-              <CardContent className="p-6 text-center">
-                <MapPin className="w-8 h-8 text-primary mx-auto mb-3" />
-                <h3 className="text-senior-base font-semibold">Posizione</h3>
-                <p className="text-sm text-muted-foreground mt-1">Aggiorna il segnalino</p>
+              <CardContent className="p-4 md:p-6 text-center">
+                <MapPin className="w-7 h-7 md:w-8 md:h-8 text-primary mx-auto mb-2 md:mb-3" />
+                <h3 className="text-sm md:text-senior-base font-semibold">Posizione</h3>
+                <p className="text-xs md:text-sm text-muted-foreground mt-1">Aggiorna il segnalino</p>
               </CardContent>
             </Card>
           </div>
