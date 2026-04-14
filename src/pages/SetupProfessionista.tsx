@@ -11,18 +11,33 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
-interface Servizio {
-  id: string;
+interface ServizioBase {
   nome: string;
   prezzo: number;
   prezzoConsigliato: number;
-  minPrezzo: number;
-  maxPrezzo: number;
-  attivo: boolean;
-  dbId?: string;
+  minPrezzo?: number;
+  maxPrezzo?: number;
 }
 
-const serviziInfermiere: Omit<Servizio, "id" | "attivo">[] = [
+interface Servizio extends ServizioBase {
+  id: string;
+  attivo: boolean;
+  dbId?: string;
+  _min: number;
+  _max: number;
+}
+
+function buildServizio(s: ServizioBase, i: number): Servizio {
+  return {
+    ...s,
+    id: `srv-${i}`,
+    attivo: false,
+    _min: s.minPrezzo ?? Math.round(s.prezzoConsigliato * 0.7),
+    _max: s.maxPrezzo ?? Math.round(s.prezzoConsigliato * 1.3),
+  };
+}
+
+const serviziInfermiere: ServizioBase[] = [
   { nome: "Iniezione intramuscolare", prezzo: 15, prezzoConsigliato: 15 },
   { nome: "Iniezione sottocutanea", prezzo: 15, prezzoConsigliato: 15 },
   { nome: "Iniezione endovenosa", prezzo: 20, prezzoConsigliato: 20 },
@@ -69,36 +84,36 @@ const serviziInfermiere: Omit<Servizio, "id" | "attivo">[] = [
   { nome: "Assistenza infermieristica diurna (per ora)", prezzo: 30, prezzoConsigliato: 30 },
 ];
 
-const serviziFisioterapista: Omit<Servizio, "id" | "attivo">[] = [
-  { nome: "Riabilitazione motoria a domicilio", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Riabilitazione post-operatoria (protesi anca/ginocchio)", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Riabilitazione post-frattura", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Riabilitazione post-ictus", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Riabilitazione neurologica", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Riabilitazione respiratoria", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Riabilitazione pavimento pelvico", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Riabilitazione sportiva", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Linfodrenaggio manuale", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Massoterapia decontratturante", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Terapia manuale ortopedica", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Ginnastica posturale a domicilio", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Ginnastica dolce per anziani", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Rieducazione alla deambulazione", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Mobilizzazione articolare", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Trattamento cervicalgia/lombalgia", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Kinesio taping", prezzo: 35, prezzoConsigliato: 35 },
-  { nome: "Esercizio terapeutico personalizzato", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Stretching terapeutico", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Laser terapia", prezzo: 65, prezzoConsigliato: 65 },
-  { nome: "Laser terapia YAG", prezzo: 65, prezzoConsigliato: 65 },
-  { nome: "Tecar terapia", prezzo: 50, prezzoConsigliato: 50 },
-  { nome: "Onde d'urto", prezzo: 70, prezzoConsigliato: 70 },
-  { nome: "Elettrostimolazione", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Ultrasuono", prezzo: 50, prezzoConsigliato: 50 },
-  { nome: "Valutazione ecografica", prezzo: 85, prezzoConsigliato: 85 },
+const serviziFisioterapista: ServizioBase[] = [
+  { nome: "Riabilitazione motoria a domicilio", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Riabilitazione post-operatoria (protesi anca/ginocchio)", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Riabilitazione post-frattura", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Riabilitazione post-ictus", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Riabilitazione neurologica", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Riabilitazione respiratoria", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Riabilitazione pavimento pelvico", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Riabilitazione sportiva", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Linfodrenaggio manuale", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Massoterapia decontratturante", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Terapia manuale ortopedica", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Ginnastica posturale a domicilio", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Ginnastica dolce per anziani", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Rieducazione alla deambulazione", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Mobilizzazione articolare", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Trattamento cervicalgia/lombalgia", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Kinesio taping", prezzo: 35, prezzoConsigliato: 35, minPrezzo: 30, maxPrezzo: 40 },
+  { nome: "Esercizio terapeutico personalizzato", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Stretching terapeutico", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Laser terapia", prezzo: 65, prezzoConsigliato: 65, minPrezzo: 50, maxPrezzo: 80 },
+  { nome: "Laser terapia YAG", prezzo: 65, prezzoConsigliato: 65, minPrezzo: 50, maxPrezzo: 80 },
+  { nome: "Tecar terapia", prezzo: 50, prezzoConsigliato: 50, minPrezzo: 40, maxPrezzo: 60 },
+  { nome: "Onde d'urto", prezzo: 70, prezzoConsigliato: 70, minPrezzo: 60, maxPrezzo: 80 },
+  { nome: "Elettrostimolazione", prezzo: 60, prezzoConsigliato: 60, minPrezzo: 50, maxPrezzo: 70 },
+  { nome: "Ultrasuono", prezzo: 50, prezzoConsigliato: 50, minPrezzo: 40, maxPrezzo: 60 },
+  { nome: "Valutazione ecografica", prezzo: 85, prezzoConsigliato: 85, minPrezzo: 70, maxPrezzo: 100 },
 ];
 
-const serviziOSS: Omit<Servizio, "id" | "attivo">[] = [
+const serviziOSS: ServizioBase[] = [
   { nome: "Igiene personale completa a letto", prezzo: 25, prezzoConsigliato: 25 },
   { nome: "Bagno assistito in vasca/doccia", prezzo: 25, prezzoConsigliato: 25 },
   { nome: "Vestizione e svestizione assistita", prezzo: 18, prezzoConsigliato: 18 },
@@ -119,7 +134,7 @@ const serviziOSS: Omit<Servizio, "id" | "attivo">[] = [
   { nome: "Assistenza continuativa notturna (per ora)", prezzo: 22, prezzoConsigliato: 22 },
 ];
 
-function getServiziPerTipo(tipo?: string): Omit<Servizio, "id" | "attivo">[] {
+function getServiziPerTipo(tipo?: string): ServizioBase[] {
   switch (tipo) {
     case "fisioterapista": return serviziFisioterapista;
     case "oss": return serviziOSS;
@@ -144,13 +159,12 @@ const SetupProfessionista = () => {
   const serviziBase = getServiziPerTipo(tipo);
 
   const [servizi, setServizi] = useState<Servizio[]>(
-    serviziBase.map((s, i) => ({ ...s, id: `srv-${i}`, attivo: false }))
+    serviziBase.map((s, i) => buildServizio(s, i))
   );
   const [loadingData, setLoadingData] = useState(true);
   const [isFirstSetup, setIsFirstSetup] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Load existing services from DB
   useEffect(() => {
     const loadServices = async () => {
       if (!profile) return;
@@ -165,7 +179,8 @@ const SetupProfessionista = () => {
           prev.map((s) => {
             const saved = savedServices.find((ss) => ss.name === s.nome);
             if (saved) {
-              return { ...s, attivo: true, prezzo: saved.price, dbId: saved.id };
+              const price = Math.min(s._max, Math.max(s._min, saved.price));
+              return { ...s, attivo: true, prezzo: price, dbId: saved.id };
             }
             return s;
           })
@@ -188,9 +203,7 @@ const SetupProfessionista = () => {
     setServizi((prev) =>
       prev.map((s) => {
         if (s.id !== id) return s;
-        const max = Math.round(s.prezzoConsigliato * 1.3);
-        // Block typing beyond max
-        if (numValue > max) return s;
+        if (numValue > s._max) return s;
         return { ...s, prezzo: numValue };
       })
     );
@@ -200,9 +213,7 @@ const SetupProfessionista = () => {
     setServizi((prev) =>
       prev.map((s) => {
         if (s.id !== id) return s;
-        const min = Math.round(s.prezzoConsigliato * 0.7);
-        const max = Math.round(s.prezzoConsigliato * 1.3);
-        const clamped = Math.min(max, Math.max(min, s.prezzo));
+        const clamped = Math.min(s._max, Math.max(s._min, s.prezzo));
         return { ...s, prezzo: clamped };
       })
     );
@@ -222,7 +233,6 @@ const SetupProfessionista = () => {
     }
     setSaving(true);
 
-    // Delete all existing services for this professional then re-insert active ones
     await supabase.from("services").delete().eq("professional_id", profile.id);
     
     const toInsert = serviziAttivi.map((s) => ({
@@ -294,9 +304,7 @@ const SetupProfessionista = () => {
                 });
                 const attivi = sorted.filter(s => s.attivo);
                 const nonAttivi = sorted.filter(s => !s.attivo);
-                const renderServizio = (servizio: typeof servizi[0]) => {
-                  const min = Math.round(servizio.prezzoConsigliato * 0.7);
-                  const max = Math.round(servizio.prezzoConsigliato * 1.3);
+                const renderServizio = (servizio: Servizio) => {
                   return (
                     <div
                       key={servizio.id}
@@ -313,7 +321,7 @@ const SetupProfessionista = () => {
                         {servizio.attivo && (
                           <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
                             <Info className="w-3 h-3" />
-                            Consigliato: €{servizio.prezzoConsigliato} (min €{min} — max €{max})
+                            Consigliato: €{servizio.prezzoConsigliato} (min €{servizio._min} — max €{servizio._max})
                           </p>
                         )}
                       </div>
@@ -334,8 +342,7 @@ const SetupProfessionista = () => {
                               type="button"
                               className="h-4 w-5 flex items-center justify-center rounded border border-input bg-muted hover:bg-accent text-[10px] leading-none"
                               onClick={() => {
-                                const max = Math.round(servizio.prezzoConsigliato * 1.3);
-                                if (servizio.prezzo < max) {
+                                if (servizio.prezzo < servizio._max) {
                                   setServizi(prev => prev.map(s => s.id === servizio.id ? { ...s, prezzo: s.prezzo + 1 } : s));
                                 }
                               }}
@@ -345,8 +352,7 @@ const SetupProfessionista = () => {
                               type="button"
                               className="h-4 w-5 flex items-center justify-center rounded border border-input bg-muted hover:bg-accent text-[10px] leading-none"
                               onClick={() => {
-                                const min = Math.round(servizio.prezzoConsigliato * 0.7);
-                                if (servizio.prezzo > min) {
+                                if (servizio.prezzo > servizio._min) {
                                   setServizi(prev => prev.map(s => s.id === servizio.id ? { ...s, prezzo: s.prezzo - 1 } : s));
                                 }
                               }}
