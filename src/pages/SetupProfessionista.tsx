@@ -173,11 +173,16 @@ const SetupProfessionista = () => {
   };
 
   const updatePrezzo = (id: string, rawValue: string) => {
-    // Allow only digits, strip leading zeros
     const cleaned = rawValue.replace(/[^0-9]/g, '').replace(/^0+/, '') || '';
     const numValue = cleaned === '' ? 0 : parseInt(cleaned, 10);
     setServizi((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, prezzo: numValue } : s))
+      prev.map((s) => {
+        if (s.id !== id) return s;
+        const max = Math.round(s.prezzoConsigliato * 1.3);
+        // Block typing beyond max
+        if (numValue > max) return s;
+        return { ...s, prezzo: numValue };
+      })
     );
   };
 
