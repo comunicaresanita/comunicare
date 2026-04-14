@@ -156,11 +156,8 @@ const SetupProfessionista = () => {
   const { toast } = useToast();
   const { profile } = useAuth();
   const tipo = profile?.professional_type;
-  const serviziBase = getServiziPerTipo(tipo);
 
-  const [servizi, setServizi] = useState<Servizio[]>(
-    serviziBase.map((s, i) => buildServizio(s, i))
-  );
+  const [servizi, setServizi] = useState<Servizio[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [isFirstSetup, setIsFirstSetup] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -168,6 +165,9 @@ const SetupProfessionista = () => {
   useEffect(() => {
     const loadServices = async () => {
       if (!profile) return;
+      const serviziBase = getServiziPerTipo(profile.professional_type);
+      const baseList = serviziBase.map((s, i) => buildServizio(s, i));
+
       const { data: savedServices } = await supabase
         .from("services")
         .select("*")
@@ -175,8 +175,8 @@ const SetupProfessionista = () => {
 
       if (savedServices && savedServices.length > 0) {
         setIsFirstSetup(false);
-        setServizi((prev) =>
-          prev.map((s) => {
+        setServizi(
+          baseList.map((s) => {
             const saved = savedServices.find((ss) => ss.name === s.nome);
             if (saved) {
               const price = Math.min(s._max, Math.max(s._min, saved.price));
@@ -185,6 +185,8 @@ const SetupProfessionista = () => {
             return s;
           })
         );
+      } else {
+        setServizi(baseList);
       }
       setLoadingData(false);
     };
