@@ -35,12 +35,14 @@ const prestazioniDisponibili = [
   // Fisioterapia
   "Riabilitazione motoria a domicilio", "Riabilitazione post-operatoria (protesi anca/ginocchio)",
   "Riabilitazione post-frattura", "Riabilitazione post-ictus", "Riabilitazione neurologica",
-  "Riabilitazione respiratoria", "Riabilitazione pavimento pelvico",
+  "Riabilitazione respiratoria", "Riabilitazione pavimento pelvico", "Riabilitazione sportiva",
   "Linfodrenaggio manuale", "Massoterapia decontratturante", "Terapia manuale ortopedica",
   "Ginnastica posturale a domicilio", "Ginnastica dolce per anziani",
   "Rieducazione alla deambulazione", "Mobilizzazione articolare",
   "Trattamento cervicalgia/lombalgia", "Kinesio taping",
   "Esercizio terapeutico personalizzato", "Stretching terapeutico",
+  "Laser terapia", "Laser terapia YAG", "Tecar terapia",
+  "Onde d'urto", "Elettrostimolazione", "Ultrasuono", "Valutazione ecografica",
   // OSS
   "Igiene personale completa a letto", "Bagno assistito in vasca/doccia",
   "Vestizione e svestizione assistita", "Cambio pannolone e igiene intima",

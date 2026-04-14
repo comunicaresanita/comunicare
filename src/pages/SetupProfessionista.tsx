@@ -68,24 +68,32 @@ const serviziInfermiere: Omit<Servizio, "id" | "attivo">[] = [
 ];
 
 const serviziFisioterapista: Omit<Servizio, "id" | "attivo">[] = [
-  { nome: "Riabilitazione motoria a domicilio", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Riabilitazione motoria a domicilio", prezzo: 60, prezzoConsigliato: 60 },
   { nome: "Riabilitazione post-operatoria (protesi anca/ginocchio)", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Riabilitazione post-frattura", prezzo: 55, prezzoConsigliato: 55 },
-  { nome: "Riabilitazione post-ictus", prezzo: 65, prezzoConsigliato: 65 },
-  { nome: "Riabilitazione neurologica", prezzo: 65, prezzoConsigliato: 65 },
-  { nome: "Riabilitazione respiratoria", prezzo: 55, prezzoConsigliato: 55 },
-  { nome: "Riabilitazione pavimento pelvico", prezzo: 55, prezzoConsigliato: 55 },
+  { nome: "Riabilitazione post-frattura", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Riabilitazione post-ictus", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Riabilitazione neurologica", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Riabilitazione respiratoria", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Riabilitazione pavimento pelvico", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Riabilitazione sportiva", prezzo: 60, prezzoConsigliato: 60 },
   { nome: "Linfodrenaggio manuale", prezzo: 60, prezzoConsigliato: 60 },
-  { nome: "Massoterapia decontratturante", prezzo: 50, prezzoConsigliato: 50 },
-  { nome: "Terapia manuale ortopedica", prezzo: 55, prezzoConsigliato: 55 },
-  { nome: "Ginnastica posturale a domicilio", prezzo: 45, prezzoConsigliato: 45 },
-  { nome: "Ginnastica dolce per anziani", prezzo: 40, prezzoConsigliato: 40 },
-  { nome: "Rieducazione alla deambulazione", prezzo: 50, prezzoConsigliato: 50 },
-  { nome: "Mobilizzazione articolare", prezzo: 50, prezzoConsigliato: 50 },
-  { nome: "Trattamento cervicalgia/lombalgia", prezzo: 50, prezzoConsigliato: 50 },
-  { nome: "Kinesio taping", prezzo: 30, prezzoConsigliato: 30 },
-  { nome: "Esercizio terapeutico personalizzato", prezzo: 50, prezzoConsigliato: 50 },
-  { nome: "Stretching terapeutico", prezzo: 40, prezzoConsigliato: 40 },
+  { nome: "Massoterapia decontratturante", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Terapia manuale ortopedica", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Ginnastica posturale a domicilio", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Ginnastica dolce per anziani", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Rieducazione alla deambulazione", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Mobilizzazione articolare", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Trattamento cervicalgia/lombalgia", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Kinesio taping", prezzo: 35, prezzoConsigliato: 35 },
+  { nome: "Esercizio terapeutico personalizzato", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Stretching terapeutico", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Laser terapia", prezzo: 65, prezzoConsigliato: 65 },
+  { nome: "Laser terapia YAG", prezzo: 65, prezzoConsigliato: 65 },
+  { nome: "Tecar terapia", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Onde d'urto", prezzo: 70, prezzoConsigliato: 70 },
+  { nome: "Elettrostimolazione", prezzo: 60, prezzoConsigliato: 60 },
+  { nome: "Ultrasuono", prezzo: 50, prezzoConsigliato: 50 },
+  { nome: "Valutazione ecografica", prezzo: 85, prezzoConsigliato: 85 },
 ];
 
 const serviziOSS: Omit<Servizio, "id" | "attivo">[] = [
@@ -310,10 +318,19 @@ const SetupProfessionista = () => {
                       {servizio.attivo && (
                         <div className="flex items-center gap-1">
                           <span className="text-senior-sm">€</span>
-                          <div className="flex flex-col">
+                          <Input
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            value={servizio.prezzo === 0 ? '' : String(servizio.prezzo)}
+                            onChange={(e) => updatePrezzo(servizio.id, e.target.value)}
+                            onBlur={() => clampPrezzo(servizio.id)}
+                            className="w-14 md:w-16 text-center h-8 text-sm"
+                          />
+                          <div className="flex flex-col gap-0.5">
                             <button
                               type="button"
-                              className="h-5 w-8 flex items-center justify-center rounded-t border border-b-0 border-input bg-muted hover:bg-accent text-xs leading-none"
+                              className="h-4 w-5 flex items-center justify-center rounded border border-input bg-muted hover:bg-accent text-[10px] leading-none"
                               onClick={() => {
                                 const max = Math.round(servizio.prezzoConsigliato * 1.3);
                                 if (servizio.prezzo < max) {
@@ -322,18 +339,9 @@ const SetupProfessionista = () => {
                               }}
                               aria-label="Aumenta prezzo"
                             >▲</button>
-                            <Input
-                              type="text"
-                              inputMode="numeric"
-                              pattern="[0-9]*"
-                              value={servizio.prezzo === 0 ? '' : String(servizio.prezzo)}
-                              onChange={(e) => updatePrezzo(servizio.id, e.target.value)}
-                              onBlur={() => clampPrezzo(servizio.id)}
-                              className="w-16 md:w-20 text-center rounded-none h-8 text-sm"
-                            />
                             <button
                               type="button"
-                              className="h-5 w-8 flex items-center justify-center rounded-b border border-t-0 border-input bg-muted hover:bg-accent text-xs leading-none"
+                              className="h-4 w-5 flex items-center justify-center rounded border border-input bg-muted hover:bg-accent text-[10px] leading-none"
                               onClick={() => {
                                 const min = Math.round(servizio.prezzoConsigliato * 0.7);
                                 if (servizio.prezzo > min) {
