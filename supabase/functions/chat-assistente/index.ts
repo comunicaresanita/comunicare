@@ -1,12 +1,12 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const PRESTAZIONI = [
-  // Infermieristici
+const SERVIZI_INFERMIERISTICI = [
   "Iniezione intramuscolare", "Iniezione sottocutanea", "Iniezione endovenosa",
   "Prelievo ematico a domicilio", "Medicazione semplice", "Medicazione complessa",
   "Medicazione ferita chirurgica", "Medicazione ulcera da pressione", "Medicazione ulcera venosa",
@@ -27,7 +27,9 @@ const PRESTAZIONI = [
   "Aerosolterapia a domicilio", "Ossigenoterapia domiciliare - avvio e monitoraggio",
   "Assistenza domiciliare continuativa (per ora)", "Assistenza infermieristica notturna (per ora)",
   "Assistenza infermieristica diurna (per ora)",
-  // Fisioterapia
+];
+
+const SERVIZI_FISIOTERAPIA = [
   "Riabilitazione motoria a domicilio", "Riabilitazione post-operatoria (protesi anca/ginocchio)",
   "Riabilitazione post-frattura", "Riabilitazione post-ictus", "Riabilitazione neurologica",
   "Riabilitazione respiratoria", "Riabilitazione pavimento pelvico", "Riabilitazione sportiva",
@@ -38,7 +40,9 @@ const PRESTAZIONI = [
   "Esercizio terapeutico personalizzato", "Stretching terapeutico",
   "Laser terapia", "Laser terapia YAG", "Tecar terapia",
   "Onde d'urto", "Elettrostimolazione", "Ultrasuono", "Valutazione ecografica",
-  // OSS
+];
+
+const SERVIZI_OSS = [
   "Igiene personale completa a letto", "Bagno assistito in vasca/doccia",
   "Vestizione e svestizione assistita", "Cambio pannolone e igiene intima",
   "Mobilizzazione e cambio postura a letto", "Trasferimento letto-carrozzina/poltrona",
@@ -62,30 +66,64 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
-    const systemPrompt = `Sei un assistente sanitario virtuale per una piattaforma italiana che mette in contatto pazienti con professionisti sanitari a domicilio (infermieri, fisioterapisti, OSS).
+    // Fetch professionals and their services from the database in real-time
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const sb = createClient(supabaseUrl, supabaseKey);
 
-Il tuo compito è aiutare gli utenti a capire quale prestazione sanitaria fa al caso loro, basandoti sui sintomi o necessità che descrivono.
+    const { data: professionals } = await sb
+      .from("profiles")
+      .select("id, first_name, last_name, professional_type, zona, bio")
+      .eq("role", "professionista");
+
+    const { data: allServices } = await sb
+      .from("services")
+      .select("professional_id, name, price");
+
+    // Build a directory of professionals with their services
+    let professionalsDirectory = "";
+    if (professionals && professionals.length > 0) {
+      professionalsDirectory = "\n\n**Professionisti attualmente disponibili sulla piattaforma:**\n";
+      for (const prof of professionals) {
+        const profServices = allServices?.filter(s => s.professional_id === prof.id) || [];
+        const typeLabel = prof.professional_type === "infermiere" ? "Infermiere" 
+          : prof.professional_type === "fisioterapista" ? "Fisioterapista" 
+          : prof.professional_type === "oss" ? "OSS" : prof.professional_type || "N/D";
+        
+        professionalsDirectory += `\n- **${prof.first_name} ${prof.last_name}** (${typeLabel})`;
+        if (prof.zona) professionalsDirectory += ` — Zona: ${prof.zona}`;
+        if (profServices.length > 0) {
+          professionalsDirectory += `\n  Servizi: ${profServices.map(s => `${s.name} (€${s.price})`).join(", ")}`;
+        }
+      }
+    }
+
+    const systemPrompt = `Sei un assistente sanitario virtuale per una piattaforma italiana che mette in contatto utenti con professionisti sanitari a domicilio (infermieri, fisioterapisti, OSS).
+
+Il tuo compito è aiutare gli utenti a capire quale prestazione sanitaria fa al caso loro, basandoti sui sintomi o necessità che descrivono. Puoi anche consigliare un professionista specifico tra quelli disponibili.
 
 Le prestazioni disponibili sulla piattaforma sono:
 
 **Servizi Infermieristici:**
-${PRESTAZIONI.slice(0, 44).map(p => `- ${p}`).join("\n")}
+${SERVIZI_INFERMIERISTICI.map(p => `- ${p}`).join("\n")}
 
 **Servizi di Fisioterapia:**
-${PRESTAZIONI.slice(44, 69).map(p => `- ${p}`).join("\n")}
+${SERVIZI_FISIOTERAPIA.map(p => `- ${p}`).join("\n")}
 
 **Servizi OSS (Operatore Socio-Sanitario):**
-${PRESTAZIONI.slice(69).map(p => `- ${p}`).join("\n")}
+${SERVIZI_OSS.map(p => `- ${p}`).join("\n")}
+${professionalsDirectory}
 
 Regole:
 - Rispondi SEMPRE in italiano
 - Sii empatico, chiaro e conciso (max 3-4 frasi per risposta)
 - NON fare diagnosi mediche
 - Suggerisci la prestazione più adatta tra quelle disponibili, specificando se è un servizio infermieristico, fisioterapico o OSS
+- Se l'utente chiede di un professionista specifico, cerca tra quelli disponibili e fornisci le informazioni
 - Se non sei sicuro, chiedi dettagli
 - Se il caso richiede urgenza medica, consiglia di chiamare il 118 o recarsi al pronto soccorso
 - Non inventare prestazioni che non sono nella lista
-- Puoi anche suggerire di cercare un professionista per nome nella barra di ricerca della piattaforma`;
+- Puoi suggerire di cercare un professionista per nome nella barra di ricerca della piattaforma`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
