@@ -582,7 +582,15 @@ const DashboardPaziente = () => {
           )}
         </div>
       </main>
-      <ChatbotWidget />
+      <ChatbotWidget 
+        onSelectService={(service) => {
+          setSearchMode("prestazione");
+          setRicerca(service);
+          setPrestazioneSelezionata(service);
+          setProfessionistaSelezionato(null);
+        }}
+        professionals={professionisti.map(p => ({ profileId: p.profileId, nome: p.nome }))}
+      />
       <Footer />
     </div>
   );

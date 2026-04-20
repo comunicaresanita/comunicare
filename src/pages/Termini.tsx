@@ -1,12 +1,21 @@
+import { useNavigate } from "react-router-dom";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 const Termini = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen flex flex-col">
       <AuthHeader />
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-3xl">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4 gap-2 text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="w-4 h-4" />
+            Torna indietro
+          </Button>
           <h1 className="text-senior-2xl md:text-senior-3xl font-bold mb-8">Termini e Condizioni</h1>
           <p className="text-senior-sm text-muted-foreground mb-8 italic">
             Ultimo aggiornamento: Aprile 2026 — Documento segnaposto da far revisionare da un legale.
