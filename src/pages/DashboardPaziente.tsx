@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import { MapPin, Search, Star, ShieldCheck, Stethoscope, Navigation } from "lucide-react";
+import { MapPin, Search, Star, ShieldCheck, Stethoscope, Navigation, User } from "lucide-react";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -70,11 +70,15 @@ interface ProfessionistaData {
   verified: boolean;
 }
 
+type SearchMode = "prestazione" | "professionista";
+
 const DashboardPaziente = () => {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const [prestazioneSelezionata, setPrestazioneSelezionata] = useState("");
+  const [professionistaSelezionato, setProfessionistaSelezionato] = useState<ProfessionistaData | null>(null);
   const [ricerca, setRicerca] = useState("");
+  const [searchMode, setSearchMode] = useState<SearchMode>("prestazione");
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
@@ -82,13 +86,20 @@ const DashboardPaziente = () => {
   const [professionisti, setProfessionisti] = useState<ProfessionistaData[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
 
-  // Fuzzy search with typo tolerance and synonyms
+  // Fuzzy search for services
   const prestazioniFiltrate = useMemo(
-    () => fuzzySearchServices(ricerca, prestazioniDisponibili),
-    [ricerca]
+    () => searchMode === "prestazione" ? fuzzySearchServices(ricerca, prestazioniDisponibili) : [],
+    [ricerca, searchMode]
   );
 
-  // Filter professionals and calculate distance, sort by nearest
+  // Fuzzy search for professional names
+  const professionistiSuggeriti = useMemo(() => {
+    if (searchMode !== "professionista" || !ricerca.trim()) return [];
+    const q = ricerca.toLowerCase().trim();
+    return professionisti.filter((p) => p.nome.toLowerCase().includes(q)).slice(0, 10);
+  }, [ricerca, searchMode, professionisti]);
+
+  // Filter professionals by selected service
   const professionistiFiltrati = useMemo(() => {
     if (!prestazioneSelezionata) return [];
     const filtered = professionisti.filter((p) =>
@@ -103,13 +114,27 @@ const DashboardPaziente = () => {
     return filtered;
   }, [prestazioneSelezionata, professionisti, userCoords]);
 
+  // When switching mode, reset selections
+  const handleModeSwitch = (mode: SearchMode) => {
+    setSearchMode(mode);
+    setRicerca("");
+    setPrestazioneSelezionata("");
+    setProfessionistaSelezionato(null);
+  };
+
+  const handleSelectProfessionista = (p: ProfessionistaData) => {
+    setProfessionistaSelezionato(p);
+    setRicerca(p.nome);
+    setPrestazioneSelezionata("");
+  };
+
+  // --- Maps & data loading (unchanged) ---
   useEffect(() => {
     if ((window as any).google?.maps) {
       setMapsLoaded(true);
       return;
     }
     if (document.getElementById("google-maps-script")) return;
-
     const loadMaps = async () => {
       try {
         const { data } = await supabase.functions.invoke("get-maps-key");
@@ -135,7 +160,6 @@ const DashboardPaziente = () => {
       setUserCoords({ lat: profile.lat, lng: profile.lng });
       return;
     }
-
     const google = (window as any).google;
     const geocoder = new google.maps.Geocoder();
     geocoder.geocode({ address: profile.address + ", Italia" }, (results: any[], status: string) => {
@@ -156,7 +180,6 @@ const DashboardPaziente = () => {
         .eq("role", "professionista");
 
       if (!professionals || professionals.length === 0) return;
-
       const profIds = professionals.map((p) => p.id);
 
       const [{ data: services }, { data: reviews }] = await Promise.all([
@@ -172,7 +195,6 @@ const DashboardPaziente = () => {
           const avg = profReviews.length > 0
             ? Math.round((profReviews.reduce((sum, r) => sum + r.rating, 0) / profReviews.length) * 10) / 10
             : 0;
-
           return {
             profileId: p.id,
             nome: `${p.first_name} ${p.last_name}`,
@@ -188,24 +210,22 @@ const DashboardPaziente = () => {
             verified: (p as any).verified || false,
           };
         });
-
       setProfessionisti(mapped);
     };
-
     fetchProfessionisti();
   }, []);
 
+  // Map for service search
   useEffect(() => {
+    if (professionistaSelezionato) return; // skip when viewing single professional
     if (!prestazioneSelezionata || !mapRef.current || !mapsLoaded) return;
     const google = (window as any).google;
     if (!google) return;
 
     const center = userCoords || { lat: 43.7696, lng: 11.2558 };
-
     if (!mapInstanceRef.current) {
       mapInstanceRef.current = new google.maps.Map(mapRef.current, {
-        center,
-        zoom: 11,
+        center, zoom: 11,
         styles: [{ featureType: "poi", stylers: [{ visibility: "simplified" }] }],
       });
     } else {
@@ -222,15 +242,10 @@ const DashboardPaziente = () => {
         title: p.nome,
         icon: {
           path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
-          fillColor: "#4A90D9",
-          fillOpacity: 1,
-          strokeColor: "#2a6cb6",
-          strokeWeight: 1.5,
-          scale: 1.8,
+          fillColor: "#4A90D9", fillOpacity: 1, strokeColor: "#2a6cb6", strokeWeight: 1.5, scale: 1.8,
           anchor: new google.maps.Point(12, 22),
         },
       });
-
       marker.addListener("click", () => {
         const el = document.getElementById(`prof-card-${p.profileId}`);
         if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -257,21 +272,64 @@ const DashboardPaziente = () => {
 
     if (userCoords) {
       const userMarker = new google.maps.Marker({
-        position: userCoords,
-        map: mapInstanceRef.current,
-        title: "La tua posizione",
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          fillColor: "#22c55e",
-          fillOpacity: 1,
-          strokeColor: "#16a34a",
-          strokeWeight: 2,
-          scale: 8,
-        },
+        position: userCoords, map: mapInstanceRef.current, title: "La tua posizione",
+        icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: "#22c55e", fillOpacity: 1, strokeColor: "#16a34a", strokeWeight: 2, scale: 8 },
       });
       markersRef.current.push(userMarker);
     }
-  }, [prestazioneSelezionata, professionistiFiltrati, navigate, mapsLoaded, userCoords]);
+  }, [prestazioneSelezionata, professionistiFiltrati, mapsLoaded, userCoords, professionistaSelezionato]);
+
+  // Map for single professional view
+  useEffect(() => {
+    if (!professionistaSelezionato || !mapRef.current || !mapsLoaded) return;
+    const google = (window as any).google;
+    if (!google) return;
+
+    const p = professionistaSelezionato;
+    const center = { lat: p.lat, lng: p.lng };
+
+    if (!mapInstanceRef.current) {
+      mapInstanceRef.current = new google.maps.Map(mapRef.current, {
+        center, zoom: 13,
+        styles: [{ featureType: "poi", stylers: [{ visibility: "simplified" }] }],
+      });
+    } else {
+      mapInstanceRef.current.setCenter(center);
+      mapInstanceRef.current.setZoom(13);
+    }
+
+    markersRef.current.forEach((m: any) => m.setMap(null));
+    markersRef.current = [];
+
+    const marker = new google.maps.Marker({
+      position: center, map: mapInstanceRef.current, title: p.nome,
+      icon: {
+        path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
+        fillColor: "#4A90D9", fillOpacity: 1, strokeColor: "#2a6cb6", strokeWeight: 1.5, scale: 1.8,
+        anchor: new google.maps.Point(12, 22),
+      },
+    });
+    markersRef.current.push(marker);
+
+    if (userCoords) {
+      const bounds = new google.maps.LatLngBounds();
+      bounds.extend(userCoords);
+      bounds.extend(center);
+      mapInstanceRef.current.fitBounds(bounds);
+      google.maps.event.addListenerOnce(mapInstanceRef.current, "bounds_changed", () => {
+        if (mapInstanceRef.current.getZoom() > 14) mapInstanceRef.current.setZoom(14);
+      });
+
+      const userMarker = new google.maps.Marker({
+        position: userCoords, map: mapInstanceRef.current, title: "La tua posizione",
+        icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: "#22c55e", fillOpacity: 1, strokeColor: "#16a34a", strokeWeight: 2, scale: 8 },
+      });
+      markersRef.current.push(userMarker);
+    }
+  }, [professionistaSelezionato, mapsLoaded, userCoords]);
+
+  const showResults = prestazioneSelezionata || professionistaSelezionato;
+  const typeLabel = (t: string) => t === "oss" ? "OSS" : t === "fisioterapista" ? "Fisioterapista" : "Infermiere";
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -288,33 +346,89 @@ const DashboardPaziente = () => {
           <Card className="mb-6 md:mb-8">
             <CardHeader className="p-4 md:p-6">
               <CardTitle className="text-base md:text-senior-lg flex items-center gap-2">
-                <Search className="w-5 h-5" /> Scegli la prestazione
+                <Search className="w-5 h-5" /> Cerca per
               </CardTitle>
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={() => handleModeSwitch("prestazione")}
+                  className={`px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition-colors ${
+                    searchMode === "prestazione"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Prestazione
+                </button>
+                <button
+                  onClick={() => handleModeSwitch("professionista")}
+                  className={`px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition-colors flex items-center gap-1 ${
+                    searchMode === "professionista"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <User className="w-3.5 h-3.5" /> Professionista
+                </button>
+              </div>
             </CardHeader>
             <CardContent className="p-4 md:p-6 pt-0 md:pt-0">
-              <input
-                type="text" value={ricerca} onChange={(e) => setRicerca(e.target.value)}
-                placeholder="Cerca una prestazione..."
-                className="w-full border rounded-md p-3 text-sm md:text-senior-sm bg-background mb-4"
-              />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 md:max-h-64 overflow-y-auto">
-                {prestazioniFiltrate.map((p) => (
-                  <button key={p} onClick={() => setPrestazioneSelezionata(p)}
-                    className={`text-left p-2.5 md:p-3 rounded-lg border transition-colors text-xs md:text-senior-sm ${
-                      prestazioneSelezionata === p ? "border-primary bg-secondary text-primary font-medium" : "border-border hover:border-primary/50"
-                    }`}
-                  >{p}</button>
-                ))}
+              <div className="relative">
+                <input
+                  type="text" value={ricerca}
+                  onChange={(e) => {
+                    setRicerca(e.target.value);
+                    if (searchMode === "professionista") setProfessionistaSelezionato(null);
+                  }}
+                  placeholder={searchMode === "prestazione" ? "Cerca una prestazione..." : "Cerca per nome e cognome..."}
+                  className="w-full border rounded-md p-3 text-sm md:text-senior-sm bg-background mb-4"
+                />
+                {/* Name autocomplete dropdown */}
+                {searchMode === "professionista" && ricerca.trim() && !professionistaSelezionato && professionistiSuggeriti.length > 0 && (
+                  <div className="absolute z-20 left-0 right-0 top-12 bg-background border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                    {professionistiSuggeriti.map((p) => (
+                      <button
+                        key={p.profileId}
+                        onClick={() => handleSelectProfessionista(p)}
+                        className="w-full text-left px-4 py-2.5 hover:bg-secondary flex items-center gap-3 text-sm border-b last:border-b-0"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
+                          {p.photoUrl ? (
+                            <img src={p.photoUrl} alt={p.nome} className="w-full h-full object-cover" />
+                          ) : (
+                            <User className="w-4 h-4 text-muted-foreground" />
+                          )}
+                        </div>
+                        <div>
+                          <span className="font-medium">{p.nome}</span>
+                          <span className="text-xs text-muted-foreground ml-2">{typeLabel(p.professionalType)}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
+
+              {/* Service list (only in prestazione mode) */}
+              {searchMode === "prestazione" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 md:max-h-64 overflow-y-auto">
+                  {prestazioniFiltrate.map((p) => (
+                    <button key={p} onClick={() => { setPrestazioneSelezionata(p); setProfessionistaSelezionato(null); }}
+                      className={`text-left p-2.5 md:p-3 rounded-lg border transition-colors text-xs md:text-senior-sm ${
+                        prestazioneSelezionata === p ? "border-primary bg-secondary text-primary font-medium" : "border-border hover:border-primary/50"
+                      }`}
+                    >{p}</button>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 
-          {prestazioneSelezionata && (
+          {/* === Results: by service === */}
+          {prestazioneSelezionata && !professionistaSelezionato && (
             <>
               <h2 className="text-base md:text-senior-xl font-semibold mb-4">
                 Professionisti disponibili per: <span className="text-primary">{prestazioneSelezionata}</span>
               </h2>
-
               <div ref={mapRef} className="w-full h-56 md:h-80 rounded-lg overflow-hidden border mb-4 md:mb-6 bg-secondary">
                 {!mapsLoaded && (
                   <div className="flex items-center justify-center h-full">
@@ -325,11 +439,9 @@ const DashboardPaziente = () => {
                   </div>
                 )}
               </div>
-
               <div className="space-y-4">
                 {professionistiFiltrati.map((p) => {
                   const servizio = p.servizi.find((s) => s.name === prestazioneSelezionata);
-                  const typeLabel = p.professionalType === "oss" ? "OSS" : p.professionalType === "fisioterapista" ? "Fisioterapista" : "Infermiere";
                   const distKm = (p as any)._distKm as number | undefined;
                   return (
                     <Card id={`prof-card-${p.profileId}`} key={p.profileId} className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
@@ -353,7 +465,7 @@ const DashboardPaziente = () => {
                             )}
                           </div>
                           <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">{typeLabel}</span>
+                            <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">{typeLabel(p.professionalType)}</span>
                             {p.valutazione > 0 && (
                               <span className="flex items-center gap-0.5 text-sm">
                                 <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
@@ -364,11 +476,7 @@ const DashboardPaziente = () => {
                           <p className="text-xs md:text-senior-sm text-muted-foreground truncate mt-1">{p.bio}</p>
                           {(p.zona || distKm !== undefined) && (
                             <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                              {p.zona && (
-                                <span className="flex items-center gap-1">
-                                  <MapPin className="w-4 h-4" /> {p.zona}
-                                </span>
-                              )}
+                              {p.zona && (<span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {p.zona}</span>)}
                               {distKm !== undefined && (
                                 <span className="flex items-center gap-1 font-medium text-primary">
                                   <Navigation className="w-3.5 h-3.5" /> ~{distKm < 1 ? `${Math.round(distKm * 1000)}m` : `${Math.round(distKm)} km`}
@@ -395,6 +503,81 @@ const DashboardPaziente = () => {
                   </div>
                 )}
               </div>
+            </>
+          )}
+
+          {/* === Results: by professional name === */}
+          {professionistaSelezionato && (
+            <>
+              <h2 className="text-base md:text-senior-xl font-semibold mb-4">
+                Profilo di: <span className="text-primary">{professionistaSelezionato.nome}</span>
+              </h2>
+              <div ref={mapRef} className="w-full h-56 md:h-80 rounded-lg overflow-hidden border mb-4 md:mb-6 bg-secondary">
+                {!mapsLoaded && (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center">
+                      <MapPin className="w-12 h-12 text-primary mx-auto mb-3" />
+                      <p className="text-senior-sm text-muted-foreground">Caricamento mappa...</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Card className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
+                onClick={() => navigate(`/profilo-infermiere/${professionistaSelezionato.profileId}`)}
+              >
+                <CardContent className="p-4 md:p-6">
+                  <div className="flex items-start md:items-center gap-3 md:gap-6 mb-4">
+                    <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      {professionistaSelezionato.photoUrl ? (
+                        <img src={professionistaSelezionato.photoUrl} alt={professionistaSelezionato.nome} className="w-full h-full object-cover" />
+                      ) : (
+                        <Stethoscope className="w-7 h-7 md:w-10 md:h-10 text-primary" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-base md:text-senior-xl font-semibold">{professionistaSelezionato.nome}</h3>
+                        {professionistaSelezionato.verified && (
+                          <span className="inline-flex items-center gap-0.5 text-white text-xs font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: "#0097B2" }}>
+                            <ShieldCheck className="w-3 h-3" /> Verificato
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">{typeLabel(professionistaSelezionato.professionalType)}</span>
+                        {professionistaSelezionato.valutazione > 0 && (
+                          <span className="flex items-center gap-0.5 text-sm">
+                            <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" /> {professionistaSelezionato.valutazione}
+                          </span>
+                        )}
+                      </div>
+                      {professionistaSelezionato.bio && (
+                        <p className="text-xs md:text-senior-sm text-muted-foreground mt-1">{professionistaSelezionato.bio}</p>
+                      )}
+                      {professionistaSelezionato.zona && (
+                        <span className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                          <MapPin className="w-4 h-4" /> {professionistaSelezionato.zona}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Services list */}
+                  <h4 className="text-sm md:text-senior-base font-semibold mb-2 mt-2">Prestazioni offerte:</h4>
+                  <div className="space-y-1.5">
+                    {professionistaSelezionato.servizi.map((s) => (
+                      <div key={s.name} className="flex justify-between items-center p-2 rounded-md bg-secondary/50 text-xs md:text-sm">
+                        <span>{s.name}</span>
+                        <span className="font-bold text-primary ml-2 flex-shrink-0">€{s.price}</span>
+                      </div>
+                    ))}
+                    {professionistaSelezionato.servizi.length === 0 && (
+                      <p className="text-sm text-muted-foreground">Nessuna prestazione configurata.</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
             </>
           )}
         </div>
