@@ -282,7 +282,7 @@ const DashboardPaziente = () => {
             Trova il tuo professionista
           </h1>
           <p className="text-sm md:text-senior-base text-muted-foreground mb-6 md:mb-8">
-            Seleziona la prestazione di cui hai bisogno per trovare i professionisti più vicini a te.
+            Seleziona la prestazione di cui hai bisogno o il nome dello specialista più vicino a te.
           </p>
 
           <Card className="mb-6 md:mb-8">
