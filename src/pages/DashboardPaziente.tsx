@@ -217,7 +217,6 @@ const DashboardPaziente = () => {
 
   // Professionals to show on map
   const mapProfessionals = useMemo(() => {
-    if (professionistaSelezionato) return [professionistaSelezionato];
     if (prestazioneSelezionata) return professionistiFiltrati;
     return professionisti;
   }, [professionistaSelezionato, prestazioneSelezionata, professionistiFiltrati, professionisti]);
