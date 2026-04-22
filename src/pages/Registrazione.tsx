@@ -48,6 +48,8 @@ const Registrazione = () => {
   const navigate = useNavigate();
   const { signUp } = useAuth();
 
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+
 
   const validateEmail = (value: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
