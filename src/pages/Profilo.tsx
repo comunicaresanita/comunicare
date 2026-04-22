@@ -21,10 +21,11 @@ import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import AddressAutocomplete from "@/components/AddressAutocomplete";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Camera, ArrowLeft, Trash2, ClipboardList } from "lucide-react";
+import { Camera, ArrowLeft, Trash2, ClipboardList, UserCog } from "lucide-react";
 
 const Profilo = () => {
   const { user, profile, loading: authLoading, refreshProfile, signOut } = useAuth();
@@ -50,15 +51,8 @@ const Profilo = () => {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(false);
 
-  // Scroll to storico section if hash is #storico
-  useEffect(() => {
-    if (location.hash === "#storico") {
-      setTimeout(() => {
-        const el = document.getElementById("storico");
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 300);
-    }
-  }, [location.hash]);
+  const defaultTab = location.hash === "#storico" ? "dashboard" : "dati";
+  const [activeTab, setActiveTab] = useState(defaultTab);
 
   // Fetch booking history for patients
   useEffect(() => {
@@ -201,11 +195,20 @@ const Profilo = () => {
             <ArrowLeft className="w-4 h-4" />
             Torna indietro
           </Button>
+          <h1 className="text-xl md:text-senior-3xl font-bold mb-4">Il mio profilo</h1>
+
+          {profile.role !== "professionista" && (
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="dati" className="gap-2"><UserCog className="w-4 h-4" />Dati personali</TabsTrigger>
+                <TabsTrigger value="dashboard" className="gap-2"><ClipboardList className="w-4 h-4" />Dashboard</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          )}
+
+          {(activeTab === "dati" || profile.role === "professionista") && (
           <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-senior-xl">Il mio profilo</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 pt-6">
               {profile.role === "professionista" && (
                 <div className="flex flex-col items-center gap-3">
                   <div className="relative w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden">

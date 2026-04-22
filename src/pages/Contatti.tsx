@@ -1,16 +1,17 @@
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Mail, Send, ArrowLeft } from "lucide-react";
+import { Mail, Send, ArrowLeft, Calendar, ExternalLink } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import { articles } from "@/data/blogArticles";
 
 const faqItems = [
   {
@@ -153,6 +154,35 @@ const Contatti = () => {
               </Accordion>
             </CardContent>
           </Card>
+
+          {/* Ultimi articoli */}
+          <h2 className="text-lg md:text-xl font-bold mt-10 mb-4">Ultimi articoli</h2>
+          <div className="space-y-6">
+            {articles.map((article) => (
+              <Link to={`/blog/${article.slug}`} key={article.slug} className="block">
+                <Card className="hover:border-primary transition-colors cursor-pointer overflow-hidden">
+                  {article.imageUrl && (
+                    <div className="w-full h-48 overflow-hidden">
+                      <img src={article.imageUrl} alt={article.imageAlt} className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <CardHeader>
+                    <CardTitle className="text-base md:text-lg leading-snug">{article.title}</CardTitle>
+                    <CardDescription className="flex items-center gap-1.5 text-xs">
+                      <Calendar className="w-3.5 h-3.5" /> {article.date}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground leading-relaxed">{article.summary}</p>
+                    <span className="inline-flex items-center gap-1.5 text-xs text-primary font-medium">
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      Fonte: {article.source}
+                    </span>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
         </div>
       </main>
       <Footer />
