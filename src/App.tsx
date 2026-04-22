@@ -24,7 +24,7 @@ import Contatti from "./pages/Contatti.tsx";
 import Blog from "./pages/Blog.tsx";
 import BlogArticolo from "./pages/BlogArticolo.tsx";
 import Admin from "./pages/Admin.tsx";
-import AdminRoute from "./components/AdminRoute.tsx";
+
 
 const queryClient = new QueryClient();
 
@@ -54,7 +54,7 @@ const App = () => (
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogArticolo />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
