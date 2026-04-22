@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Legend } from "recharts";
-import { Lock, Users, UserCheck, Activity, TrendingUp } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { AreaChart, Area, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { Lock, Users, UserCheck, Activity, TrendingUp, Trash2, Download } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { it } from "date-fns/locale";
+import { toast } from "sonner";
 
 type Profile = {
   id: string;
@@ -54,6 +55,8 @@ const Admin = () => {
   const [error, setError] = useState("");
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Profile | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const handleLogin = async () => {
     setLoading(true);
@@ -73,6 +76,48 @@ const Admin = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke("admin-data", {
+        body: { password, action: "delete", userId: deleteTarget.user_id },
+      });
+      if (fnError || data?.error) {
+        toast.error(data?.error || "Errore durante l'eliminazione");
+        return;
+      }
+      setProfiles((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+      setSelectedUser(null);
+      setDeleteTarget(null);
+      toast.success("Utente eliminato con successo");
+    } catch {
+      toast.error("Errore di connessione");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const downloadCSV = () => {
+    const headers = ["Nome", "Cognome", "Email", "Telefono", "Ruolo", "Tipo Professionista", "Indirizzo", "Zona", "Età", "Bio", "Partita IVA", "Numero OPI", "Numero FNOFI", "Caregiver", "Info Aggiuntive", "Verificato", "Data Iscrizione"];
+    const rows = profiles.map((p) => [
+      p.first_name, p.last_name, p.email, p.phone || "", p.role === "professionista" ? "Professionista" : "Utente",
+      p.role === "professionista" ? professionalTypeLabel(p.professional_type) : "",
+      p.address || "", p.zona || "", p.age ?? "", p.bio || "", p.partita_iva || "",
+      p.numero_opi || "", p.numero_fnofi || "", p.is_caregiver ? "Sì" : "No",
+      p.additional_info || "", p.verified ? "Sì" : "No",
+      format(parseISO(p.created_at), "dd/MM/yyyy HH:mm", { locale: it }),
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `comunicare_utenti_${format(new Date(), "yyyy-MM-dd")}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   if (!authenticated) {
@@ -114,7 +159,6 @@ const Admin = () => {
     { name: "Fisioterapisti", value: fisioterapisti.length },
   ].filter((d) => d.value > 0);
 
-  // Timeline: group signups by month
   const timelineMap: Record<string, number> = {};
   profiles.forEach((p) => {
     const month = format(parseISO(p.created_at), "yyyy-MM");
@@ -127,7 +171,6 @@ const Admin = () => {
       iscritti: count,
     }));
 
-  // Cumulative timeline
   let cumulative = 0;
   const cumulativeData = Object.entries(timelineMap)
     .sort(([a], [b]) => a.localeCompare(b))
@@ -142,11 +185,16 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-3">
           <h1 className="text-3xl font-bold">Dashboard Admin</h1>
-          <Button variant="outline" onClick={() => { setAuthenticated(false); setPassword(""); }}>
-            Esci
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={downloadCSV}>
+              <Download className="w-4 h-4 mr-1" /> Scarica CSV
+            </Button>
+            <Button variant="outline" onClick={() => { setAuthenticated(false); setPassword(""); }}>
+              Esci
+            </Button>
+          </div>
         </div>
 
         {/* Stats cards */}
@@ -200,12 +248,15 @@ const Admin = () => {
             <CardContent>
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={timelineData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" fontSize={12} />
-                    <YAxis allowDecimals={false} />
-                    <Tooltip />
-                    <Bar dataKey="iscritti" fill="#0097B2" radius={[4, 4, 0, 0]} />
+                  <BarChart data={timelineData} barSize={32}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="month" fontSize={12} tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                    <YAxis allowDecimals={false} tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                    <Tooltip
+                      contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8 }}
+                      labelStyle={{ fontWeight: 600 }}
+                    />
+                    <Bar dataKey="iscritti" fill="#0097B2" radius={[6, 6, 0, 0]} name="Nuovi iscritti" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -213,21 +264,32 @@ const Admin = () => {
           </Card>
         </div>
 
-        {/* Cumulative chart */}
+        {/* Cumulative chart - Area Chart */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Crescita totale iscritti</CardTitle>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <TrendingUp className="w-5 h-5" /> Crescita totale iscritti
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[250px]">
+            <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={cumulativeData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" fontSize={12} />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Bar dataKey="totale" fill="#10B981" radius={[4, 4, 0, 0]} />
-                </BarChart>
+                <AreaChart data={cumulativeData}>
+                  <defs>
+                    <linearGradient id="gradientTotale" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0.05} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="month" fontSize={12} tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                  <YAxis allowDecimals={false} tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                  <Tooltip
+                    contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8 }}
+                    labelStyle={{ fontWeight: 600 }}
+                  />
+                  <Area type="monotone" dataKey="totale" stroke="#10B981" strokeWidth={3} fill="url(#gradientTotale)" name="Totale iscritti" dot={{ r: 5, fill: "#10B981" }} activeDot={{ r: 7 }} />
+                </AreaChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
@@ -248,16 +310,22 @@ const Admin = () => {
                     <TableHead>Ruolo</TableHead>
                     <TableHead>Tipo</TableHead>
                     <TableHead>Data iscrizione</TableHead>
+                    <TableHead className="w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {profiles.map((p) => (
-                    <TableRow key={p.id} className="cursor-pointer hover:bg-muted" onClick={() => setSelectedUser(p)}>
-                      <TableCell className="font-medium">{p.first_name} {p.last_name}</TableCell>
-                      <TableCell>{p.email}</TableCell>
-                      <TableCell>{p.role === "professionista" ? "Professionista" : "Utente"}</TableCell>
-                      <TableCell>{p.role === "professionista" ? professionalTypeLabel(p.professional_type) : "—"}</TableCell>
-                      <TableCell>{format(parseISO(p.created_at), "dd/MM/yyyy HH:mm", { locale: it })}</TableCell>
+                    <TableRow key={p.id} className="cursor-pointer hover:bg-muted">
+                      <TableCell className="font-medium" onClick={() => setSelectedUser(p)}>{p.first_name} {p.last_name}</TableCell>
+                      <TableCell onClick={() => setSelectedUser(p)}>{p.email}</TableCell>
+                      <TableCell onClick={() => setSelectedUser(p)}>{p.role === "professionista" ? "Professionista" : "Utente"}</TableCell>
+                      <TableCell onClick={() => setSelectedUser(p)}>{p.role === "professionista" ? professionalTypeLabel(p.professional_type) : "—"}</TableCell>
+                      <TableCell onClick={() => setSelectedUser(p)}>{format(parseISO(p.created_at), "dd/MM/yyyy HH:mm", { locale: it })}</TableCell>
+                      <TableCell>
+                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={(e) => { e.stopPropagation(); setDeleteTarget(p); }}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -271,6 +339,7 @@ const Admin = () => {
           <DialogContent className="max-w-lg max-h-[80vh] overflow-auto">
             <DialogHeader>
               <DialogTitle>{selectedUser?.first_name} {selectedUser?.last_name}</DialogTitle>
+              <DialogDescription>Dettagli profilo utente</DialogDescription>
             </DialogHeader>
             {selectedUser && (
               <div className="space-y-3 text-sm">
@@ -303,10 +372,32 @@ const Admin = () => {
                     <img src={selectedUser.photo_url} alt="Foto" className="w-24 h-24 rounded-full object-cover" />
                   </div>
                 )}
+                <Button variant="destructive" className="w-full mt-4" onClick={() => { setDeleteTarget(selectedUser); }}>
+                  <Trash2 className="w-4 h-4 mr-2" /> Elimina utente
+                </Button>
               </div>
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Delete confirmation */}
+        <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Conferma eliminazione</AlertDialogTitle>
+              <AlertDialogDescription>
+                Sei sicuro di voler eliminare <strong>{deleteTarget?.first_name} {deleteTarget?.last_name}</strong> ({deleteTarget?.email})?
+                Questa azione è irreversibile e cancellerà tutti i dati associati.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={deleting}>Annulla</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                {deleting ? "Eliminazione..." : "Elimina"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
