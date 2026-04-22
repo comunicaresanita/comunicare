@@ -23,6 +23,7 @@ import SetupPosizione from "./pages/SetupPosizione.tsx";
 import Contatti from "./pages/Contatti.tsx";
 import Blog from "./pages/Blog.tsx";
 import BlogArticolo from "./pages/BlogArticolo.tsx";
+import Admin from "./pages/Admin.tsx";
 
 const queryClient = new QueryClient();
 
