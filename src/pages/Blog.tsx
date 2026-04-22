@@ -26,7 +26,12 @@ const Blog = () => {
           <div className="space-y-6">
             {articles.map((article) => (
               <Link to={`/blog/${article.slug}`} key={article.slug} className="block">
-                <Card className="hover:border-primary transition-colors cursor-pointer">
+                <Card className="hover:border-primary transition-colors cursor-pointer overflow-hidden">
+                  {article.imageUrl && (
+                    <div className="w-full h-48 overflow-hidden">
+                      <img src={article.imageUrl} alt={article.imageAlt} className="w-full h-full object-cover" />
+                    </div>
+                  )}
                   <CardHeader>
                     <CardTitle className="text-base md:text-lg leading-snug">{article.title}</CardTitle>
                     <CardDescription className="flex items-center gap-1.5 text-xs">

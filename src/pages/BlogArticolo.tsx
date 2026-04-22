@@ -47,6 +47,12 @@ const BlogArticolo = () => {
               <Calendar className="w-3.5 h-3.5" /> {article.date}
             </div>
 
+            {article.imageUrl && (
+              <div className="w-full h-64 md:h-80 rounded-lg overflow-hidden mb-6">
+                <img src={article.imageUrl} alt={article.imageAlt} className="w-full h-full object-cover" />
+              </div>
+            )}
+
             <div className="prose prose-sm max-w-none text-foreground space-y-4 mb-6">
               {article.content.map((paragraph, i) => (
                 <p key={i} className="text-sm md:text-base leading-relaxed text-muted-foreground">

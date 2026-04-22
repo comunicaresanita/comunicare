@@ -6,6 +6,8 @@ export interface BlogArticle {
   source: string;
   sourceUrl: string;
   content: string[];
+  imageUrl: string;
+  imageAlt: string;
 }
 
 export const articles: BlogArticle[] = [
@@ -13,6 +15,8 @@ export const articles: BlogArticle[] = [
     slug: "assistenza-infermieristica-domiciliare-anziani",
     title: "L'importanza dell'assistenza infermieristica domiciliare per gli anziani",
     date: "15 Aprile 2026",
+    imageUrl: "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=800&q=80",
+    imageAlt: "Infermiera che assiste un paziente anziano a domicilio",
     summary: "L'assistenza domiciliare consente agli anziani di ricevere cure personalizzate nel comfort della propria casa, riducendo il rischio di infezioni ospedaliere e migliorando la qualità della vita.",
     source: "Organizzazione Mondiale della Sanità (OMS)",
     sourceUrl: "https://www.who.int/news-room/fact-sheets/detail/ageing-and-health",
@@ -28,6 +32,8 @@ export const articles: BlogArticle[] = [
     slug: "fisioterapista-riabilitazione-post-operatoria",
     title: "Il ruolo del fisioterapista nella riabilitazione post-operatoria",
     date: "8 Aprile 2026",
+    imageUrl: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80",
+    imageAlt: "Fisioterapista durante una sessione di riabilitazione con un paziente",
     summary: "La riabilitazione fisioterapica precoce dopo un intervento chirurgico accelera il recupero funzionale e riduce i tempi di degenza.",
     source: "Ministero della Salute",
     sourceUrl: "https://www.salute.gov.it/portale/lea/dettaglioContenutiLea.jsp?id=4833&area=Lea&menu=distrettuale",
@@ -43,6 +49,8 @@ export const articles: BlogArticle[] = [
     slug: "oss-assistenza-socio-sanitaria",
     title: "OSS: una figura essenziale nell'assistenza socio-sanitaria",
     date: "1 Aprile 2026",
+    imageUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=80",
+    imageAlt: "Operatore socio-sanitario che assiste una persona anziana nelle attività quotidiane",
     summary: "L'Operatore Socio-Sanitario svolge un ruolo fondamentale nel supporto alle persone con ridotta autonomia, contribuendo all'igiene personale, alla mobilizzazione e al supporto nelle attività quotidiane.",
     source: "Ministero della Salute",
     sourceUrl: "https://www.salute.gov.it",

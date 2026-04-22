@@ -8,6 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { AreaChart, Area, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { Lock, Users, UserCheck, Activity, TrendingUp, Trash2, Download } from "lucide-react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import { format, parseISO } from "date-fns";
 import { it } from "date-fns/locale";
 import { toast } from "sonner";
@@ -100,24 +102,33 @@ const Admin = () => {
     }
   };
 
-  const downloadCSV = () => {
-    const headers = ["Nome", "Cognome", "Email", "Telefono", "Ruolo", "Tipo Professionista", "Indirizzo", "Zona", "Età", "Bio", "Partita IVA", "Numero OPI", "Numero FNOFI", "Caregiver", "Info Aggiuntive", "Verificato", "Data Iscrizione"];
-    const rows = profiles.map((p) => [
-      p.first_name, p.last_name, p.email, p.phone || "", p.role === "professionista" ? "Professionista" : "Utente",
-      p.role === "professionista" ? professionalTypeLabel(p.professional_type) : "",
-      p.address || "", p.zona || "", p.age ?? "", p.bio || "", p.partita_iva || "",
-      p.numero_opi || "", p.numero_fnofi || "", p.is_caregiver ? "Sì" : "No",
-      p.additional_info || "", p.verified ? "Sì" : "No",
-      format(parseISO(p.created_at), "dd/MM/yyyy HH:mm", { locale: it }),
-    ]);
-    const csv = [headers, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `comunicare_utenti_${format(new Date(), "yyyy-MM-dd")}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const downloadPDF = async () => {
+    const element = document.getElementById("admin-dashboard-content");
+    if (!element) return;
+    toast.info("Generazione PDF in corso...");
+    try {
+      const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const ratio = pdfWidth / imgWidth;
+      const scaledHeight = imgHeight * ratio;
+      let position = 0;
+
+      while (position < scaledHeight) {
+        if (position > 0) pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, -position, pdfWidth, scaledHeight);
+        position += pdfHeight;
+      }
+
+      pdf.save(`comunicare_admin_${format(new Date(), "yyyy-MM-dd")}.pdf`);
+      toast.success("PDF scaricato!");
+    } catch {
+      toast.error("Errore durante la generazione del PDF");
+    }
   };
 
   if (!authenticated) {
@@ -184,12 +195,12 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div id="admin-dashboard-content" className="max-w-7xl mx-auto space-y-8">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <h1 className="font-bold text-2xl">Dashboard admin</h1>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={downloadCSV}>
-              <Download className="w-4 h-4 mr-1" /> Scarica CSV
+            <Button variant="outline" onClick={downloadPDF}>
+              <Download className="w-4 h-4 mr-1" /> Scarica PDF
             </Button>
             <Button variant="outline" onClick={() => { setAuthenticated(false); setPassword(""); }}>
               Esci
