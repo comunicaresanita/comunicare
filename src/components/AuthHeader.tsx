@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/comunicare-logo.png";
-import { User, LogOut, Phone, BookOpen } from "lucide-react";
+import { User, LogOut, Phone, BookOpen, CalendarCheck } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,7 +45,7 @@ const AuthHeader = () => {
               </DropdownMenuItem>
               {profile?.role !== "professionista" && (
                 <DropdownMenuItem asChild>
-                  <Link to="/dashboard-paziente" className="cursor-pointer">🗓️ Prenota</Link>
+                  <Link to="/dashboard-paziente" className="cursor-pointer"><CalendarCheck className="w-4 h-4 mr-2" />Prenota</Link>
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem asChild>
