@@ -19,7 +19,7 @@ const faqItems = [
   },
   {
     q: "Posso cancellare una prenotazione?",
-    a: "Sì, puoi cancellare una prenotazione dalla tua dashboard. Ti consigliamo di farlo con almeno 24 ore di anticipo per rispetto del professionista."
+    a: "Sì, puoi cancellare una prenotazione dalla tua dashboard. È obbligatorio avvisare almeno 24 ore prima della prestazione. In caso contrario, l'importo non sarà rimborsato."
   },
   {
     q: "Come faccio a registrarmi come professionista?",

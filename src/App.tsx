@@ -22,6 +22,7 @@ import Profilo from "./pages/Profilo.tsx";
 import SetupPosizione from "./pages/SetupPosizione.tsx";
 import Contatti from "./pages/Contatti.tsx";
 import Blog from "./pages/Blog.tsx";
+import BlogArticolo from "./pages/BlogArticolo.tsx";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/profilo" element={<Profilo />} />
             <Route path="/contatti" element={<Contatti />} />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogArticolo />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
