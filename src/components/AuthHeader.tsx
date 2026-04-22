@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/comunicare-logo.png";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, Phone, BookOpen } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,6 +42,12 @@ const AuthHeader = () => {
               )}
               <DropdownMenuItem asChild>
                 <Link to="/profilo" className="cursor-pointer">Il mio profilo</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/contatti" className="cursor-pointer"><Phone className="w-4 h-4 mr-2" />Contatti</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/blog" className="cursor-pointer"><BookOpen className="w-4 h-4 mr-2" />Blog</Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
                 <LogOut className="w-4 h-4 mr-2" />

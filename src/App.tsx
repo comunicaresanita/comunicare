@@ -20,6 +20,8 @@ import PagamentoSuccesso from "./pages/PagamentoSuccesso.tsx";
 import AuthCallback from "./pages/AuthCallback.tsx";
 import Profilo from "./pages/Profilo.tsx";
 import SetupPosizione from "./pages/SetupPosizione.tsx";
+import Contatti from "./pages/Contatti.tsx";
+import Blog from "./pages/Blog.tsx";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +47,8 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/pagamento-successo" element={<PagamentoSuccesso />} />
             <Route path="/profilo" element={<Profilo />} />
+            <Route path="/contatti" element={<Contatti />} />
+            <Route path="/blog" element={<Blog />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
