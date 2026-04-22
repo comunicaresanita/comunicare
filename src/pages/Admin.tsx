@@ -186,7 +186,7 @@ const Admin = () => {
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <h1 className="text-3xl font-bold">Dashboard Admin</h1>
+          <h1 className="font-bold text-2xl">Dashboard admin</h1>
           <div className="flex gap-2">
             <Button variant="outline" onClick={downloadCSV}>
               <Download className="w-4 h-4 mr-1" /> Scarica CSV
