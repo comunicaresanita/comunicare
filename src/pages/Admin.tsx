@@ -9,7 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { AreaChart, Area, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { Lock, Users, UserCheck, Activity, TrendingUp, Trash2, Download } from "lucide-react";
 import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 import { format, parseISO } from "date-fns";
 import { it } from "date-fns/locale";
 import { toast } from "sonner";
@@ -107,7 +107,13 @@ const Admin = () => {
     if (!element) return;
     toast.info("Generazione PDF in corso...");
     try {
-      const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight,
+      });
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -124,9 +130,18 @@ const Admin = () => {
         position += pdfHeight;
       }
 
-      pdf.save(`comunicare_admin_${format(new Date(), "yyyy-MM-dd")}.pdf`);
+      const pdfBlob = pdf.output("blob");
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      const link = document.createElement("a");
+      link.href = pdfUrl;
+      link.download = "Report_Iscritti.pdf";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(pdfUrl);
       toast.success("PDF scaricato!");
-    } catch {
+    } catch (error) {
+      console.error("Errore generazione PDF admin:", error);
       toast.error("Errore durante la generazione del PDF");
     }
   };

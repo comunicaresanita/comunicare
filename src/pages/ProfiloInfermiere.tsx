@@ -9,6 +9,43 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
+const NIGHT_START_HOUR = 20;
+
+const getSlotStartHour = (slot: string | null) => {
+  if (!slot) return null;
+  const [start] = slot.split("-");
+  const hour = Number(start);
+  return Number.isNaN(hour) ? null : hour;
+};
+
+const getBookingPricing = (basePrice: number, date: Date | null, slot: string | null) => {
+  const startHour = getSlotStartHour(slot);
+  const isNight = startHour !== null && startHour >= NIGHT_START_HOUR;
+  const isSunday = date?.getDay() === 0;
+
+  let surchargeRate = 0;
+  let surchargeReason: string | null = null;
+
+  if (isNight && isSunday) {
+    surchargeRate = 0.6;
+    surchargeReason = "Maggiorazione del 60% applicata perché la prestazione è notturna e festiva.";
+  } else if (isSunday) {
+    surchargeRate = 0.4;
+    surchargeReason = "Maggiorazione del 40% applicata perché la prestazione è festiva.";
+  } else if (isNight) {
+    surchargeRate = 0.25;
+    surchargeReason = "Maggiorazione del 25% applicata perché la prestazione rientra tra le prestazioni notturne.";
+  }
+
+  const finalPrice = Math.round(basePrice * (1 + surchargeRate));
+
+  return {
+    finalPrice,
+    surchargeRate,
+    surchargeReason,
+  };
+};
+
 interface ProfessionalProfile {
   id: string;
   first_name: string;
@@ -219,6 +256,7 @@ const ProfiloInfermiere = () => {
     : 0;
 
   const selectedService = services.find(s => s.name === servizioSelezionato);
+  const bookingPricing = getBookingPricing(selectedService?.price || 0, selectedDate, slotSelezionato);
 
   const typeLabel = professional.professional_type === "oss" ? "OSS"
     : professional.professional_type === "fisioterapista" ? "Fisioterapista"
@@ -238,7 +276,7 @@ const ProfiloInfermiere = () => {
       toast({ title: "Seleziona tutti i campi", description: "Scegli un giorno e uno slot orario.", variant: "destructive" });
       return;
     }
-    if (!user) {
+    if (!user || !userProfile?.id) {
       toast({ title: "Accedi per prenotare", description: "Devi effettuare l'accesso per prenotare una prestazione.", variant: "destructive" });
       navigate("/login");
       return;
@@ -250,10 +288,10 @@ const ProfiloInfermiere = () => {
       const { error: bookingError } = await supabase
         .from("bookings")
         .insert({
-          patient_id: userProfile?.id!,
+          patient_id: userProfile.id,
           professional_id: professional.id,
           service_name: servizioSelezionato,
-          price: selectedService?.price || 0,
+          price: bookingPricing.finalPrice,
           day: dayStr,
           time_slot: slotSelezionato,
           status: "confirmed",
@@ -265,8 +303,9 @@ const ProfiloInfermiere = () => {
 
       toast({ title: "Prenotazione confermata!", description: "La tua prenotazione è stata registrata con successo." });
       navigate("/dashboard-paziente");
-    } catch (err: any) {
-      toast({ title: "Errore", description: err.message || "Errore durante la prenotazione.", variant: "destructive" });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Errore durante la prenotazione.";
+      toast({ title: "Errore", description: message, variant: "destructive" });
     } finally {
       setPaymentLoading(false);
     }
@@ -433,7 +472,13 @@ const ProfiloInfermiere = () => {
                   <p><strong>Servizio:</strong> {servizioSelezionato}</p>
                   <p><strong>Giorno:</strong> {formatSelectedDate(selectedDate)}</p>
                   <p><strong>Orario:</strong> {slotSelezionato}</p>
-                  <p><strong>Prezzo:</strong> €{selectedService?.price}</p>
+                  <p><strong>Tariffa base:</strong> €{selectedService?.price}</p>
+                  <p><strong>Prezzo finale:</strong> €{bookingPricing.finalPrice}</p>
+                  {bookingPricing.surchargeReason && (
+                    <p className="text-xs text-muted-foreground">
+                      {bookingPricing.surchargeReason}
+                    </p>
+                  )}
                 </div>
                 <Button size="lg" onClick={handlePrenotaSenzaPagamento} className="w-full py-5 md:py-6" disabled={paymentLoading}>
                   {paymentLoading ? "Prenotazione in corso..." : "Prenota"}
