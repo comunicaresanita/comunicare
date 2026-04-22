@@ -377,22 +377,24 @@ const DashboardPaziente = () => {
             </CardContent>
           </Card>
 
+          {/* Map always visible */}
+          <div ref={mapRef} className="w-full h-56 md:h-80 rounded-lg overflow-hidden border mb-4 md:mb-6 bg-secondary">
+            {!mapsLoaded && (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <MapPin className="w-12 h-12 text-primary mx-auto mb-3" />
+                  <p className="text-senior-sm text-muted-foreground">Caricamento mappa...</p>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* === Results: by service === */}
           {prestazioneSelezionata && !professionistaSelezionato && (
             <>
               <h2 className="text-base md:text-senior-xl font-semibold mb-4">
                 Professionisti disponibili per: <span className="text-primary">{prestazioneSelezionata}</span>
               </h2>
-              <div ref={mapRef} className="w-full h-56 md:h-80 rounded-lg overflow-hidden border mb-4 md:mb-6 bg-secondary">
-                {!mapsLoaded && (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-center">
-                      <MapPin className="w-12 h-12 text-primary mx-auto mb-3" />
-                      <p className="text-senior-sm text-muted-foreground">Caricamento mappa...</p>
-                    </div>
-                  </div>
-                )}
-              </div>
               <div className="space-y-4">
                 {professionistiFiltrati.map((p) => {
                   const servizio = p.servizi.find((s) => s.name === prestazioneSelezionata);
@@ -462,81 +464,64 @@ const DashboardPaziente = () => {
 
           {/* === Results: by professional name === */}
           {professionistaSelezionato && (
-            <>
-              <h2 className="text-base md:text-senior-xl font-semibold mb-4">
-                Profilo di: <span className="text-primary">{professionistaSelezionato.nome}</span>
-              </h2>
-              <div ref={mapRef} className="w-full h-56 md:h-80 rounded-lg overflow-hidden border mb-4 md:mb-6 bg-secondary">
-                {!mapsLoaded && (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-center">
-                      <MapPin className="w-12 h-12 text-primary mx-auto mb-3" />
-                      <p className="text-senior-sm text-muted-foreground">Caricamento mappa...</p>
-                    </div>
+            <Card className="transition-shadow border-2 hover:border-primary">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-start md:items-center gap-3 md:gap-6 mb-4">
+                  <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    {professionistaSelezionato.photoUrl ? (
+                      <img src={professionistaSelezionato.photoUrl} alt={professionistaSelezionato.nome} className="w-full h-full object-cover" />
+                    ) : (
+                      <Stethoscope className="w-7 h-7 md:w-10 md:h-10 text-primary" />
+                    )}
                   </div>
-                )}
-              </div>
-
-              <Card className="transition-shadow border-2 hover:border-primary">
-                <CardContent className="p-4 md:p-6">
-                  <div className="flex items-start md:items-center gap-3 md:gap-6 mb-4">
-                    <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
-                      {professionistaSelezionato.photoUrl ? (
-                        <img src={professionistaSelezionato.photoUrl} alt={professionistaSelezionato.nome} className="w-full h-full object-cover" />
-                      ) : (
-                        <Stethoscope className="w-7 h-7 md:w-10 md:h-10 text-primary" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-base md:text-senior-xl font-semibold">{professionistaSelezionato.nome}</h3>
-                        {professionistaSelezionato.verified && (
-                          <span className="inline-flex items-center gap-0.5 text-white text-xs font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: "#0097B2" }}>
-                            <ShieldCheck className="w-3 h-3" /> Verificato
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">{typeLabel(professionistaSelezionato.professionalType)}</span>
-                        {professionistaSelezionato.valutazione > 0 && (
-                          <span className="flex items-center gap-0.5 text-sm">
-                            <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" /> {professionistaSelezionato.valutazione}
-                          </span>
-                        )}
-                      </div>
-                      {professionistaSelezionato.bio && (
-                        <p className="text-xs md:text-senior-sm text-muted-foreground mt-1">{professionistaSelezionato.bio}</p>
-                      )}
-                      {professionistaSelezionato.zona && (
-                        <span className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-                          <MapPin className="w-4 h-4" /> {professionistaSelezionato.zona}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base md:text-senior-xl font-semibold">{professionistaSelezionato.nome}</h3>
+                      {professionistaSelezionato.verified && (
+                        <span className="inline-flex items-center gap-0.5 text-white text-xs font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: "#0097B2" }}>
+                          <ShieldCheck className="w-3 h-3" /> Verificato
                         </span>
                       )}
                     </div>
-                  </div>
-
-                  {/* Services list */}
-                  <h4 className="text-sm md:text-senior-base font-semibold mb-2 mt-2">Prestazioni offerte:</h4>
-                  <p className="text-xs text-muted-foreground mb-2">Seleziona una prestazione per accedere al calendario delle disponibilità.</p>
-                  <div className="space-y-1.5">
-                    {professionistaSelezionato.servizi.map((s) => (
-                      <button
-                        key={s.name}
-                        type="button"
-                        onClick={() => navigate(`/profilo-infermiere/${professionistaSelezionato.profileId}?servizio=${encodeURIComponent(s.name)}`)}
-                        className="flex w-full justify-between items-center p-2 rounded-md bg-secondary/50 text-xs md:text-sm text-left transition-colors hover:bg-secondary"
-                      >
-                        <span>{s.name}</span>
-                        <span className="font-bold text-primary ml-2 flex-shrink-0">€{s.price}</span>
-                      </button>
-                    ))}
-                    {professionistaSelezionato.servizi.length === 0 && (
-                      <p className="text-sm text-muted-foreground">Nessuna prestazione configurata.</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">{typeLabel(professionistaSelezionato.professionalType)}</span>
+                      {professionistaSelezionato.valutazione > 0 && (
+                        <span className="flex items-center gap-0.5 text-sm">
+                          <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" /> {professionistaSelezionato.valutazione}
+                        </span>
+                      )}
+                    </div>
+                    {professionistaSelezionato.bio && (
+                      <p className="text-xs md:text-senior-sm text-muted-foreground mt-1">{professionistaSelezionato.bio}</p>
+                    )}
+                    {professionistaSelezionato.zona && (
+                      <span className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                        <MapPin className="w-4 h-4" /> {professionistaSelezionato.zona}
+                      </span>
                     )}
                   </div>
-                </CardContent>
-              </Card>
-            </>
+                </div>
+
+                <h4 className="text-sm md:text-senior-base font-semibold mb-2 mt-2">Prestazioni offerte:</h4>
+                <p className="text-xs text-muted-foreground mb-2">Seleziona una prestazione per accedere al calendario delle disponibilità.</p>
+                <div className="space-y-1.5">
+                  {professionistaSelezionato.servizi.map((s) => (
+                    <button
+                      key={s.name}
+                      type="button"
+                      onClick={() => navigate(`/profilo-infermiere/${professionistaSelezionato.profileId}?servizio=${encodeURIComponent(s.name)}`)}
+                      className="flex w-full justify-between items-center p-2 rounded-md bg-secondary/50 text-xs md:text-sm text-left transition-colors hover:bg-secondary"
+                    >
+                      <span>{s.name}</span>
+                      <span className="font-bold text-primary ml-2 flex-shrink-0">€{s.price}</span>
+                    </button>
+                  ))}
+                  {professionistaSelezionato.servizi.length === 0 && (
+                    <p className="text-sm text-muted-foreground">Nessuna prestazione configurata.</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           )}
         </div>
       </main>
