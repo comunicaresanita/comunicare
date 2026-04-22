@@ -43,6 +43,11 @@ const AuthHeader = () => {
               <DropdownMenuItem asChild>
                 <Link to="/profilo" className="cursor-pointer">Il mio profilo</Link>
               </DropdownMenuItem>
+              {profile?.role !== "professionista" && (
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard-paziente" className="cursor-pointer">🗓️ Prenota</Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem asChild>
                 <Link to="/contatti" className="cursor-pointer"><Phone className="w-4 h-4 mr-2" />Contatti</Link>
               </DropdownMenuItem>

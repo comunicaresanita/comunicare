@@ -450,8 +450,8 @@ const ProfiloInfermiere = () => {
                 <p className="text-xs text-muted-foreground text-center mt-2">
                   Il pagamento è sicuro tramite Stripe. Il professionista riceverà il compenso solo a prestazione completata.
                 </p>
-                <p className="text-xs text-destructive text-center mt-1 font-medium">
-                  ⚠️ In caso di cancellazione, è obbligatorio avvisare almeno 24 ore prima della prestazione. In caso contrario, l'importo non sarà rimborsato.
+                <p className="text-xs text-muted-foreground text-center mt-1">
+                  In caso di cancellazione, è obbligatorio avvisare almeno 24 ore prima della prestazione. In caso contrario, l'importo non sarà rimborsato.
                 </p>
               </CardContent>
             </Card>
