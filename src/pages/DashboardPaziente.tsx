@@ -345,13 +345,13 @@ const DashboardPaziente = () => {
 
           <Card className="mb-6 md:mb-8">
             <CardHeader className="p-4 md:p-6">
-              <CardTitle className="text-base md:text-senior-lg flex items-center gap-2">
+              <CardTitle className="text-lg md:text-senior-lg flex items-center gap-2">
                 <Search className="w-5 h-5" /> Cerca per
               </CardTitle>
-              <div className="flex gap-2 mt-2">
+              <div className="flex gap-2 mt-2 text-sm">
                 <button
                   onClick={() => handleModeSwitch("prestazione")}
-                  className={`px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-full text-sm md:text-sm font-medium transition-colors ${
                     searchMode === "prestazione"
                       ? "bg-primary text-primary-foreground"
                       : "bg-secondary text-muted-foreground hover:text-foreground"
@@ -361,7 +361,7 @@ const DashboardPaziente = () => {
                 </button>
                 <button
                   onClick={() => handleModeSwitch("professionista")}
-                  className={`px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition-colors flex items-center gap-1 ${
+                  className={`px-3 py-1.5 rounded-full text-sm md:text-sm font-medium transition-colors flex items-center gap-1 ${
                     searchMode === "professionista"
                       ? "bg-primary text-primary-foreground"
                       : "bg-secondary text-muted-foreground hover:text-foreground"
@@ -413,7 +413,7 @@ const DashboardPaziente = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 md:max-h-64 overflow-y-auto">
                   {prestazioniFiltrate.map((p) => (
                     <button key={p} onClick={() => { setPrestazioneSelezionata(p); setProfessionistaSelezionato(null); }}
-                      className={`text-left p-2.5 md:p-3 rounded-lg border transition-colors text-xs md:text-senior-sm ${
+                      className={`text-left p-2.5 md:p-3 rounded-lg border transition-colors text-sm md:text-senior-sm ${
                         prestazioneSelezionata === p ? "border-primary bg-secondary text-primary font-medium" : "border-border hover:border-primary/50"
                       }`}
                     >{p}</button>
