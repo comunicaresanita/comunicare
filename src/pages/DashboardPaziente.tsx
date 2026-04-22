@@ -523,9 +523,7 @@ const DashboardPaziente = () => {
                 )}
               </div>
 
-              <Card className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
-                onClick={() => navigate(`/profilo-infermiere/${professionistaSelezionato.profileId}`)}
-              >
+              <Card className="transition-shadow border-2 hover:border-primary">
                 <CardContent className="p-4 md:p-6">
                   <div className="flex items-start md:items-center gap-3 md:gap-6 mb-4">
                     <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
@@ -565,12 +563,18 @@ const DashboardPaziente = () => {
 
                   {/* Services list */}
                   <h4 className="text-sm md:text-senior-base font-semibold mb-2 mt-2">Prestazioni offerte:</h4>
+                  <p className="text-xs text-muted-foreground mb-2">Seleziona una prestazione per accedere al calendario delle disponibilità.</p>
                   <div className="space-y-1.5">
                     {professionistaSelezionato.servizi.map((s) => (
-                      <div key={s.name} className="flex justify-between items-center p-2 rounded-md bg-secondary/50 text-xs md:text-sm">
+                      <button
+                        key={s.name}
+                        type="button"
+                        onClick={() => navigate(`/profilo-infermiere/${professionistaSelezionato.profileId}?servizio=${encodeURIComponent(s.name)}`)}
+                        className="flex w-full justify-between items-center p-2 rounded-md bg-secondary/50 text-xs md:text-sm text-left transition-colors hover:bg-secondary"
+                      >
                         <span>{s.name}</span>
                         <span className="font-bold text-primary ml-2 flex-shrink-0">€{s.price}</span>
-                      </div>
+                      </button>
                     ))}
                     {professionistaSelezionato.servizi.length === 0 && (
                       <p className="text-sm text-muted-foreground">Nessuna prestazione configurata.</p>

@@ -291,7 +291,6 @@ const ProfiloInfermiere = () => {
           patient_id: userProfile?.id!,
           professional_id: professional.id,
           service_name: servizioSelezionato,
-          price: selectedService?.price || 0,
           price: bookingPricing.finalPrice,
           day: dayStr,
           time_slot: slotSelezionato,
@@ -472,7 +471,8 @@ const ProfiloInfermiere = () => {
                   <p><strong>Servizio:</strong> {servizioSelezionato}</p>
                   <p><strong>Giorno:</strong> {formatSelectedDate(selectedDate)}</p>
                   <p><strong>Orario:</strong> {slotSelezionato}</p>
-                  <p><strong>Prezzo:</strong> €{bookingPricing.finalPrice}</p>
+                  <p><strong>Tariffa base:</strong> €{selectedService?.price}</p>
+                  <p><strong>Prezzo finale:</strong> €{bookingPricing.finalPrice}</p>
                   {bookingPricing.surchargeReason && (
                     <p className="text-xs text-muted-foreground">
                       {bookingPricing.surchargeReason}
