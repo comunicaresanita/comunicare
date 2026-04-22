@@ -251,8 +251,17 @@ const DashboardPaziente = () => {
         },
       });
       marker.addListener("click", () => {
-        const el = document.getElementById(`prof-card-${p.profileId}`);
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (!prestazioneSelezionata) {
+          // No service selected: show this professional's card
+          handleSelectProfessionista(p);
+          setTimeout(() => {
+            const el = document.getElementById(`prof-card-selected`);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+          }, 100);
+        } else {
+          const el = document.getElementById(`prof-card-${p.profileId}`);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
       });
       markersRef.current.push(marker);
     });
@@ -277,7 +286,7 @@ const DashboardPaziente = () => {
       mapInstanceRef.current.setCenter(userCoords);
       mapInstanceRef.current.setZoom(12);
     }
-  }, [mapProfessionals, mapsLoaded, userCoords]);
+  }, [mapProfessionals, mapsLoaded, userCoords, prestazioneSelezionata]);
 
   const typeLabel = (t: string) => t === "oss" ? "OSS" : t === "fisioterapista" ? "Fisioterapista" : "Infermiere";
 
@@ -464,7 +473,7 @@ const DashboardPaziente = () => {
 
           {/* === Results: by professional name === */}
           {professionistaSelezionato && (
-            <Card className="transition-shadow border-2 hover:border-primary">
+            <Card id="prof-card-selected" className="transition-shadow border-2 hover:border-primary">
               <CardContent className="p-4 md:p-6">
                 <div className="flex items-start md:items-center gap-3 md:gap-6 mb-4">
                   <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
