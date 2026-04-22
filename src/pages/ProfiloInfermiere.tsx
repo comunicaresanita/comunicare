@@ -427,7 +427,7 @@ const ProfiloInfermiere = () => {
                 <p className="mt-4 text-sm text-muted-foreground text-center">Nessuno slot disponibile per questa data.</p>
               )}
 
-              {availability.length === 0 && (
+              {availability.length === 0 && overrides.length === 0 && (
                 <p className="text-muted-foreground text-center py-4">Nessuna disponibilità impostata al momento.</p>
               )}
             </CardContent>
