@@ -215,10 +215,16 @@ const DashboardPaziente = () => {
     fetchProfessionisti();
   }, []);
 
-  // Map for service search
+  // Professionals to show on map
+  const mapProfessionals = useMemo(() => {
+    if (professionistaSelezionato) return [professionistaSelezionato];
+    if (prestazioneSelezionata) return professionistiFiltrati;
+    return professionisti;
+  }, [professionistaSelezionato, prestazioneSelezionata, professionistiFiltrati, professionisti]);
+
+  // Map rendering
   useEffect(() => {
-    if (professionistaSelezionato) return; // skip when viewing single professional
-    if (!prestazioneSelezionata || !mapRef.current || !mapsLoaded) return;
+    if (!mapRef.current || !mapsLoaded) return;
     const google = (window as any).google;
     if (!google) return;
 
@@ -228,14 +234,12 @@ const DashboardPaziente = () => {
         center, zoom: 11,
         styles: [{ featureType: "poi", stylers: [{ visibility: "simplified" }] }],
       });
-    } else {
-      mapInstanceRef.current.setCenter(center);
     }
 
     markersRef.current.forEach((m: any) => m.setMap(null));
     markersRef.current = [];
 
-    professionistiFiltrati.forEach((p) => {
+    mapProfessionals.forEach((p) => {
       const marker = new google.maps.Marker({
         position: { lat: p.lat, lng: p.lng },
         map: mapInstanceRef.current,
@@ -253,23 +257,6 @@ const DashboardPaziente = () => {
       markersRef.current.push(marker);
     });
 
-    if (professionistiFiltrati.length > 0 && userCoords) {
-      const nearest = professionistiFiltrati[0];
-      const bounds = new google.maps.LatLngBounds();
-      bounds.extend(userCoords);
-      bounds.extend({ lat: nearest.lat, lng: nearest.lng });
-      professionistiFiltrati.slice(0, 3).forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
-      mapInstanceRef.current.fitBounds(bounds);
-      google.maps.event.addListenerOnce(mapInstanceRef.current, "bounds_changed", () => {
-        const currentZoom = mapInstanceRef.current.getZoom();
-        if (currentZoom > 14) mapInstanceRef.current.setZoom(14);
-      });
-    } else if (professionistiFiltrati.length > 0) {
-      const bounds = new google.maps.LatLngBounds();
-      professionistiFiltrati.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
-      mapInstanceRef.current.fitBounds(bounds);
-    }
-
     if (userCoords) {
       const userMarker = new google.maps.Marker({
         position: userCoords, map: mapInstanceRef.current, title: "La tua posizione",
@@ -277,7 +264,20 @@ const DashboardPaziente = () => {
       });
       markersRef.current.push(userMarker);
     }
-  }, [prestazioneSelezionata, professionistiFiltrati, mapsLoaded, userCoords, professionistaSelezionato]);
+
+    if (mapProfessionals.length > 0) {
+      const bounds = new google.maps.LatLngBounds();
+      if (userCoords) bounds.extend(userCoords);
+      mapProfessionals.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
+      mapInstanceRef.current.fitBounds(bounds);
+      google.maps.event.addListenerOnce(mapInstanceRef.current, "bounds_changed", () => {
+        if (mapInstanceRef.current.getZoom() > 14) mapInstanceRef.current.setZoom(14);
+      });
+    } else if (userCoords) {
+      mapInstanceRef.current.setCenter(userCoords);
+      mapInstanceRef.current.setZoom(12);
+    }
+  }, [mapProfessionals, mapsLoaded, userCoords]);
 
   // Map for single professional view
   useEffect(() => {
