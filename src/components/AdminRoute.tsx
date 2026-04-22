@@ -1,8 +1,9 @@
+import type { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 type AdminRouteProps = {
-  children: JSX.Element;
+  children: ReactNode;
 };
 
 const ADMIN_EMAILS = new Set([

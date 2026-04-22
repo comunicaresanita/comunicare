@@ -276,7 +276,7 @@ const ProfiloInfermiere = () => {
       toast({ title: "Seleziona tutti i campi", description: "Scegli un giorno e uno slot orario.", variant: "destructive" });
       return;
     }
-    if (!user) {
+    if (!user || !userProfile?.id) {
       toast({ title: "Accedi per prenotare", description: "Devi effettuare l'accesso per prenotare una prestazione.", variant: "destructive" });
       navigate("/login");
       return;
@@ -288,7 +288,7 @@ const ProfiloInfermiere = () => {
       const { error: bookingError } = await supabase
         .from("bookings")
         .insert({
-          patient_id: userProfile?.id!,
+          patient_id: userProfile.id,
           professional_id: professional.id,
           service_name: servizioSelezionato,
           price: bookingPricing.finalPrice,
@@ -303,8 +303,9 @@ const ProfiloInfermiere = () => {
 
       toast({ title: "Prenotazione confermata!", description: "La tua prenotazione è stata registrata con successo." });
       navigate("/dashboard-paziente");
-    } catch (err: any) {
-      toast({ title: "Errore", description: err.message || "Errore durante la prenotazione.", variant: "destructive" });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Errore durante la prenotazione.";
+      toast({ title: "Errore", description: message, variant: "destructive" });
     } finally {
       setPaymentLoading(false);
     }
