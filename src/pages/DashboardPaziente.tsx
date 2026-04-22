@@ -279,56 +279,6 @@ const DashboardPaziente = () => {
     }
   }, [mapProfessionals, mapsLoaded, userCoords]);
 
-  // Map for single professional view
-  useEffect(() => {
-    if (!professionistaSelezionato || !mapRef.current || !mapsLoaded) return;
-    const google = (window as any).google;
-    if (!google) return;
-
-    const p = professionistaSelezionato;
-    const center = { lat: p.lat, lng: p.lng };
-
-    if (!mapInstanceRef.current) {
-      mapInstanceRef.current = new google.maps.Map(mapRef.current, {
-        center, zoom: 13,
-        styles: [{ featureType: "poi", stylers: [{ visibility: "simplified" }] }],
-      });
-    } else {
-      mapInstanceRef.current.setCenter(center);
-      mapInstanceRef.current.setZoom(13);
-    }
-
-    markersRef.current.forEach((m: any) => m.setMap(null));
-    markersRef.current = [];
-
-    const marker = new google.maps.Marker({
-      position: center, map: mapInstanceRef.current, title: p.nome,
-      icon: {
-        path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
-        fillColor: "#4A90D9", fillOpacity: 1, strokeColor: "#2a6cb6", strokeWeight: 1.5, scale: 1.8,
-        anchor: new google.maps.Point(12, 22),
-      },
-    });
-    markersRef.current.push(marker);
-
-    if (userCoords) {
-      const bounds = new google.maps.LatLngBounds();
-      bounds.extend(userCoords);
-      bounds.extend(center);
-      mapInstanceRef.current.fitBounds(bounds);
-      google.maps.event.addListenerOnce(mapInstanceRef.current, "bounds_changed", () => {
-        if (mapInstanceRef.current.getZoom() > 14) mapInstanceRef.current.setZoom(14);
-      });
-
-      const userMarker = new google.maps.Marker({
-        position: userCoords, map: mapInstanceRef.current, title: "La tua posizione",
-        icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: "#22c55e", fillOpacity: 1, strokeColor: "#16a34a", strokeWeight: 2, scale: 8 },
-      });
-      markersRef.current.push(userMarker);
-    }
-  }, [professionistaSelezionato, mapsLoaded, userCoords]);
-
-  const showResults = prestazioneSelezionata || professionistaSelezionato;
   const typeLabel = (t: string) => t === "oss" ? "OSS" : t === "fisioterapista" ? "Fisioterapista" : "Infermiere";
 
   return (
