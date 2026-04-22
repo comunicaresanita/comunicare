@@ -97,8 +97,8 @@ const Registrazione = () => {
     setLoading(true);
     const metadata: Record<string, string> = {
       role: ruolo!,
-      first_name: nome,
-      last_name: cognome,
+      first_name: capitalize(nome),
+      last_name: capitalize(cognome),
       address: indirizzo,
       bio: bio || "",
       numero_opi: numeroOpi || "",
