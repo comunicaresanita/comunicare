@@ -40,6 +40,7 @@ const Registrazione = () => {
   const [numeroOpi, setNumeroOpi] = useState("");
   const [numeroFnofi, setNumeroFnofi] = useState("");
   const [partitaIva, setPartitaIva] = useState("");
+  const [phone, setPhone] = useState("");
   
   const [mapLat, setMapLat] = useState<number | null>(null);
   const [mapLng, setMapLng] = useState<number | null>(null);
@@ -101,6 +102,7 @@ const Registrazione = () => {
       numero_opi: numeroOpi || "",
       numero_fnofi: numeroFnofi || "",
       partita_iva: partitaIva || "",
+      phone: phone,
     };
     if (ruolo === "professionista") {
       metadata.professional_type = tipoProfessionista || "infermiere";
@@ -271,6 +273,10 @@ const Registrazione = () => {
                   {confirmPassword && password !== confirmPassword && (
                     <p className="text-sm text-destructive">Le password non corrispondono.</p>
                   )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-senior-sm">Numero di cellulare *</Label>
+                  <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Es. +39 333 1234567" required className="text-senior-sm py-3" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="indirizzo" className="text-senior-sm">Indirizzo *</Label>
