@@ -367,12 +367,12 @@ const DashboardPaziente = () => {
                 )}
               </div>
 
-              {/* Service suggestions dropdown (only when typing) */}
+              {/* Service suggestions (only when typing) */}
               {searchMode === "prestazione" && ricerca.trim() && !prestazioneSelezionata && prestazioniFiltrate.length > 0 && (
-                <div className="absolute z-20 left-0 right-0 top-12 bg-background border rounded-md shadow-lg max-h-52 overflow-y-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 md:max-h-64 overflow-y-auto mt-2">
                   {prestazioniFiltrate.map((p) => (
                     <button key={p} onClick={() => { setPrestazioneSelezionata(p); setRicerca(p); setProfessionistaSelezionato(null); }}
-                      className="w-full text-left px-4 py-2.5 hover:bg-secondary text-sm border-b last:border-b-0"
+                      className="text-left p-2.5 md:p-3 rounded-lg border border-border hover:border-primary/50 transition-colors text-sm md:text-senior-sm"
                     >{p}</button>
                   ))}
                 </div>
