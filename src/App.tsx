@@ -24,7 +24,7 @@ import Contatti from "./pages/Contatti.tsx";
 import Blog from "./pages/Blog.tsx";
 import BlogArticolo from "./pages/BlogArticolo.tsx";
 import Admin from "./pages/Admin.tsx";
-import AdminRoute from "./components/AdminRoute.tsx";
+
 
 const queryClient = new QueryClient();
 
