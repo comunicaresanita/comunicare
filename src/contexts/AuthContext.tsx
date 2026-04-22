@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+  const INACTIVITY_TIMEOUT = 10 * 60 * 1000; // 10 minutes
 
   const handleInactivityLogout = useCallback(async () => {
     await supabase.auth.signOut();
