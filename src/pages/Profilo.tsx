@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,11 +24,12 @@ import AddressAutocomplete from "@/components/AddressAutocomplete";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Camera, ArrowLeft, Trash2 } from "lucide-react";
+import { Camera, ArrowLeft, Trash2, ClipboardList } from "lucide-react";
 
 const Profilo = () => {
   const { user, profile, loading: authLoading, refreshProfile, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   const [firstName, setFirstName] = useState("");
@@ -46,6 +47,34 @@ const Profilo = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loadingBookings, setLoadingBookings] = useState(false);
+
+  // Scroll to storico section if hash is #storico
+  useEffect(() => {
+    if (location.hash === "#storico") {
+      setTimeout(() => {
+        const el = document.getElementById("storico");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 300);
+    }
+  }, [location.hash]);
+
+  // Fetch booking history for patients
+  useEffect(() => {
+    const fetchBookings = async () => {
+      if (!profile || profile.role === "professionista") return;
+      setLoadingBookings(true);
+      const { data } = await supabase
+        .from("bookings")
+        .select("*, professional:professional_id(first_name, last_name)")
+        .eq("patient_id", profile.id)
+        .order("day", { ascending: false });
+      setBookings(data || []);
+      setLoadingBookings(false);
+    };
+    fetchBookings();
+  }, [profile]);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/login");
