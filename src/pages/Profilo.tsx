@@ -311,7 +311,7 @@ const Profilo = () => {
               </Button>
 
               {/* Delete account section */}
-              <div className="border-t border-border pt-6 mt-6">
+              <div className="border-t border-border pt-6 mt-6 px-[10px] mx-[10px] border">
                 <h3 className="text-senior-lg font-semibold text-destructive mb-2">Cancella account</h3>
                 <p className="text-sm text-foreground mb-4">
                   Eliminando il tuo account, tutti i tuoi dati verranno rimossi permanentemente dal server, inclusi profilo, prenotazioni, recensioni e servizi. Questa azione è irreversibile.
