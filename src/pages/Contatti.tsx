@@ -129,7 +129,7 @@ const Contatti = () => {
           </Card>
 
           {/* FAQ */}
-          <Card>
+          <Card id="faq">
             <CardHeader>
               <CardTitle className="text-lg">Domande frequenti (FAQ)</CardTitle>
             </CardHeader>
