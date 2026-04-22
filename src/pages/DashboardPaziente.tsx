@@ -286,7 +286,7 @@ const DashboardPaziente = () => {
       mapInstanceRef.current.setCenter(userCoords);
       mapInstanceRef.current.setZoom(12);
     }
-  }, [mapProfessionals, mapsLoaded, userCoords]);
+  }, [mapProfessionals, mapsLoaded, userCoords, prestazioneSelezionata]);
 
   const typeLabel = (t: string) => t === "oss" ? "OSS" : t === "fisioterapista" ? "Fisioterapista" : "Infermiere";
 
