@@ -2,15 +2,12 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/comunicare-logo.png";
-import { Menu, LogOut, Phone, BookOpen, Home, User, LayoutDashboard, HelpCircle } from "lucide-react";
+import { Menu, LogOut, Phone, Home, User, LayoutDashboard, HelpCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 
 const AuthHeader = () => {
@@ -41,7 +38,7 @@ const AuthHeader = () => {
     <header className="bg-card shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
         <Link to={logoTarget} className="flex items-center">
-          <img src={logo} alt="ComuniCARE" className="h-10 md:h-16" />
+          <img src={logo} alt="ComuniCARE" className="h-12 md:h-20" />
         </Link>
         {user ? (
           <DropdownMenu>
@@ -61,26 +58,11 @@ const AuthHeader = () => {
                   <Home className="w-4 h-4 mr-2" />Home
                 </DropdownMenuItem>
               )}
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="cursor-pointer">
-                  <User className="w-4 h-4 mr-2" />Il mio profilo
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem asChild>
-                    <Link to="/profilo" className="cursor-pointer">Dati personali</Link>
-                  </DropdownMenuItem>
-                  {profile?.role !== "professionista" && (
-                    <DropdownMenuItem asChild>
-                      <Link to="/profilo#storico" className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />Storico prestazioni</Link>
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
               <DropdownMenuItem asChild>
-                <Link to="/contatti" className="cursor-pointer"><Phone className="w-4 h-4 mr-2" />Contatti</Link>
+                <Link to="/profilo" className="cursor-pointer"><User className="w-4 h-4 mr-2" />Il mio profilo</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/blog" className="cursor-pointer"><BookOpen className="w-4 h-4 mr-2" />Blog</Link>
+                <Link to="/contatti" className="cursor-pointer"><Phone className="w-4 h-4 mr-2" />Contatti</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/contatti#faq" className="cursor-pointer"><HelpCircle className="w-4 h-4 mr-2" />FAQ</Link>
