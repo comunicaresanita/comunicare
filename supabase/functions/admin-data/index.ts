@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { password } = await req.json();
+    const { password, action, userId } = await req.json();
     const adminPassword = Deno.env.get("ADMIN_PASSWORD");
 
     if (!adminPassword || password !== adminPassword) {
@@ -26,6 +26,44 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Delete user action
+    if (action === "delete" && userId) {
+      // Get profile id
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("user_id", userId)
+        .single();
+
+      if (profile) {
+        await supabase.from("reviews").delete().or(`patient_id.eq.${profile.id},professional_id.eq.${profile.id}`);
+        await supabase.from("bookings").delete().or(`patient_id.eq.${profile.id},professional_id.eq.${profile.id}`);
+        await supabase.from("services").delete().eq("professional_id", profile.id);
+        await supabase.from("availability").delete().eq("professional_id", profile.id);
+        await supabase.from("availability_overrides").delete().eq("professional_id", profile.id);
+
+        const { data: files } = await supabase.storage.from("profile-photos").list(userId);
+        if (files && files.length > 0) {
+          await supabase.storage.from("profile-photos").remove(files.map(f => `${userId}/${f.name}`));
+        }
+
+        await supabase.from("profiles").delete().eq("user_id", userId);
+      }
+
+      const { error: deleteError } = await supabase.auth.admin.deleteUser(userId);
+      if (deleteError) {
+        return new Response(JSON.stringify({ error: deleteError.message }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Default: fetch all profiles
     const { data: profiles, error } = await supabase
       .from("profiles")
       .select("*")
