@@ -11,6 +11,9 @@ const BlogArticolo = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
   const article = articles.find((a) => a.slug === slug);
   const otherArticles = articles.filter((a) => a.slug !== slug);
 
