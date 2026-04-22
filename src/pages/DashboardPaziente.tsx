@@ -251,8 +251,17 @@ const DashboardPaziente = () => {
         },
       });
       marker.addListener("click", () => {
-        const el = document.getElementById(`prof-card-${p.profileId}`);
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (!prestazioneSelezionata) {
+          // No service selected: show this professional's card
+          handleSelectProfessionista(p);
+          setTimeout(() => {
+            const el = document.getElementById(`prof-card-selected`);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+          }, 100);
+        } else {
+          const el = document.getElementById(`prof-card-${p.profileId}`);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
       });
       markersRef.current.push(marker);
     });
