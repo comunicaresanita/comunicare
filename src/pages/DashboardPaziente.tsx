@@ -215,10 +215,16 @@ const DashboardPaziente = () => {
     fetchProfessionisti();
   }, []);
 
-  // Map for service search
+  // Professionals to show on map
+  const mapProfessionals = useMemo(() => {
+    if (professionistaSelezionato) return [professionistaSelezionato];
+    if (prestazioneSelezionata) return professionistiFiltrati;
+    return professionisti;
+  }, [professionistaSelezionato, prestazioneSelezionata, professionistiFiltrati, professionisti]);
+
+  // Map rendering
   useEffect(() => {
-    if (professionistaSelezionato) return; // skip when viewing single professional
-    if (!prestazioneSelezionata || !mapRef.current || !mapsLoaded) return;
+    if (!mapRef.current || !mapsLoaded) return;
     const google = (window as any).google;
     if (!google) return;
 
@@ -228,14 +234,12 @@ const DashboardPaziente = () => {
         center, zoom: 11,
         styles: [{ featureType: "poi", stylers: [{ visibility: "simplified" }] }],
       });
-    } else {
-      mapInstanceRef.current.setCenter(center);
     }
 
     markersRef.current.forEach((m: any) => m.setMap(null));
     markersRef.current = [];
 
-    professionistiFiltrati.forEach((p) => {
+    mapProfessionals.forEach((p) => {
       const marker = new google.maps.Marker({
         position: { lat: p.lat, lng: p.lng },
         map: mapInstanceRef.current,
@@ -253,23 +257,6 @@ const DashboardPaziente = () => {
       markersRef.current.push(marker);
     });
 
-    if (professionistiFiltrati.length > 0 && userCoords) {
-      const nearest = professionistiFiltrati[0];
-      const bounds = new google.maps.LatLngBounds();
-      bounds.extend(userCoords);
-      bounds.extend({ lat: nearest.lat, lng: nearest.lng });
-      professionistiFiltrati.slice(0, 3).forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
-      mapInstanceRef.current.fitBounds(bounds);
-      google.maps.event.addListenerOnce(mapInstanceRef.current, "bounds_changed", () => {
-        const currentZoom = mapInstanceRef.current.getZoom();
-        if (currentZoom > 14) mapInstanceRef.current.setZoom(14);
-      });
-    } else if (professionistiFiltrati.length > 0) {
-      const bounds = new google.maps.LatLngBounds();
-      professionistiFiltrati.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
-      mapInstanceRef.current.fitBounds(bounds);
-    }
-
     if (userCoords) {
       const userMarker = new google.maps.Marker({
         position: userCoords, map: mapInstanceRef.current, title: "La tua posizione",
@@ -277,58 +264,21 @@ const DashboardPaziente = () => {
       });
       markersRef.current.push(userMarker);
     }
-  }, [prestazioneSelezionata, professionistiFiltrati, mapsLoaded, userCoords, professionistaSelezionato]);
 
-  // Map for single professional view
-  useEffect(() => {
-    if (!professionistaSelezionato || !mapRef.current || !mapsLoaded) return;
-    const google = (window as any).google;
-    if (!google) return;
-
-    const p = professionistaSelezionato;
-    const center = { lat: p.lat, lng: p.lng };
-
-    if (!mapInstanceRef.current) {
-      mapInstanceRef.current = new google.maps.Map(mapRef.current, {
-        center, zoom: 13,
-        styles: [{ featureType: "poi", stylers: [{ visibility: "simplified" }] }],
-      });
-    } else {
-      mapInstanceRef.current.setCenter(center);
-      mapInstanceRef.current.setZoom(13);
-    }
-
-    markersRef.current.forEach((m: any) => m.setMap(null));
-    markersRef.current = [];
-
-    const marker = new google.maps.Marker({
-      position: center, map: mapInstanceRef.current, title: p.nome,
-      icon: {
-        path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
-        fillColor: "#4A90D9", fillOpacity: 1, strokeColor: "#2a6cb6", strokeWeight: 1.5, scale: 1.8,
-        anchor: new google.maps.Point(12, 22),
-      },
-    });
-    markersRef.current.push(marker);
-
-    if (userCoords) {
+    if (mapProfessionals.length > 0) {
       const bounds = new google.maps.LatLngBounds();
-      bounds.extend(userCoords);
-      bounds.extend(center);
+      if (userCoords) bounds.extend(userCoords);
+      mapProfessionals.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
       mapInstanceRef.current.fitBounds(bounds);
       google.maps.event.addListenerOnce(mapInstanceRef.current, "bounds_changed", () => {
         if (mapInstanceRef.current.getZoom() > 14) mapInstanceRef.current.setZoom(14);
       });
-
-      const userMarker = new google.maps.Marker({
-        position: userCoords, map: mapInstanceRef.current, title: "La tua posizione",
-        icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: "#22c55e", fillOpacity: 1, strokeColor: "#16a34a", strokeWeight: 2, scale: 8 },
-      });
-      markersRef.current.push(userMarker);
+    } else if (userCoords) {
+      mapInstanceRef.current.setCenter(userCoords);
+      mapInstanceRef.current.setZoom(12);
     }
-  }, [professionistaSelezionato, mapsLoaded, userCoords]);
+  }, [mapProfessionals, mapsLoaded, userCoords]);
 
-  const showResults = prestazioneSelezionata || professionistaSelezionato;
   const typeLabel = (t: string) => t === "oss" ? "OSS" : t === "fisioterapista" ? "Fisioterapista" : "Infermiere";
 
   return (
@@ -408,20 +358,36 @@ const DashboardPaziente = () => {
                 )}
               </div>
 
-              {/* Service list (only in prestazione mode) */}
-              {searchMode === "prestazione" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 md:max-h-64 overflow-y-auto">
+              {/* Service suggestions dropdown (only when typing) */}
+              {searchMode === "prestazione" && ricerca.trim() && !prestazioneSelezionata && prestazioniFiltrate.length > 0 && (
+                <div className="absolute z-20 left-0 right-0 top-12 bg-background border rounded-md shadow-lg max-h-52 overflow-y-auto">
                   {prestazioniFiltrate.map((p) => (
-                    <button key={p} onClick={() => { setPrestazioneSelezionata(p); setProfessionistaSelezionato(null); }}
-                      className={`text-left p-2.5 md:p-3 rounded-lg border transition-colors text-sm md:text-senior-sm ${
-                        prestazioneSelezionata === p ? "border-primary bg-secondary text-primary font-medium" : "border-border hover:border-primary/50"
-                      }`}
+                    <button key={p} onClick={() => { setPrestazioneSelezionata(p); setRicerca(p); setProfessionistaSelezionato(null); }}
+                      className="w-full text-left px-4 py-2.5 hover:bg-secondary text-sm border-b last:border-b-0"
                     >{p}</button>
                   ))}
                 </div>
               )}
+              {prestazioneSelezionata && (
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-sm text-primary font-medium">Prestazione selezionata: {prestazioneSelezionata}</span>
+                  <button onClick={() => { setPrestazioneSelezionata(""); setRicerca(""); }} className="text-xs text-muted-foreground underline hover:text-foreground">Cambia</button>
+                </div>
+              )}
             </CardContent>
           </Card>
+
+          {/* Map always visible */}
+          <div ref={mapRef} className="w-full h-56 md:h-80 rounded-lg overflow-hidden border mb-4 md:mb-6 bg-secondary">
+            {!mapsLoaded && (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <MapPin className="w-12 h-12 text-primary mx-auto mb-3" />
+                  <p className="text-senior-sm text-muted-foreground">Caricamento mappa...</p>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* === Results: by service === */}
           {prestazioneSelezionata && !professionistaSelezionato && (
@@ -429,16 +395,6 @@ const DashboardPaziente = () => {
               <h2 className="text-base md:text-senior-xl font-semibold mb-4">
                 Professionisti disponibili per: <span className="text-primary">{prestazioneSelezionata}</span>
               </h2>
-              <div ref={mapRef} className="w-full h-56 md:h-80 rounded-lg overflow-hidden border mb-4 md:mb-6 bg-secondary">
-                {!mapsLoaded && (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-center">
-                      <MapPin className="w-12 h-12 text-primary mx-auto mb-3" />
-                      <p className="text-senior-sm text-muted-foreground">Caricamento mappa...</p>
-                    </div>
-                  </div>
-                )}
-              </div>
               <div className="space-y-4">
                 {professionistiFiltrati.map((p) => {
                   const servizio = p.servizi.find((s) => s.name === prestazioneSelezionata);
@@ -508,81 +464,64 @@ const DashboardPaziente = () => {
 
           {/* === Results: by professional name === */}
           {professionistaSelezionato && (
-            <>
-              <h2 className="text-base md:text-senior-xl font-semibold mb-4">
-                Profilo di: <span className="text-primary">{professionistaSelezionato.nome}</span>
-              </h2>
-              <div ref={mapRef} className="w-full h-56 md:h-80 rounded-lg overflow-hidden border mb-4 md:mb-6 bg-secondary">
-                {!mapsLoaded && (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-center">
-                      <MapPin className="w-12 h-12 text-primary mx-auto mb-3" />
-                      <p className="text-senior-sm text-muted-foreground">Caricamento mappa...</p>
-                    </div>
+            <Card className="transition-shadow border-2 hover:border-primary">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex items-start md:items-center gap-3 md:gap-6 mb-4">
+                  <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    {professionistaSelezionato.photoUrl ? (
+                      <img src={professionistaSelezionato.photoUrl} alt={professionistaSelezionato.nome} className="w-full h-full object-cover" />
+                    ) : (
+                      <Stethoscope className="w-7 h-7 md:w-10 md:h-10 text-primary" />
+                    )}
                   </div>
-                )}
-              </div>
-
-              <Card className="transition-shadow border-2 hover:border-primary">
-                <CardContent className="p-4 md:p-6">
-                  <div className="flex items-start md:items-center gap-3 md:gap-6 mb-4">
-                    <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
-                      {professionistaSelezionato.photoUrl ? (
-                        <img src={professionistaSelezionato.photoUrl} alt={professionistaSelezionato.nome} className="w-full h-full object-cover" />
-                      ) : (
-                        <Stethoscope className="w-7 h-7 md:w-10 md:h-10 text-primary" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-base md:text-senior-xl font-semibold">{professionistaSelezionato.nome}</h3>
-                        {professionistaSelezionato.verified && (
-                          <span className="inline-flex items-center gap-0.5 text-white text-xs font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: "#0097B2" }}>
-                            <ShieldCheck className="w-3 h-3" /> Verificato
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">{typeLabel(professionistaSelezionato.professionalType)}</span>
-                        {professionistaSelezionato.valutazione > 0 && (
-                          <span className="flex items-center gap-0.5 text-sm">
-                            <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" /> {professionistaSelezionato.valutazione}
-                          </span>
-                        )}
-                      </div>
-                      {professionistaSelezionato.bio && (
-                        <p className="text-xs md:text-senior-sm text-muted-foreground mt-1">{professionistaSelezionato.bio}</p>
-                      )}
-                      {professionistaSelezionato.zona && (
-                        <span className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-                          <MapPin className="w-4 h-4" /> {professionistaSelezionato.zona}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base md:text-senior-xl font-semibold">{professionistaSelezionato.nome}</h3>
+                      {professionistaSelezionato.verified && (
+                        <span className="inline-flex items-center gap-0.5 text-white text-xs font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: "#0097B2" }}>
+                          <ShieldCheck className="w-3 h-3" /> Verificato
                         </span>
                       )}
                     </div>
-                  </div>
-
-                  {/* Services list */}
-                  <h4 className="text-sm md:text-senior-base font-semibold mb-2 mt-2">Prestazioni offerte:</h4>
-                  <p className="text-xs text-muted-foreground mb-2">Seleziona una prestazione per accedere al calendario delle disponibilità.</p>
-                  <div className="space-y-1.5">
-                    {professionistaSelezionato.servizi.map((s) => (
-                      <button
-                        key={s.name}
-                        type="button"
-                        onClick={() => navigate(`/profilo-infermiere/${professionistaSelezionato.profileId}?servizio=${encodeURIComponent(s.name)}`)}
-                        className="flex w-full justify-between items-center p-2 rounded-md bg-secondary/50 text-xs md:text-sm text-left transition-colors hover:bg-secondary"
-                      >
-                        <span>{s.name}</span>
-                        <span className="font-bold text-primary ml-2 flex-shrink-0">€{s.price}</span>
-                      </button>
-                    ))}
-                    {professionistaSelezionato.servizi.length === 0 && (
-                      <p className="text-sm text-muted-foreground">Nessuna prestazione configurata.</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">{typeLabel(professionistaSelezionato.professionalType)}</span>
+                      {professionistaSelezionato.valutazione > 0 && (
+                        <span className="flex items-center gap-0.5 text-sm">
+                          <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" /> {professionistaSelezionato.valutazione}
+                        </span>
+                      )}
+                    </div>
+                    {professionistaSelezionato.bio && (
+                      <p className="text-xs md:text-senior-sm text-muted-foreground mt-1">{professionistaSelezionato.bio}</p>
+                    )}
+                    {professionistaSelezionato.zona && (
+                      <span className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                        <MapPin className="w-4 h-4" /> {professionistaSelezionato.zona}
+                      </span>
                     )}
                   </div>
-                </CardContent>
-              </Card>
-            </>
+                </div>
+
+                <h4 className="text-sm md:text-senior-base font-semibold mb-2 mt-2">Prestazioni offerte:</h4>
+                <p className="text-xs text-muted-foreground mb-2">Seleziona una prestazione per accedere al calendario delle disponibilità.</p>
+                <div className="space-y-1.5">
+                  {professionistaSelezionato.servizi.map((s) => (
+                    <button
+                      key={s.name}
+                      type="button"
+                      onClick={() => navigate(`/profilo-infermiere/${professionistaSelezionato.profileId}?servizio=${encodeURIComponent(s.name)}`)}
+                      className="flex w-full justify-between items-center p-2 rounded-md bg-secondary/50 text-xs md:text-sm text-left transition-colors hover:bg-secondary"
+                    >
+                      <span>{s.name}</span>
+                      <span className="font-bold text-primary ml-2 flex-shrink-0">€{s.price}</span>
+                    </button>
+                  ))}
+                  {professionistaSelezionato.servizi.length === 0 && (
+                    <p className="text-sm text-muted-foreground">Nessuna prestazione configurata.</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           )}
         </div>
       </main>
