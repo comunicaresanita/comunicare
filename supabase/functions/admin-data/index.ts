@@ -5,20 +5,103 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+type AdminRequest = {
+  password?: string;
+  action?: "delete";
+  userId?: string;
+};
+
+const jsonResponse = (body: Record<string, unknown>, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+
+const ensureNoError = (error: { message: string } | null, message: string) => {
+  if (error) {
+    throw new Error(`${message}: ${error.message}`);
+  }
+};
+
+const deleteUserEverywhere = async (supabase: ReturnType<typeof createClient>, userId: string) => {
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  ensureNoError(profileError, "Impossibile leggere il profilo utente");
+
+  if (profile) {
+    ensureNoError(
+      (await supabase.from("reviews").delete().or(`patient_id.eq.${profile.id},professional_id.eq.${profile.id}`)).error,
+      "Impossibile eliminare le recensioni collegate"
+    );
+
+    ensureNoError(
+      (await supabase.from("bookings").delete().or(`patient_id.eq.${profile.id},professional_id.eq.${profile.id}`)).error,
+      "Impossibile eliminare le prenotazioni collegate"
+    );
+
+    ensureNoError(
+      (await supabase.from("services").delete().eq("professional_id", profile.id)).error,
+      "Impossibile eliminare i servizi collegati"
+    );
+
+    ensureNoError(
+      (await supabase.from("availability").delete().eq("professional_id", profile.id)).error,
+      "Impossibile eliminare le disponibilità settimanali"
+    );
+
+    ensureNoError(
+      (await supabase.from("availability_overrides").delete().eq("professional_id", profile.id)).error,
+      "Impossibile eliminare le eccezioni di disponibilità"
+    );
+
+    const storage = supabase.storage.from("profile-photos");
+    const { data: files, error: listFilesError } = await storage.list(userId);
+    ensureNoError(listFilesError, "Impossibile leggere le foto profilo");
+
+    if (files && files.length > 0) {
+      ensureNoError(
+        (await storage.remove(files.map((file) => `${userId}/${file.name}`))).error,
+        "Impossibile eliminare le foto profilo"
+      );
+    }
+
+    ensureNoError(
+      (await supabase.from("profiles").delete().eq("user_id", userId)).error,
+      "Impossibile eliminare il profilo"
+    );
+  }
+
+  const { error: deleteAuthError } = await supabase.auth.admin.deleteUser(userId, false);
+  ensureNoError(deleteAuthError, "Impossibile eliminare le credenziali utente");
+
+  const { data: deletedProfileCheck, error: deletedProfileCheckError } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  ensureNoError(deletedProfileCheckError, "Impossibile verificare l'eliminazione del profilo");
+
+  if (deletedProfileCheck) {
+    throw new Error("Eliminazione incompleta: il profilo risulta ancora presente nel database");
+  }
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const { password, action, userId } = await req.json();
+    const { password, action, userId }: AdminRequest = await req.json();
     const adminPassword = Deno.env.get("ADMIN_PASSWORD");
 
     if (!adminPassword || password !== adminPassword) {
-      return new Response(JSON.stringify({ error: "Password non valida" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return jsonResponse({ error: "Password non valida" }, 401);
     }
 
     const supabase = createClient(
@@ -26,64 +109,27 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Delete user action
-    if (action === "delete" && userId) {
-      // Get profile id
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("user_id", userId)
-        .single();
-
-      if (profile) {
-        await supabase.from("reviews").delete().or(`patient_id.eq.${profile.id},professional_id.eq.${profile.id}`);
-        await supabase.from("bookings").delete().or(`patient_id.eq.${profile.id},professional_id.eq.${profile.id}`);
-        await supabase.from("services").delete().eq("professional_id", profile.id);
-        await supabase.from("availability").delete().eq("professional_id", profile.id);
-        await supabase.from("availability_overrides").delete().eq("professional_id", profile.id);
-
-        const { data: files } = await supabase.storage.from("profile-photos").list(userId);
-        if (files && files.length > 0) {
-          await supabase.storage.from("profile-photos").remove(files.map(f => `${userId}/${f.name}`));
-        }
-
-        await supabase.from("profiles").delete().eq("user_id", userId);
+    if (action === "delete") {
+      if (!userId) {
+        return jsonResponse({ error: "Utente non specificato" }, 400);
       }
 
-      const { error: deleteError } = await supabase.auth.admin.deleteUser(userId);
-      if (deleteError) {
-        return new Response(JSON.stringify({ error: deleteError.message }), {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-
-      return new Response(JSON.stringify({ success: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      await deleteUserEverywhere(supabase, userId);
+      return jsonResponse({ success: true });
     }
 
-    // Default: fetch all profiles
     const { data: profiles, error } = await supabase
       .from("profiles")
       .select("*")
       .order("created_at", { ascending: true });
 
     if (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return jsonResponse({ error: error.message }, 500);
     }
 
-    return new Response(JSON.stringify({ profiles }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return jsonResponse({ profiles });
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    const errorMessage = e instanceof Error ? e.message : "Errore sconosciuto";
+    return jsonResponse({ error: errorMessage }, 500);
   }
 });
