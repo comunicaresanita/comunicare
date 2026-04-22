@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
