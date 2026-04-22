@@ -1,8 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/comunicare-logo.png";
-import { User, LogOut, Phone, BookOpen, CalendarCheck } from "lucide-react";
+import { User, LogOut, Phone, BookOpen, Home, LayoutDashboard, HelpCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,16 +13,31 @@ import {
 const AuthHeader = () => {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
   };
 
+  const logoTarget = user
+    ? profile?.role === "professionista"
+      ? "/dashboard-professionista"
+      : "/dashboard-paziente"
+    : "/";
+
+  const handleHomeClick = () => {
+    if (location.pathname === "/dashboard-paziente") {
+      window.location.reload();
+    } else {
+      navigate("/dashboard-paziente");
+    }
+  };
+
   return (
     <header className="bg-card shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
-        <Link to={user ? (profile?.role === "professionista" ? "/dashboard-professionista" : "/dashboard-paziente") : "/"} className="flex items-center">
+        <Link to={logoTarget} className="flex items-center">
           <img src={logo} alt="ComuniCARE" className="h-10 md:h-16" />
         </Link>
         {user ? (
@@ -35,24 +50,31 @@ const AuthHeader = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {profile?.role === "professionista" && (
+              {profile?.role === "professionista" ? (
                 <DropdownMenuItem asChild>
-                  <Link to="/dashboard-professionista" className="cursor-pointer">Dashboard</Link>
+                  <Link to="/dashboard-professionista" className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
                 </DropdownMenuItem>
+              ) : (
+                <>
+                  <DropdownMenuItem onClick={handleHomeClick} className="cursor-pointer">
+                    <Home className="w-4 h-4 mr-2" />Home
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard-paziente" className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
+                  </DropdownMenuItem>
+                </>
               )}
               <DropdownMenuItem asChild>
-                <Link to="/profilo" className="cursor-pointer">Il mio profilo</Link>
+                <Link to="/profilo" className="cursor-pointer"><User className="w-4 h-4 mr-2" />Il mio profilo</Link>
               </DropdownMenuItem>
-              {profile?.role !== "professionista" && (
-                <DropdownMenuItem asChild>
-                  <Link to="/dashboard-paziente" className="cursor-pointer"><CalendarCheck className="w-4 h-4 mr-2" />Prenota</Link>
-                </DropdownMenuItem>
-              )}
               <DropdownMenuItem asChild>
                 <Link to="/contatti" className="cursor-pointer"><Phone className="w-4 h-4 mr-2" />Contatti</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/blog" className="cursor-pointer"><BookOpen className="w-4 h-4 mr-2" />Blog</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/contatti#faq" className="cursor-pointer"><HelpCircle className="w-4 h-4 mr-2" />FAQ</Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
                 <LogOut className="w-4 h-4 mr-2" />
