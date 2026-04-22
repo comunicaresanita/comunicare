@@ -233,7 +233,7 @@ const ProfiloInfermiere = () => {
     return `${dayName} ${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
   };
 
-  const handlePrenota = async () => {
+  const handlePrenotaSenzaPagamento = async () => {
     if (!servizioSelezionato || !slotSelezionato || !selectedDate) {
       toast({ title: "Seleziona tutti i campi", description: "Scegli un giorno e uno slot orario.", variant: "destructive" });
       return;
@@ -247,7 +247,7 @@ const ProfiloInfermiere = () => {
     setPaymentLoading(true);
     try {
       const dayStr = formatSelectedDate(selectedDate);
-      const { data: booking, error: bookingError } = await supabase
+      const { error: bookingError } = await supabase
         .from("bookings")
         .insert({
           patient_id: userProfile?.id!,
@@ -256,26 +256,17 @@ const ProfiloInfermiere = () => {
           price: selectedService?.price || 0,
           day: dayStr,
           time_slot: slotSelezionato,
-          status: "pending",
+          status: "confirmed",
         })
         .select()
         .single();
 
       if (bookingError) throw bookingError;
 
-      const { data, error } = await supabase.functions.invoke("create-payment", {
-        body: {
-          bookingId: booking.id,
-          serviceName: servizioSelezionato,
-          price: selectedService?.price || 0,
-          professionalName: `${professional.first_name} ${professional.last_name}`,
-        },
-      });
-
-      if (error) throw error;
-      if (data?.url) window.location.href = data.url;
+      toast({ title: "Prenotazione confermata!", description: "La tua prenotazione è stata registrata con successo." });
+      navigate("/dashboard-paziente");
     } catch (err: any) {
-      toast({ title: "Errore", description: err.message || "Errore durante il pagamento.", variant: "destructive" });
+      toast({ title: "Errore", description: err.message || "Errore durante la prenotazione.", variant: "destructive" });
     } finally {
       setPaymentLoading(false);
     }
@@ -433,7 +424,7 @@ const ProfiloInfermiere = () => {
             </CardContent>
           </Card>
 
-          {/* Riepilogo e pagamento */}
+          {/* Riepilogo e prenotazione (pagamento temporaneamente disabilitato) */}
           {servizioSelezionato && slotSelezionato && selectedDate && (
             <Card className="mb-6 md:mb-8 border-primary border-2">
               <CardContent className="p-4 md:p-6">
@@ -444,14 +435,14 @@ const ProfiloInfermiere = () => {
                   <p><strong>Orario:</strong> {slotSelezionato}</p>
                   <p><strong>Prezzo:</strong> €{selectedService?.price}</p>
                 </div>
-                <Button size="lg" onClick={handlePrenota} className="w-full py-5 md:py-6" disabled={paymentLoading}>
-                  {paymentLoading ? "Elaborazione pagamento..." : `Paga €${selectedService?.price} e prenota`}
+                <Button size="lg" onClick={handlePrenotaSenzaPagamento} className="w-full py-5 md:py-6" disabled={paymentLoading}>
+                  {paymentLoading ? "Prenotazione in corso..." : "Prenota"}
                 </Button>
                 <p className="text-xs text-muted-foreground text-center mt-2">
-                  Il pagamento è sicuro tramite Stripe. Il professionista riceverà il compenso solo a prestazione completata.
+                  Il pagamento verrà richiesto in un secondo momento. Riceverai una conferma via email.
                 </p>
                 <p className="text-xs text-muted-foreground text-center mt-1 font-bold">
-                  In caso di cancellazione, è obbligatorio avvisare almeno 24 ore prima della prestazione. In caso contrario, l'importo non sarà rimborsato.
+                  In caso di cancellazione, è obbligatorio avvisare almeno 24 ore prima della prestazione.
                 </p>
               </CardContent>
             </Card>
