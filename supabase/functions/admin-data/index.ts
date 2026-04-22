@@ -99,11 +99,6 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return jsonResponse({ error: "Non autorizzato" }, 401);
-    }
-
     const { password, action, userId }: AdminRequest = await req.json();
     const adminPassword = Deno.env.get("ADMIN_PASSWORD");
 
@@ -115,19 +110,6 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
-
-    const userClient = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, {
-      global: { headers: { Authorization: authHeader } },
-    });
-
-    const {
-      data: { user },
-      error: authError,
-    } = await userClient.auth.getUser();
-
-    if (authError || !user || user.email?.toLowerCase() !== ADMIN_EMAIL) {
-      return jsonResponse({ error: "Accesso admin non autorizzato" }, 403);
-    }
 
     if (action === "delete") {
       if (!userId) {
