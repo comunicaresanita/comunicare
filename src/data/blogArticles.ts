@@ -54,49 +54,4 @@ export const articles: BlogArticle[] = [
       "Con l'invecchiamento della popolazione e l'aumento delle patologie croniche, la domanda di OSS qualificati è in costante crescita, rendendo questa figura professionale sempre più strategica per il sistema sanitario territoriale."
     ]
   },
-  {
-    slug: "cure-domiciliari-integrate-italia",
-    title: "Le cure domiciliari integrate: il modello italiano di assistenza territoriale",
-    date: "25 Marzo 2026",
-    summary: "L'Assistenza Domiciliare Integrata (ADI) rappresenta il modello italiano per garantire cure multidisciplinari a domicilio, con l'obiettivo di ridurre le ospedalizzazioni e migliorare la qualità della vita dei pazienti.",
-    source: "Istituto Superiore di Sanità (ISS)",
-    sourceUrl: "https://www.iss.it",
-    content: [
-      "L'Assistenza Domiciliare Integrata (ADI) è un insieme coordinato di prestazioni sanitarie e socio-sanitarie erogate a domicilio, rivolte a persone che necessitano di cure continuative ma che non richiedono il ricovero ospedaliero. L'Istituto Superiore di Sanità monitora e valuta questi servizi come parte della rete di assistenza territoriale.",
-      "Il modello ADI prevede la collaborazione di diverse figure professionali: medico di medicina generale, infermiere, fisioterapista, operatore socio-sanitario e, quando necessario, specialisti come geriatri, cardiologi o neurologi. Questo approccio multidisciplinare garantisce una presa in carico globale del paziente.",
-      "I dati dell'ISS mostrano che l'ADI è particolarmente efficace per i pazienti con patologie croniche come diabete, scompenso cardiaco, BPCO e malattie neurodegenerative. La continuità delle cure e il monitoraggio costante riducono significativamente i ricoveri ospedalieri impropri.",
-      "Il PNRR ha posto l'assistenza domiciliare al centro della riforma sanitaria italiana, con l'obiettivo di portare la copertura ADI al 10% della popolazione over 65. Questo significa un investimento massiccio in infrastrutture digitali, formazione del personale e coordinamento tra servizi sanitari e sociali.",
-      "Per i pazienti e le famiglie, l'ADI rappresenta un'opportunità per ricevere cure di qualità senza allontanarsi dall'ambiente domestico, con un impatto positivo sulla compliance terapeutica e sul benessere psicologico."
-    ]
-  },
-  {
-    slug: "telemedicina-assistenza-domiciliare-futuro",
-    title: "Telemedicina e assistenza domiciliare: il futuro della sanità",
-    date: "18 Marzo 2026",
-    summary: "L'integrazione tra telemedicina e assistenza domiciliare sta trasformando l'accesso alle cure, con investimenti significativi previsti dal PNRR italiano.",
-    source: "Piano Nazionale di Ripresa e Resilienza (PNRR) – Italia",
-    sourceUrl: "https://www.governo.it/it/approfondimento/pnrr/16718",
-    content: [
-      "La telemedicina, combinata con l'assistenza domiciliare, rappresenta una delle innovazioni più promettenti nel settore sanitario. Il Piano Nazionale di Ripresa e Resilienza (PNRR) italiano ha riconosciuto questo potenziale stanziando investimenti significativi per la digitalizzazione dei servizi sanitari territoriali.",
-      "Grazie alla telemedicina, i professionisti sanitari possono monitorare i parametri vitali dei pazienti a distanza, effettuare teleconsulti con specialisti e coordinare i piani terapeutici in tempo reale. Questo è particolarmente utile per i pazienti che vivono in aree rurali o che hanno difficoltà a spostarsi.",
-      "Il PNRR prevede la creazione delle Centrali Operative Territoriali (COT), strutture che coordineranno i servizi sanitari e sociali a livello distrettuale, integrando la telemedicina con le visite domiciliari. L'obiettivo è creare un sistema di cure \"connesso\" che metta il paziente al centro.",
-      "Le piattaforme digitali come ComuniCARE si inseriscono in questo contesto, facilitando l'incontro tra professionisti sanitari e utenti e semplificando la prenotazione di prestazioni domiciliari. La tecnologia diventa così un abilitatore di prossimità, non un sostituto del rapporto umano.",
-      "Le sfide principali riguardano l'alfabetizzazione digitale della popolazione anziana, la garanzia della privacy dei dati sanitari e l'interoperabilità tra i diversi sistemi informativi sanitari. Tuttavia, i benefici attesi in termini di efficienza e accessibilità delle cure rendono questo percorso irreversibile."
-    ]
-  },
-  {
-    slug: "invecchiamento-attivo-prevenzione-domiciliare",
-    title: "Invecchiamento attivo e prevenzione: il ruolo dell'assistenza domiciliare",
-    date: "10 Marzo 2026",
-    summary: "Promuovere l'invecchiamento attivo attraverso la prevenzione e l'assistenza domiciliare riduce il rischio di disabilità e migliora la qualità della vita degli anziani, secondo le linee guida dell'Unione Europea.",
-    source: "Commissione Europea – Libro Verde sull'invecchiamento",
-    sourceUrl: "https://ec.europa.eu/info/law/better-regulation/have-your-say/initiatives/12722-Green-Paper-on-Ageing_it",
-    content: [
-      "L'invecchiamento attivo è definito dall'Unione Europea come il processo di ottimizzazione delle opportunità di salute, partecipazione e sicurezza allo scopo di migliorare la qualità della vita delle persone anziane. La Commissione Europea, nel suo Libro Verde sull'invecchiamento, sottolinea l'importanza di politiche preventive e di assistenza territoriale.",
-      "La prevenzione domiciliare gioca un ruolo chiave: visite periodiche da parte di infermieri e fisioterapisti possono identificare precocemente fattori di rischio come la fragilità, il rischio di cadute, la malnutrizione e l'isolamento sociale. Intervenire prima che questi fattori si aggravino riduce drasticamente il rischio di ospedalizzazione.",
-      "Programmi di esercizio fisico adattato, supervisionati da fisioterapisti a domicilio, hanno dimostrato di migliorare l'equilibrio, la forza muscolare e la mobilità negli anziani, riducendo il rischio di cadute fino al 30%. Questo tipo di intervento è raccomandato dalle principali istituzioni sanitarie europee.",
-      "L'assistenza domiciliare preventiva include anche l'educazione sanitaria: insegnare ai pazienti e ai caregiver la corretta gestione delle terapie farmacologiche, l'importanza di una dieta equilibrata e le tecniche per mantenere l'autonomia nelle attività quotidiane.",
-      "In un contesto di risorse sanitarie limitate, investire nella prevenzione domiciliare è una scelta strategica: ogni euro investito in prevenzione genera risparmi significativi in termini di ricoveri evitati e prestazioni di emergenza non necessarie."
-    ]
-  },
 ];

@@ -33,7 +33,7 @@ const BlogArticolo = () => {
       <AuthHeader />
       <main className="flex-1 bg-background py-6 md:py-12">
         <div className="container mx-auto px-4 md:px-6 max-w-3xl">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4 gap-2">
+          <Button variant="ghost" onClick={() => navigate("/blog")} className="mb-4 gap-2">
             <ArrowLeft className="w-4 h-4" /> Torna indietro
           </Button>
 
