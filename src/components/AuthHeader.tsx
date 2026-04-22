@@ -45,7 +45,7 @@ const AuthHeader = () => {
               </DropdownMenuItem>
               {profile?.role !== "professionista" && (
                 <DropdownMenuItem asChild>
-                  <Link to="/dashboard-paziente" className="cursor-pointer">🗓️ Prenota</Link>
+                  <Link to="/dashboard-paziente" className="cursor-pointer"><CalendarCheck className="w-4 h-4 mr-2" />Prenota</Link>
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem asChild>
