@@ -310,62 +310,15 @@ const Profilo = () => {
                 {saving ? "Salvataggio..." : "Salva modifiche"}
               </Button>
 
-              {/* Storico prestazioni for patients */}
-              {profile?.role !== "professionista" && (
-                <div id="storico" className="border-t border-border pt-6 mt-8">
-                  <h3 className="text-senior-lg font-semibold mb-4 flex items-center gap-2">
-                    <ClipboardList className="w-5 h-5" />
-                    Storico prestazioni
-                  </h3>
-                  {loadingBookings ? (
-                    <p className="text-sm text-muted-foreground">Caricamento...</p>
-                  ) : bookings.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
-                      Non hai ancora effettuato prestazioni. Quando prenoterai e completerai una prestazione, apparirà qui il tuo storico.
-                    </p>
-                  ) : (
-                    <div className="space-y-3">
-                      {bookings.map((b) => (
-                        <Card key={b.id} className="p-3">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <p className="font-medium text-sm">{b.service_name}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {new Date(b.day).toLocaleDateString("it-IT")} — {b.time_slot}
-                              </p>
-                              {b.professional && (
-                                <p className="text-xs text-muted-foreground">
-                                  {b.professional.first_name} {b.professional.last_name}
-                                </p>
-                              )}
-                            </div>
-                            <span className={`text-xs px-2 py-1 rounded-full ${
-                              b.status === "confermato" ? "bg-primary/10 text-primary" :
-                              b.status === "completato" ? "bg-green-100 text-green-700" :
-                              "bg-muted text-muted-foreground"
-                            }`}>
-                              {b.status}
-                            </span>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Spacer */}
-              <div className="h-16" />
-
               {/* Delete account section */}
               <div className="border-t border-border pt-6 mt-6">
-                <h3 className="text-senior-lg font-semibold text-red-900 dark:text-red-400 mb-2">Cancella account</h3>
+                <h3 className="text-senior-lg font-semibold text-destructive mb-2">Cancella account</h3>
                 <p className="text-sm text-foreground mb-4">
                   Eliminando il tuo account, tutti i tuoi dati verranno rimossi permanentemente dal server, inclusi profilo, prenotazioni, recensioni e servizi. Questa azione è irreversibile.
                 </p>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" className="gap-2 bg-red-900 hover:bg-red-950 text-white" disabled={deleting}>
+                    <Button variant="destructive" className="gap-2" disabled={deleting}>
                       <Trash2 className="w-4 h-4" />
                       {deleting ? "Eliminazione..." : "Elimina il mio account"}
                     </Button>
@@ -379,7 +332,7 @@ const Profilo = () => {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>No, torna indietro</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDeleteAccount} className="bg-red-900 text-white hover:bg-red-950">
+                      <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                         Sì, elimina definitivamente
                       </AlertDialogAction>
                     </AlertDialogFooter>
@@ -388,6 +341,52 @@ const Profilo = () => {
               </div>
             </CardContent>
           </Card>
+          )}
+
+          {activeTab === "dashboard" && profile.role !== "professionista" && (
+            <Card className="border-0 shadow-lg">
+              <CardContent className="space-y-4 pt-6">
+                <h3 className="text-senior-lg font-semibold flex items-center gap-2">
+                  <ClipboardList className="w-5 h-5" />
+                  Storico prestazioni
+                </h3>
+                {loadingBookings ? (
+                  <p className="text-sm text-muted-foreground">Caricamento...</p>
+                ) : bookings.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    Non hai ancora effettuato prestazioni. Quando prenoterai e completerai una prestazione, apparirà qui il tuo storico.
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {bookings.map((b) => (
+                      <Card key={b.id} className="p-3">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-medium text-sm">{b.service_name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(b.day).toLocaleDateString("it-IT")} — {b.time_slot}
+                            </p>
+                            {b.professional && (
+                              <p className="text-xs text-muted-foreground">
+                                {b.professional.first_name} {b.professional.last_name}
+                              </p>
+                            )}
+                          </div>
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            b.status === "confermato" ? "bg-primary/10 text-primary" :
+                            b.status === "completato" ? "bg-primary/20 text-primary" :
+                            "bg-muted text-muted-foreground"
+                          }`}>
+                            {b.status}
+                          </span>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </main>
       <Footer />
