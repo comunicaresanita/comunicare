@@ -2,12 +2,15 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/comunicare-logo.png";
-import { User, LogOut, Phone, BookOpen, Home, LayoutDashboard, HelpCircle } from "lucide-react";
+import { Menu, LogOut, Phone, BookOpen, Home, User, LayoutDashboard, HelpCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 
 const AuthHeader = () => {
@@ -44,9 +47,8 @@ const AuthHeader = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="gap-1.5 md:gap-2 text-xs md:text-sm px-3 md:px-4">
-                <User className="w-4 h-4" />
-                <span className="hidden sm:inline">Il tuo profilo</span>
-                <span className="sm:hidden">Profilo</span>
+                <Menu className="w-4 h-4" />
+                <span>Menu</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -55,18 +57,25 @@ const AuthHeader = () => {
                   <Link to="/dashboard-professionista" className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
                 </DropdownMenuItem>
               ) : (
-                <>
-                  <DropdownMenuItem onClick={handleHomeClick} className="cursor-pointer">
-                    <Home className="w-4 h-4 mr-2" />Home
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/dashboard-paziente" className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
-                  </DropdownMenuItem>
-                </>
+                <DropdownMenuItem onClick={handleHomeClick} className="cursor-pointer">
+                  <Home className="w-4 h-4 mr-2" />Home
+                </DropdownMenuItem>
               )}
-              <DropdownMenuItem asChild>
-                <Link to="/profilo" className="cursor-pointer"><User className="w-4 h-4 mr-2" />Il mio profilo</Link>
-              </DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="cursor-pointer">
+                  <User className="w-4 h-4 mr-2" />Il mio profilo
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profilo" className="cursor-pointer">Dati personali</Link>
+                  </DropdownMenuItem>
+                  {profile?.role !== "professionista" && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/profilo#storico" className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />Storico prestazioni</Link>
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
               <DropdownMenuItem asChild>
                 <Link to="/contatti" className="cursor-pointer"><Phone className="w-4 h-4 mr-2" />Contatti</Link>
               </DropdownMenuItem>
