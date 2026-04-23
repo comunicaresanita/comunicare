@@ -42,6 +42,9 @@ const Index = () => {
           <p className="text-sm md:text-senior-lg text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto">
             Trova il professionista sanitario più vicino a te, prenota online e ricevi cure di qualità direttamente a casa tua.
           </p>
+          <p className="text-sm md:text-senior-base text-muted-foreground mb-4 md:mb-5 font-medium">
+            Sei nuovo? Registrati qui 👇
+          </p>
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-2">
             <Link to="/registrazione?ruolo=paziente">
               <Button size="lg" className="px-6 py-5 md:px-10 md:py-6 w-full sm:w-auto text-sm md:text-base">

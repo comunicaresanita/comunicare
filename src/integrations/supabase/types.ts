@@ -147,6 +147,7 @@ export type Database = {
           address: string | null
           age: number | null
           bio: string | null
+          caregiver_address: string | null
           created_at: string
           email: string
           first_name: string
@@ -171,6 +172,7 @@ export type Database = {
           address?: string | null
           age?: number | null
           bio?: string | null
+          caregiver_address?: string | null
           created_at?: string
           email: string
           first_name: string
@@ -195,6 +197,7 @@ export type Database = {
           address?: string | null
           age?: number | null
           bio?: string | null
+          caregiver_address?: string | null
           created_at?: string
           email?: string
           first_name?: string
