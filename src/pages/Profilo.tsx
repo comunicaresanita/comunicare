@@ -56,6 +56,8 @@ const Profilo = () => {
   const [caregiverCitta, setCaregiverCitta] = useState("");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [addressErrors, setAddressErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
+  const [caregiverErrors, setCaregiverErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
   const [deleting, setDeleting] = useState(false);
   const [bookings, setBookings] = useState<any[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(false);
@@ -149,6 +151,40 @@ const Profilo = () => {
 
   const handleSave = async () => {
     if (!profile) return;
+
+    // Validate required address fields for patients
+    if (profile.role === "paziente") {
+      const addrErr = {
+        via: !via.trim(),
+        civico: !civico.trim(),
+        cap: !cap.trim(),
+        citta: !citta.trim(),
+      };
+      setAddressErrors(addrErr);
+
+      const cgErr = isCaregiver ? {
+        via: !caregiverVia.trim(),
+        civico: !caregiverCivico.trim(),
+        cap: !caregiverCap.trim(),
+        citta: !caregiverCitta.trim(),
+      } : {};
+      setCaregiverErrors(cgErr);
+
+      const hasAddrError = Object.values(addrErr).some(Boolean);
+      const hasCgError = Object.values(cgErr).some(Boolean);
+
+      if (hasAddrError || hasCgError) {
+        toast({ title: "Campi obbligatori mancanti", description: "Compila tutti i campi dell'indirizzo prima di salvare.", variant: "destructive" });
+        // Scroll to first missing field
+        const firstErrorId = hasAddrError
+          ? (addrErr.via ? "via-field" : addrErr.civico ? "civico-field" : addrErr.cap ? "cap-field" : "citta-field")
+          : (cgErr.via ? "caregiver-via-field" : cgErr.civico ? "caregiver-civico-field" : cgErr.cap ? "caregiver-cap-field" : "caregiver-citta-field");
+        document.getElementById(firstErrorId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById(firstErrorId)?.focus();
+        return;
+      }
+    }
+
     setSaving(true);
     const updates: any = {
       first_name: firstName,
@@ -275,11 +311,12 @@ const Profilo = () => {
                     civico={civico}
                     cap={cap}
                     citta={citta}
-                    onViaChange={setVia}
-                    onCivicoChange={setCivico}
-                    onCapChange={setCap}
-                    onCittaChange={setCitta}
+                    onViaChange={(v) => { setVia(v); setAddressErrors(e => ({ ...e, via: false })); }}
+                    onCivicoChange={(v) => { setCivico(v); setAddressErrors(e => ({ ...e, civico: false })); }}
+                    onCapChange={(v) => { setCap(v); setAddressErrors(e => ({ ...e, cap: false })); }}
+                    onCittaChange={(v) => { setCitta(v); setAddressErrors(e => ({ ...e, citta: false })); }}
                     label="Indirizzo di residenza"
+                    errors={addressErrors}
                   />
                   <div className="space-y-2">
                     <Label className="text-senior-sm">Numero di cellulare</Label>
@@ -313,11 +350,13 @@ const Profilo = () => {
                         civico={caregiverCivico}
                         cap={caregiverCap}
                         citta={caregiverCitta}
-                        onViaChange={setCaregiverVia}
-                        onCivicoChange={setCaregiverCivico}
-                        onCapChange={setCaregiverCap}
-                        onCittaChange={setCaregiverCitta}
+                        onViaChange={(v) => { setCaregiverVia(v); setCaregiverErrors(e => ({ ...e, via: false })); }}
+                        onCivicoChange={(v) => { setCaregiverCivico(v); setCaregiverErrors(e => ({ ...e, civico: false })); }}
+                        onCapChange={(v) => { setCaregiverCap(v); setCaregiverErrors(e => ({ ...e, cap: false })); }}
+                        onCittaChange={(v) => { setCaregiverCitta(v); setCaregiverErrors(e => ({ ...e, citta: false })); }}
                         label="Indirizzo del familiare / assistito"
+                        errors={caregiverErrors}
+                        idPrefix="caregiver"
                       />
                     </div>
                   )}
