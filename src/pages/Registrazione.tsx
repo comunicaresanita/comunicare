@@ -341,6 +341,7 @@ const Registrazione = () => {
                           onCittaChange={setCaregiverCitta}
                           required
                           label="Indirizzo del familiare / assistito *"
+                          idPrefix="caregiver"
                         />
                       </div>
                     )}
