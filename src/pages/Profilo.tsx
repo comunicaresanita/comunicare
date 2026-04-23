@@ -20,6 +20,7 @@ import {
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import AddressAutocomplete from "@/components/AddressAutocomplete";
+import StructuredAddressInput, { parseAddressToFields, composeAddress } from "@/components/StructuredAddressInput";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
@@ -36,6 +37,10 @@ const Profilo = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [address, setAddress] = useState("");
+  const [via, setVia] = useState("");
+  const [civico, setCivico] = useState("");
+  const [cap, setCap] = useState("");
+  const [citta, setCitta] = useState("");
   const [bio, setBio] = useState("");
   const [numeroOpi, setNumeroOpi] = useState("");
   const [numeroFnofi, setNumeroFnofi] = useState("");
@@ -45,6 +50,10 @@ const Profilo = () => {
   const [age, setAge] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [isCaregiver, setIsCaregiver] = useState(false);
+  const [caregiverVia, setCaregiverVia] = useState("");
+  const [caregiverCivico, setCaregiverCivico] = useState("");
+  const [caregiverCap, setCaregiverCap] = useState("");
+  const [caregiverCitta, setCaregiverCitta] = useState("");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -79,6 +88,14 @@ const Profilo = () => {
       setFirstName(profile.first_name || "");
       setLastName(profile.last_name || "");
       setAddress((profile as any).address || "");
+      // Parse address into structured fields for patients
+      if (profile.role === "paziente") {
+        const parsed = parseAddressToFields((profile as any).address || "");
+        setVia(parsed.via);
+        setCivico(parsed.civico);
+        setCap(parsed.cap);
+        setCitta(parsed.citta);
+      }
       setBio(profile.bio || "");
       setNumeroOpi(profile.numero_opi || "");
       setNumeroFnofi((profile as any).numero_fnofi || "");
@@ -88,6 +105,15 @@ const Profilo = () => {
       setAge((profile as any).age ? String((profile as any).age) : "");
       setAdditionalInfo((profile as any).additional_info || "");
       setIsCaregiver((profile as any).is_caregiver || false);
+      // Parse caregiver address if available
+      const caregiverAddr = (profile as any).caregiver_address || "";
+      if (caregiverAddr) {
+        const cParsed = parseAddressToFields(caregiverAddr);
+        setCaregiverVia(cParsed.via);
+        setCaregiverCivico(cParsed.civico);
+        setCaregiverCap(cParsed.cap);
+        setCaregiverCitta(cParsed.citta);
+      }
     }
   }, [profile]);
 
