@@ -331,7 +331,7 @@ const Profilo = () => {
                     label="Indirizzo di residenza"
                     errors={addressErrors}
                   />
-                  <StructuredAddressInput
+                  <div className="space-y-2">
                   <div className="space-y-2">
                     <Label className="text-senior-sm">Età</Label>
                     <Input type="number" value={age} onChange={(e) => setAge(e.target.value)} placeholder="Es. 72" className="text-senior-sm py-3" min="1" max="120" />
