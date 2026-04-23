@@ -56,6 +56,8 @@ const Profilo = () => {
   const [caregiverCitta, setCaregiverCitta] = useState("");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [addressErrors, setAddressErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
+  const [caregiverErrors, setCaregiverErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
   const [deleting, setDeleting] = useState(false);
   const [bookings, setBookings] = useState<any[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(false);
