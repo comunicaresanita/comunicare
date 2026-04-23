@@ -16,6 +16,7 @@ interface StructuredAddressInputProps {
   required?: boolean;
   label?: string;
   errors?: { via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean };
+  idPrefix?: string;
 }
 
 interface Prediction {
@@ -70,7 +71,9 @@ const StructuredAddressInput = ({
   required = false,
   label = "Indirizzo",
   errors = {},
+  idPrefix = "",
 }: StructuredAddressInputProps) => {
+  const prefix = idPrefix ? `${idPrefix}-` : "";
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
