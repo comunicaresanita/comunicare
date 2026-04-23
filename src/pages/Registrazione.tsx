@@ -109,7 +109,7 @@ const Registrazione = () => {
       role: ruolo!,
       first_name: capitalize(nome),
       last_name: capitalize(cognome),
-      address: indirizzo,
+      address: ruolo === "paziente" ? composeAddress(via, civico, cap, citta) : indirizzo,
       bio: bio || "",
       numero_opi: numeroOpi || "",
       numero_fnofi: numeroFnofi || "",
