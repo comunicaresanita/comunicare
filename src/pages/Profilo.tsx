@@ -185,6 +185,14 @@ const Profilo = () => {
       }
     }
 
+    // Validate phone for all roles
+    if (!phone.trim()) {
+      toast({ title: "Cellulare obbligatorio", description: "Inserisci il tuo numero di cellulare.", variant: "destructive" });
+      document.getElementById("phone-field")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      document.getElementById("phone-field")?.focus();
+      return;
+    }
+
     setSaving(true);
     const updates: any = {
       first_name: firstName,
@@ -192,13 +200,13 @@ const Profilo = () => {
       address: profile.role === "paziente" ? composeAddress(via, civico, cap, citta) : address,
       bio,
     };
+    updates.phone = phone;
     if (profile.role === "professionista") {
       updates.numero_opi = numeroOpi;
       updates.numero_fnofi = numeroFnofi;
       updates.partita_iva = partitaIva;
     }
     if (profile.role === "paziente") {
-      updates.phone = phone;
       updates.age = age ? parseInt(age) : null;
       updates.additional_info = additionalInfo;
       updates.is_caregiver = isCaregiver;
@@ -304,6 +312,11 @@ const Profilo = () => {
                 <Input value={profile.email} disabled className="text-senior-sm py-3 bg-muted" />
               </div>
 
+              <div className="space-y-2">
+                <Label className="text-senior-sm">Numero di cellulare *</Label>
+                <Input id="phone-field" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Es. +39 333 1234567" className="text-senior-sm py-3" />
+              </div>
+
               {profile.role === "paziente" ? (
                 <>
                   <StructuredAddressInput
@@ -318,10 +331,7 @@ const Profilo = () => {
                     label="Indirizzo di residenza"
                     errors={addressErrors}
                   />
-                  <div className="space-y-2">
-                    <Label className="text-senior-sm">Numero di cellulare</Label>
-                    <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Es. +39 333 1234567" className="text-senior-sm py-3" />
-                  </div>
+                  <StructuredAddressInput
                   <div className="space-y-2">
                     <Label className="text-senior-sm">Età</Label>
                     <Input type="number" value={age} onChange={(e) => setAge(e.target.value)} placeholder="Es. 72" className="text-senior-sm py-3" min="1" max="120" />
@@ -405,16 +415,18 @@ const Profilo = () => {
                 {saving ? "Salvataggio..." : "Salva modifiche"}
               </Button>
 
+              <div className="h-16" />
+
               {/* Delete account section */}
-              <div className="border-t border-border pt-8 mt-16 px-[10px] mx-[10px] border">
+              <div className="border-t border-border pt-6 mx-2 pb-6">
                 <h3 className="text-senior-lg font-semibold text-destructive mb-2">Cancella account</h3>
                 <p className="text-sm text-foreground mb-4">
                   Eliminando il tuo account, tutti i tuoi dati verranno rimossi permanentemente dal server, inclusi profilo, prenotazioni, recensioni e servizi. Questa azione è irreversibile.
                 </p>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" className="gap-2" disabled={deleting}>
-                      <Trash2 className="w-4 h-4" />
+                    <Button variant="destructive" size="sm" className="gap-2" disabled={deleting}>
+                      <Trash2 className="w-3.5 h-3.5" />
                       {deleting ? "Eliminazione..." : "Elimina il mio account"}
                     </Button>
                   </AlertDialogTrigger>
