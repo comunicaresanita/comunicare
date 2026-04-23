@@ -88,8 +88,15 @@ const Registrazione = () => {
       return;
     }
 
+    // Validate caregiver address if caregiver is checked
+    if (ruolo === "paziente" && isCaregiver && (!caregiverVia.trim() || !caregiverCivico.trim() || !caregiverCap.trim() || !caregiverCitta.trim())) {
+      toast({ title: "Indirizzo assistito incompleto", description: "Compila tutti i campi dell'indirizzo del familiare/assistito.", variant: "destructive" });
+      const firstId = !caregiverVia.trim() ? "caregiver-via-field" : !caregiverCivico.trim() ? "caregiver-civico-field" : !caregiverCap.trim() ? "caregiver-cap-field" : "caregiver-citta-field";
+      document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      document.getElementById(firstId)?.focus();
+      return;
+    }
 
-    if (ruolo === "professionista" && (!mapLat || !mapLng)) {
       toast({ title: "Posizione obbligatoria", description: "Indica sulla mappa il punto in cui vuoi essere visibile.", variant: "destructive" });
       return;
     }
