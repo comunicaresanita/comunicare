@@ -268,17 +268,19 @@ const Profilo = () => {
                 <Input value={profile.email} disabled className="text-senior-sm py-3 bg-muted" />
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-senior-sm">Indirizzo</Label>
-                <AddressAutocomplete
-                  value={address}
-                  onChange={(val) => setAddress(val)}
-                  onPlaceSelect={(details) => setAddress(details.fullAddress)}
-                />
-              </div>
-
-              {profile.role === "paziente" && (
+              {profile.role === "paziente" ? (
                 <>
+                  <StructuredAddressInput
+                    via={via}
+                    civico={civico}
+                    cap={cap}
+                    citta={citta}
+                    onViaChange={setVia}
+                    onCivicoChange={setCivico}
+                    onCapChange={setCap}
+                    onCittaChange={setCitta}
+                    label="Indirizzo di residenza"
+                  />
                   <div className="space-y-2">
                     <Label className="text-senior-sm">Numero di cellulare</Label>
                     <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Es. +39 333 1234567" className="text-senior-sm py-3" />
@@ -301,11 +303,38 @@ const Profilo = () => {
                       </p>
                     </div>
                   </div>
+                  {isCaregiver && (
+                    <div className="p-4 rounded-lg border border-primary/30 bg-secondary/50">
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Inserisci l'indirizzo della persona che riceverà le cure. I professionisti si recheranno a questo indirizzo, non al tuo indirizzo di registrazione.
+                      </p>
+                      <StructuredAddressInput
+                        via={caregiverVia}
+                        civico={caregiverCivico}
+                        cap={caregiverCap}
+                        citta={caregiverCitta}
+                        onViaChange={setCaregiverVia}
+                        onCivicoChange={setCaregiverCivico}
+                        onCapChange={setCaregiverCap}
+                        onCittaChange={setCaregiverCitta}
+                        label="Indirizzo del familiare / assistito"
+                      />
+                    </div>
+                  )}
                   <div className="space-y-2">
                     <Label className="text-senior-sm">Informazioni aggiuntive</Label>
                     <Textarea value={additionalInfo} onChange={(e) => setAdditionalInfo(e.target.value)} placeholder="Inserisci eventuali informazioni utili (es. patologie, allergie, esigenze particolari...)" className="text-senior-sm" rows={3} />
                   </div>
                 </>
+              ) : (
+                <div className="space-y-2">
+                  <Label className="text-senior-sm">Indirizzo</Label>
+                  <AddressAutocomplete
+                    value={address}
+                    onChange={(val) => setAddress(val)}
+                    onPlaceSelect={(details) => setAddress(details.fullAddress)}
+                  />
+                </div>
               )}
 
               {profile.role === "professionista" && (
@@ -338,7 +367,7 @@ const Profilo = () => {
               </Button>
 
               {/* Delete account section */}
-              <div className="border-t border-border pt-6 mt-6 px-[10px] mx-[10px] border">
+              <div className="border-t border-border pt-8 mt-16 px-[10px] mx-[10px] border">
                 <h3 className="text-senior-lg font-semibold text-destructive mb-2">Cancella account</h3>
                 <p className="text-sm text-foreground mb-4">
                   Eliminando il tuo account, tutti i tuoi dati verranno rimossi permanentemente dal server, inclusi profilo, prenotazioni, recensioni e servizi. Questa azione è irreversibile.
