@@ -97,6 +97,14 @@ const Registrazione = () => {
       return;
     }
 
+    if (!phone.trim()) {
+      toast({ title: "Cellulare obbligatorio", description: "Inserisci il tuo numero di cellulare.", variant: "destructive" });
+      document.getElementById("phone")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      document.getElementById("phone")?.focus();
+      return;
+    }
+
+    if (ruolo === "professionista" && !mapLat) {
       toast({ title: "Posizione obbligatoria", description: "Indica sulla mappa il punto in cui vuoi essere visibile.", variant: "destructive" });
       return;
     }
