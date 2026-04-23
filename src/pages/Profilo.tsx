@@ -151,6 +151,40 @@ const Profilo = () => {
 
   const handleSave = async () => {
     if (!profile) return;
+
+    // Validate required address fields for patients
+    if (profile.role === "paziente") {
+      const addrErr = {
+        via: !via.trim(),
+        civico: !civico.trim(),
+        cap: !cap.trim(),
+        citta: !citta.trim(),
+      };
+      setAddressErrors(addrErr);
+
+      const cgErr = isCaregiver ? {
+        via: !caregiverVia.trim(),
+        civico: !caregiverCivico.trim(),
+        cap: !caregiverCap.trim(),
+        citta: !caregiverCitta.trim(),
+      } : {};
+      setCaregiverErrors(cgErr);
+
+      const hasAddrError = Object.values(addrErr).some(Boolean);
+      const hasCgError = Object.values(cgErr).some(Boolean);
+
+      if (hasAddrError || hasCgError) {
+        toast({ title: "Campi obbligatori mancanti", description: "Compila tutti i campi dell'indirizzo prima di salvare.", variant: "destructive" });
+        // Scroll to first missing field
+        const firstErrorId = hasAddrError
+          ? (addrErr.via ? "via-field" : addrErr.civico ? "civico-field" : addrErr.cap ? "cap-field" : "citta-field")
+          : (cgErr.via ? "caregiver-via-field" : cgErr.civico ? "caregiver-civico-field" : cgErr.cap ? "caregiver-cap-field" : "caregiver-citta-field");
+        document.getElementById(firstErrorId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById(firstErrorId)?.focus();
+        return;
+      }
+    }
+
     setSaving(true);
     const updates: any = {
       first_name: firstName,
