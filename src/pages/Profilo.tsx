@@ -322,7 +322,7 @@ const Profilo = () => {
                     </div>
                   )}
                   <div className="space-y-2">
-                    <Label className="text-senior-sm">Informazioni aggiuntive</Label>
+                    <Label className="text-senior-sm">Informazioni aggiuntive dell'assistito</Label>
                     <Textarea value={additionalInfo} onChange={(e) => setAdditionalInfo(e.target.value)} placeholder="Inserisci eventuali informazioni utili (es. patologie, allergie, esigenze particolari...)" className="text-senior-sm" rows={3} />
                   </div>
                 </>
