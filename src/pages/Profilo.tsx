@@ -311,11 +311,12 @@ const Profilo = () => {
                     civico={civico}
                     cap={cap}
                     citta={citta}
-                    onViaChange={setVia}
-                    onCivicoChange={setCivico}
-                    onCapChange={setCap}
-                    onCittaChange={setCitta}
+                    onViaChange={(v) => { setVia(v); setAddressErrors(e => ({ ...e, via: false })); }}
+                    onCivicoChange={(v) => { setCivico(v); setAddressErrors(e => ({ ...e, civico: false })); }}
+                    onCapChange={(v) => { setCap(v); setAddressErrors(e => ({ ...e, cap: false })); }}
+                    onCittaChange={(v) => { setCitta(v); setAddressErrors(e => ({ ...e, citta: false })); }}
                     label="Indirizzo di residenza"
+                    errors={addressErrors}
                   />
                   <div className="space-y-2">
                     <Label className="text-senior-sm">Numero di cellulare</Label>
@@ -349,11 +350,13 @@ const Profilo = () => {
                         civico={caregiverCivico}
                         cap={caregiverCap}
                         citta={caregiverCitta}
-                        onViaChange={setCaregiverVia}
-                        onCivicoChange={setCaregiverCivico}
-                        onCapChange={setCaregiverCap}
-                        onCittaChange={setCaregiverCitta}
+                        onViaChange={(v) => { setCaregiverVia(v); setCaregiverErrors(e => ({ ...e, via: false })); }}
+                        onCivicoChange={(v) => { setCaregiverCivico(v); setCaregiverErrors(e => ({ ...e, civico: false })); }}
+                        onCapChange={(v) => { setCaregiverCap(v); setCaregiverErrors(e => ({ ...e, cap: false })); }}
+                        onCittaChange={(v) => { setCaregiverCitta(v); setCaregiverErrors(e => ({ ...e, citta: false })); }}
                         label="Indirizzo del familiare / assistito"
+                        errors={caregiverErrors}
+                        idPrefix="caregiver"
                       />
                     </div>
                   )}
