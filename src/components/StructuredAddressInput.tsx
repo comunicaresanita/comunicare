@@ -154,7 +154,7 @@ const StructuredAddressInput = ({
               required={required}
               className={`text-senior-sm py-3 ${errors.via ? errorClass : ""}`}
               autoComplete="off"
-              id="via-field"
+              id={`${prefix}via-field`}
             />
             {showDropdown && (
               <ul className="absolute z-50 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
@@ -183,7 +183,7 @@ const StructuredAddressInput = ({
             placeholder="Es. 15"
             required={required}
             className={`text-senior-sm py-3 ${errors.civico ? errorClass : ""}`}
-            id="civico-field"
+            id={`${prefix}civico-field`}
           />
         </div>
         <div className="space-y-1">
@@ -195,7 +195,7 @@ const StructuredAddressInput = ({
             maxLength={5}
             required={required}
             className={`text-senior-sm py-3 ${errors.cap ? errorClass : ""}`}
-            id="cap-field"
+            id={`${prefix}cap-field`}
           />
         </div>
         <div className="space-y-1 sm:col-span-2">
@@ -206,7 +206,7 @@ const StructuredAddressInput = ({
             placeholder="Es. Roma"
             required={required}
             className={`text-senior-sm py-3 ${errors.citta ? errorClass : ""}`}
-            id="citta-field"
+            id={`${prefix}citta-field`}
           />
         </div>
       </div>
