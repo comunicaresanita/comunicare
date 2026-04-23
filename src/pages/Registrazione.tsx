@@ -290,21 +290,71 @@ const Registrazione = () => {
                   <Label htmlFor="phone" className="text-senior-sm">Numero di cellulare *</Label>
                   <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Es. +39 333 1234567" required className="text-senior-sm py-3" />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="indirizzo" className="text-senior-sm">Indirizzo *</Label>
-                  <AddressAutocomplete
-                    value={indirizzo}
-                    onChange={(val) => setIndirizzo(val)}
-                    onPlaceSelect={(details) => {
-                      setIndirizzo(details.fullAddress);
-                      if (ruolo === "professionista" && details.lat && details.lng) {
-                        setMapLat(details.lat);
-                        setMapLng(details.lng);
-                      }
-                    }}
-                    required
-                  />
-                </div>
+                {ruolo === "paziente" ? (
+                  <>
+                    <StructuredAddressInput
+                      via={via}
+                      civico={civico}
+                      cap={cap}
+                      citta={citta}
+                      onViaChange={setVia}
+                      onCivicoChange={setCivico}
+                      onCapChange={setCap}
+                      onCittaChange={setCitta}
+                      required
+                      label="Indirizzo di residenza *"
+                    />
+                    <div className="flex items-start space-x-3 p-4 rounded-lg border border-border bg-muted/30">
+                      <Checkbox
+                        id="caregiver_reg"
+                        checked={isCaregiver}
+                        onCheckedChange={(checked) => setIsCaregiver(checked === true)}
+                        className="mt-0.5"
+                      />
+                      <div>
+                        <Label htmlFor="caregiver_reg" className="text-senior-sm font-medium cursor-pointer">Sono un caregiver</Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Un caregiver è una persona che si prende cura di un familiare o conoscente. Seleziona questa opzione se stai cercando cure per qualcun altro.
+                        </p>
+                      </div>
+                    </div>
+                    {isCaregiver && (
+                      <div className="p-4 rounded-lg border border-primary/30 bg-secondary/50">
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Inserisci l'indirizzo della persona che riceverà le cure. I professionisti si recheranno a questo indirizzo, non al tuo indirizzo di registrazione.
+                        </p>
+                        <StructuredAddressInput
+                          via={caregiverVia}
+                          civico={caregiverCivico}
+                          cap={caregiverCap}
+                          citta={caregiverCitta}
+                          onViaChange={setCaregiverVia}
+                          onCivicoChange={setCaregiverCivico}
+                          onCapChange={setCaregiverCap}
+                          onCittaChange={setCaregiverCitta}
+                          required
+                          label="Indirizzo del familiare / assistito *"
+                        />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="space-y-2">
+                    <Label htmlFor="indirizzo" className="text-senior-sm">Indirizzo *</Label>
+                    <AddressAutocomplete
+                      value={indirizzo}
+                      onChange={(val) => setIndirizzo(val)}
+                      onPlaceSelect={(details) => {
+                        setIndirizzo(details.fullAddress);
+                        if (details.lat && details.lng) {
+                          setMapLat(details.lat);
+                          setMapLng(details.lng);
+                        }
+                      }}
+                      required
+                    />
+                  </div>
+                )}
 
                 {ruolo === "professionista" && (
                   <>
