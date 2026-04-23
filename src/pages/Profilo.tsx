@@ -153,7 +153,7 @@ const Profilo = () => {
     const updates: any = {
       first_name: firstName,
       last_name: lastName,
-      address,
+      address: profile.role === "paziente" ? composeAddress(via, civico, cap, citta) : address,
       bio,
     };
     if (profile.role === "professionista") {
@@ -166,6 +166,7 @@ const Profilo = () => {
       updates.age = age ? parseInt(age) : null;
       updates.additional_info = additionalInfo;
       updates.is_caregiver = isCaregiver;
+      updates.caregiver_address = isCaregiver ? composeAddress(caregiverVia, caregiverCivico, caregiverCap, caregiverCitta) : null;
     }
     const { error } = await supabase.from("profiles").update(updates).eq("user_id", user!.id);
     setSaving(false);
