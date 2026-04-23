@@ -19,9 +19,10 @@ serve(async (req) => {
   }
 
   try {
-    const { action, input, placeId } = await req.json();
+    const { action, input, placeId, types } = await req.json();
 
     if (action === "autocomplete") {
+      const primaryTypes = types || ["street_address", "subpremise", "premise", "route"];
       const res = await fetch("https://places.googleapis.com/v1/places:autocomplete", {
         method: "POST",
         headers: {
@@ -31,7 +32,7 @@ serve(async (req) => {
         body: JSON.stringify({
           input,
           includedRegionCodes: ["it"],
-          includedPrimaryTypes: ["street_address", "subpremise", "premise", "route"],
+          includedPrimaryTypes: primaryTypes,
           languageCode: "it",
         }),
       });
