@@ -231,6 +231,7 @@ const DashboardPaziente = () => {
     if (!mapInstanceRef.current) {
       mapInstanceRef.current = new google.maps.Map(mapRef.current, {
         center, zoom: 11,
+        streetViewControl: false,
         styles: [{ featureType: "poi", stylers: [{ visibility: "simplified" }] }],
       });
     }
