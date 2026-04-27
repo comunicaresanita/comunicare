@@ -115,6 +115,15 @@ const Profilo = () => {
       setAge((profile as any).age ? String((profile as any).age) : "");
       setAdditionalInfo((profile as any).additional_info || "");
       setIsCaregiver((profile as any).is_caregiver || false);
+      setLivesInCondominio(
+        (profile as any).lives_in_condominio === null || (profile as any).lives_in_condominio === undefined
+          ? null
+          : !!(profile as any).lives_in_condominio,
+      );
+      setIntercomName((profile as any).intercom_name || "");
+      setFloorNumber((profile as any).floor_number || "");
+      setAccessNotes((profile as any).access_notes || "");
+      setMedicalNotes((profile as any).medical_notes || "");
       // Parse caregiver address if available
       const caregiverAddr = (profile as any).caregiver_address || "";
       if (caregiverAddr) {
