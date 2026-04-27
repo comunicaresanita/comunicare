@@ -149,9 +149,11 @@ const ProfiloInfermiere = () => {
   const [cgMedicalNotes, setCgMedicalNotes] = useState("");
   const [cgHousingErrors, setCgHousingErrors] = useState<HousingInfoErrors>({});
 
-  // Prefill caregiver address from saved profile, if any
+  // Prefill from saved profile (caregiver address + medical/housing/emergency)
   useEffect(() => {
-    const savedAddr = (userProfile as any)?.caregiver_address;
+    if (!userProfile) return;
+    const p = userProfile as any;
+    const savedAddr = p.caregiver_address;
     if (savedAddr) {
       const parsed = parseAddressToFields(savedAddr);
       setCgVia(parsed.via);
@@ -159,6 +161,16 @@ const ProfiloInfermiere = () => {
       setCgCap(parsed.cap);
       setCgCitta(parsed.citta);
     }
+    setSelfMedicalNotes(p.medical_notes || "");
+    if (p.caregiver_lives_in_condominio !== null && p.caregiver_lives_in_condominio !== undefined) {
+      setCgLivesInCondominio(!!p.caregiver_lives_in_condominio);
+    }
+    setCgIntercomName(p.caregiver_intercom_name || "");
+    setCgFloorNumber(p.caregiver_floor_number || "");
+    setCgAccessNotes(p.caregiver_access_notes || "");
+    setCgEmergencyName(p.caregiver_emergency_name || "");
+    setCgEmergencyPhone(p.caregiver_emergency_phone || "");
+    setCgMedicalNotes(p.caregiver_medical_notes || "");
   }, [userProfile]);
 
   useEffect(() => {
