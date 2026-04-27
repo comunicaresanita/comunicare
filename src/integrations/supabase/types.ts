@@ -103,6 +103,8 @@ export type Database = {
           price: number
           professional_id: string
           recipient_address: string | null
+          recipient_first_name: string | null
+          recipient_last_name: string | null
           recipient_type: string | null
           service_name: string
           status: string
@@ -124,6 +126,8 @@ export type Database = {
           price: number
           professional_id: string
           recipient_address?: string | null
+          recipient_first_name?: string | null
+          recipient_last_name?: string | null
           recipient_type?: string | null
           service_name: string
           status?: string
@@ -145,6 +149,8 @@ export type Database = {
           price?: number
           professional_id?: string
           recipient_address?: string | null
+          recipient_first_name?: string | null
+          recipient_last_name?: string | null
           recipient_type?: string | null
           service_name?: string
           status?: string
@@ -179,8 +185,10 @@ export type Database = {
           caregiver_address: string | null
           caregiver_emergency_name: string | null
           caregiver_emergency_phone: string | null
+          caregiver_first_name: string | null
           caregiver_floor_number: string | null
           caregiver_intercom_name: string | null
+          caregiver_last_name: string | null
           caregiver_lives_in_condominio: boolean | null
           caregiver_medical_notes: string | null
           created_at: string
@@ -216,8 +224,10 @@ export type Database = {
           caregiver_address?: string | null
           caregiver_emergency_name?: string | null
           caregiver_emergency_phone?: string | null
+          caregiver_first_name?: string | null
           caregiver_floor_number?: string | null
           caregiver_intercom_name?: string | null
+          caregiver_last_name?: string | null
           caregiver_lives_in_condominio?: boolean | null
           caregiver_medical_notes?: string | null
           created_at?: string
@@ -253,8 +263,10 @@ export type Database = {
           caregiver_address?: string | null
           caregiver_emergency_name?: string | null
           caregiver_emergency_phone?: string | null
+          caregiver_first_name?: string | null
           caregiver_floor_number?: string | null
           caregiver_intercom_name?: string | null
+          caregiver_last_name?: string | null
           caregiver_lives_in_condominio?: boolean | null
           caregiver_medical_notes?: string | null
           created_at?: string
