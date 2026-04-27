@@ -198,6 +198,23 @@ const Profilo = () => {
       return;
     }
 
+    // Validate housing info for patients
+    if (profile.role === "paziente") {
+      const housingErr: HousingInfoErrors = {
+        livesInCondominio: livesInCondominio === null,
+        intercomName: livesInCondominio === true && !intercomName.trim(),
+        floorNumber: livesInCondominio === true && !floorNumber.trim(),
+      };
+      setHousingErrors(housingErr);
+      if (Object.values(housingErr).some(Boolean)) {
+        toast({ title: "Informazioni abitazione mancanti", description: "Indica se abiti in un condominio e compila i campi richiesti.", variant: "destructive" });
+        const firstId = housingErr.livesInCondominio ? "housing-cond-yes" : housingErr.intercomName ? "housing-intercom" : "housing-floor";
+        document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById(firstId)?.focus();
+        return;
+      }
+    }
+
     setSaving(true);
     const updates: any = {
       first_name: firstName,
@@ -214,6 +231,11 @@ const Profilo = () => {
     if (profile.role === "paziente") {
       updates.age = age ? parseInt(age) : null;
       updates.additional_info = additionalInfo;
+      updates.lives_in_condominio = livesInCondominio;
+      updates.intercom_name = livesInCondominio ? intercomName : null;
+      updates.floor_number = livesInCondominio ? floorNumber : null;
+      updates.access_notes = livesInCondominio ? accessNotes : null;
+      updates.medical_notes = medicalNotes || null;
     }
     const { error } = await supabase.from("profiles").update(updates).eq("user_id", user!.id);
     setSaving(false);
