@@ -335,40 +335,8 @@ const Profilo = () => {
                     <Label className="text-senior-sm">Età</Label>
                     <Input type="number" value={age} onChange={(e) => setAge(e.target.value)} placeholder="Es. 72" className="text-senior-sm py-3" min="1" max="120" />
                   </div>
-                  <div className="flex items-start space-x-3 p-4 rounded-lg border border-border bg-muted/30">
-                    <Checkbox
-                      id="caregiver"
-                      checked={isCaregiver}
-                      onCheckedChange={(checked) => setIsCaregiver(checked === true)}
-                      className="mt-0.5"
-                    />
-                    <div>
-                      <Label htmlFor="caregiver" className="text-senior-sm font-medium cursor-pointer">Sono un caregiver</Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Un caregiver è una persona che si prende cura di un familiare o conoscente che necessita di assistenza. Seleziona questa opzione se stai cercando cure per qualcun altro.
-                      </p>
-                    </div>
-                  </div>
-                  {isCaregiver && (
-                    <div className="p-4 rounded-lg border border-primary/30 bg-secondary/50">
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Inserisci l'indirizzo della persona che riceverà le cure. I professionisti si recheranno a questo indirizzo, non al tuo indirizzo di registrazione.
-                      </p>
-                      <StructuredAddressInput
-                        via={caregiverVia}
-                        civico={caregiverCivico}
-                        cap={caregiverCap}
-                        citta={caregiverCitta}
-                        onViaChange={(v) => { setCaregiverVia(v); setCaregiverErrors(e => ({ ...e, via: false })); }}
-                        onCivicoChange={(v) => { setCaregiverCivico(v); setCaregiverErrors(e => ({ ...e, civico: false })); }}
-                        onCapChange={(v) => { setCaregiverCap(v); setCaregiverErrors(e => ({ ...e, cap: false })); }}
-                        onCittaChange={(v) => { setCaregiverCitta(v); setCaregiverErrors(e => ({ ...e, citta: false })); }}
-                        label="Indirizzo del familiare / assistito"
-                        errors={caregiverErrors}
-                        idPrefix="caregiver"
-                      />
-                    </div>
-                  )}
+                  {/* La scelta "sono un caregiver" è ora gestita in fase di prenotazione */}
+
                   <div className="space-y-2">
                     <Label className="text-senior-sm">Informazioni aggiuntive dell'assistito</Label>
                     <Textarea value={additionalInfo} onChange={(e) => setAdditionalInfo(e.target.value)} placeholder="Inserisci eventuali informazioni utili (es. patologie, allergie, esigenze particolari...)" className="text-senior-sm" rows={3} />
