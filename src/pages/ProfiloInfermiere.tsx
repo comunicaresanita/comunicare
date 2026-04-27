@@ -509,6 +509,68 @@ const ProfiloInfermiere = () => {
             </CardContent>
           </Card>
 
+          {/* Per chi stai prenotando? */}
+          {servizioSelezionato && slotSelezionato && selectedDate && (
+            <Card className="mb-6 md:mb-8">
+              <CardHeader>
+                <CardTitle className="text-base md:text-senior-lg">Per chi stai prenotando?</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setRecipient("self")}
+                    className={`text-left p-3 rounded-lg border-2 transition-colors ${
+                      recipient === "self" ? "border-primary bg-secondary" : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    <p className="font-semibold text-sm">Per me</p>
+                    <p className="text-xs text-muted-foreground mt-1 truncate">
+                      {(userProfile as any)?.address || "Il tuo indirizzo di residenza"}
+                    </p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRecipient("other")}
+                    className={`text-left p-3 rounded-lg border-2 transition-colors ${
+                      recipient === "other" ? "border-primary bg-secondary" : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    <p className="font-semibold text-sm">Per un familiare / assistito</p>
+                    <p className="text-xs text-muted-foreground mt-1 truncate">
+                      {hasSavedCaregiverAddr
+                        ? (userProfile as any).caregiver_address
+                        : "Inserisci l'indirizzo dove recapitare la prestazione"}
+                    </p>
+                  </button>
+                </div>
+
+                {recipient === "other" && (
+                  <div className="p-4 rounded-lg border border-primary/30 bg-secondary/30">
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Inserisci l'indirizzo della persona che riceverà la prestazione. Il professionista si recherà a questo indirizzo.
+                      {hasSavedCaregiverAddr && " I dati saranno aggiornati per le prossime prenotazioni."}
+                    </p>
+                    <StructuredAddressInput
+                      via={cgVia}
+                      civico={cgCivico}
+                      cap={cgCap}
+                      citta={cgCitta}
+                      onViaChange={(v) => { setCgVia(v); setCgErrors(e => ({ ...e, via: false })); }}
+                      onCivicoChange={(v) => { setCgCivico(v); setCgErrors(e => ({ ...e, civico: false })); }}
+                      onCapChange={(v) => { setCgCap(v); setCgErrors(e => ({ ...e, cap: false })); }}
+                      onCittaChange={(v) => { setCgCitta(v); setCgErrors(e => ({ ...e, citta: false })); }}
+                      label="Indirizzo del familiare / assistito"
+                      errors={cgErrors}
+                      idPrefix="cg"
+                      required
+                    />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
           {/* Riepilogo e prenotazione (pagamento temporaneamente disabilitato) */}
           {servizioSelezionato && slotSelezionato && selectedDate && (
             <Card className="mb-6 md:mb-8 border-primary border-2">
