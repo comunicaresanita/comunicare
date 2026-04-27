@@ -170,6 +170,22 @@ const Registrazione = () => {
       return;
     }
 
+    // Persist patient-only housing fields after signup (not handled by trigger)
+    if (ruolo === "paziente") {
+      const { data: { user: signedUser } } = await supabase.auth.getUser();
+      if (signedUser) {
+        await supabase
+          .from("profiles")
+          .update({
+            lives_in_condominio: livesInCondominio,
+            intercom_name: livesInCondominio ? intercomName : null,
+            floor_number: livesInCondominio ? floorNumber : null,
+            access_notes: livesInCondominio ? accessNotes : null,
+          } as any)
+          .eq("user_id", signedUser.id);
+      }
+    }
+
     toast({ title: "Registrazione completata!", description: "Il tuo account è stato creato con successo." });
 
     if (ruolo === "professionista") {
