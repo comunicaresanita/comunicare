@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import GoogleMapPicker from "@/components/GoogleMapPicker";
 import AddressAutocomplete from "@/components/AddressAutocomplete";
 import StructuredAddressInput, { composeAddress } from "@/components/StructuredAddressInput";
+import HousingInfoFields, { HousingInfoErrors } from "@/components/HousingInfoFields";
 import { User, Stethoscope, Upload, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -51,6 +52,11 @@ const Registrazione = () => {
   const [numeroFnofi, setNumeroFnofi] = useState("");
   const [partitaIva, setPartitaIva] = useState("");
   const [phone, setPhone] = useState("");
+  const [livesInCondominio, setLivesInCondominio] = useState<boolean | null>(null);
+  const [intercomName, setIntercomName] = useState("");
+  const [floorNumber, setFloorNumber] = useState("");
+  const [accessNotes, setAccessNotes] = useState("");
+  const [housingErrors, setHousingErrors] = useState<HousingInfoErrors>({});
   
   const [mapLat, setMapLat] = useState<number | null>(null);
   const [mapLng, setMapLng] = useState<number | null>(null);
