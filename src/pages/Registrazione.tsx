@@ -110,6 +110,23 @@ const Registrazione = () => {
       return;
     }
 
+    // Validate housing info for patients
+    if (ruolo === "paziente") {
+      const housingErr: HousingInfoErrors = {
+        livesInCondominio: livesInCondominio === null,
+        intercomName: livesInCondominio === true && !intercomName.trim(),
+        floorNumber: livesInCondominio === true && !floorNumber.trim(),
+      };
+      setHousingErrors(housingErr);
+      if (Object.values(housingErr).some(Boolean)) {
+        toast({ title: "Informazioni abitazione mancanti", description: "Indica se abiti in un condominio e compila i campi richiesti.", variant: "destructive" });
+        const firstId = housingErr.livesInCondominio ? "reg-housing-cond-yes" : housingErr.intercomName ? "reg-housing-intercom" : "reg-housing-floor";
+        document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById(firstId)?.focus();
+        return;
+      }
+    }
+
     if (ruolo === "professionista" && !mapLat) {
       toast({ title: "Posizione obbligatoria", description: "Indica sulla mappa il punto in cui vuoi essere visibile.", variant: "destructive" });
       return;
