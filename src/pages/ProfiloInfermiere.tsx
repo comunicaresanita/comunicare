@@ -739,7 +739,7 @@ const ProfiloInfermiere = () => {
                     <MedicalNotesField
                       value={cgMedicalNotes}
                       onChange={setCgMedicalNotes}
-                      label="Note importanti sulla condizione dell'assistito (opzionale)"
+                      label="Note importanti sulla condizione dell'assistito (consigliato)"
                       idPrefix="cg-medical-notes"
                     />
                   </div>
