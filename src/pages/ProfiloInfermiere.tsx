@@ -129,11 +129,13 @@ const ProfiloInfermiere = () => {
 
   // Recipient selection: "self" = paziente stesso, "other" = familiare/assistito
   const [recipient, setRecipient] = useState<"self" | "other">("self");
+  const [cgFirstName, setCgFirstName] = useState("");
+  const [cgLastName, setCgLastName] = useState("");
   const [cgVia, setCgVia] = useState("");
   const [cgCivico, setCgCivico] = useState("");
   const [cgCap, setCgCap] = useState("");
   const [cgCitta, setCgCitta] = useState("");
-  const [cgErrors, setCgErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
+  const [cgErrors, setCgErrors] = useState<{ firstName?: boolean; lastName?: boolean; via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
   const hasSavedCaregiverAddr = Boolean((userProfile as any)?.caregiver_address);
 
   // "Per me" medical notes (prefilled from profile, persisted on booking)
@@ -161,6 +163,8 @@ const ProfiloInfermiere = () => {
       setCgCap(parsed.cap);
       setCgCitta(parsed.citta);
     }
+    setCgFirstName(p.caregiver_first_name || "");
+    setCgLastName(p.caregiver_last_name || "");
     setSelfMedicalNotes(p.medical_notes || "");
     if (p.caregiver_lives_in_condominio !== null && p.caregiver_lives_in_condominio !== undefined) {
       setCgLivesInCondominio(!!p.caregiver_lives_in_condominio);
@@ -343,6 +347,8 @@ const ProfiloInfermiere = () => {
 
     if (recipient === "other") {
       const errs = {
+        firstName: !cgFirstName.trim(),
+        lastName: !cgLastName.trim(),
         via: !cgVia.trim(),
         civico: !cgCivico.trim(),
         cap: !cgCap.trim(),
@@ -350,8 +356,8 @@ const ProfiloInfermiere = () => {
       };
       setCgErrors(errs);
       if (Object.values(errs).some(Boolean)) {
-        toast({ title: "Indirizzo del familiare incompleto", description: "Compila tutti i campi dell'indirizzo dell'assistito.", variant: "destructive" });
-        const firstId = errs.via ? "cg-via-field" : errs.civico ? "cg-civico-field" : errs.cap ? "cg-cap-field" : "cg-citta-field";
+        toast({ title: "Dati del familiare incompleti", description: "Compila nome, cognome e indirizzo dell'assistito.", variant: "destructive" });
+        const firstId = errs.firstName ? "cg-first-name" : errs.lastName ? "cg-last-name" : errs.via ? "cg-via-field" : errs.civico ? "cg-civico-field" : errs.cap ? "cg-cap-field" : "cg-citta-field";
         document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
         document.getElementById(firstId)?.focus();
         return;
@@ -384,6 +390,8 @@ const ProfiloInfermiere = () => {
 
       // Persist caregiver data to profile so the user can reuse it next time
       await supabase.from("profiles").update({
+        caregiver_first_name: cgFirstName,
+        caregiver_last_name: cgLastName,
         caregiver_address: recipientAddress,
         caregiver_lives_in_condominio: cgLivesInCondominio,
         caregiver_intercom_name: bookingHousing.intercom_name,
@@ -424,6 +432,8 @@ const ProfiloInfermiere = () => {
           status: "confirmed",
           recipient_address: recipientAddress,
           recipient_type: recipient,
+          recipient_first_name: recipient === "other" ? cgFirstName : null,
+          recipient_last_name: recipient === "other" ? cgLastName : null,
           lives_in_condominio: bookingHousing.lives_in_condominio,
           intercom_name: bookingHousing.intercom_name,
           floor_number: bookingHousing.floor_number,
@@ -638,9 +648,35 @@ const ProfiloInfermiere = () => {
                 {recipient === "other" && (
                   <div className="p-4 rounded-lg border border-primary/30 bg-secondary/30 space-y-5">
                     <p className="text-sm text-muted-foreground">
-                      Inserisci l'indirizzo della persona che riceverà la prestazione. Il professionista si recherà a questo indirizzo.
+                      Inserisci i dati della persona che riceverà la prestazione. Il professionista si recherà a questo indirizzo.
                       {hasSavedCaregiverAddr && " I dati saranno aggiornati per le prossime prenotazioni."}
                     </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <Label htmlFor="cg-first-name" className="text-senior-sm">
+                          Nome dell'assistito <span className="text-destructive">*</span>
+                        </Label>
+                        <Input
+                          id="cg-first-name"
+                          value={cgFirstName}
+                          onChange={(e) => { setCgFirstName(e.target.value); setCgErrors(er => ({ ...er, firstName: false })); }}
+                          placeholder="Es. Mario"
+                          className={`text-senior-sm py-3 ${cgErrors.firstName ? "border-destructive" : ""}`}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label htmlFor="cg-last-name" className="text-senior-sm">
+                          Cognome dell'assistito <span className="text-destructive">*</span>
+                        </Label>
+                        <Input
+                          id="cg-last-name"
+                          value={cgLastName}
+                          onChange={(e) => { setCgLastName(e.target.value); setCgErrors(er => ({ ...er, lastName: false })); }}
+                          placeholder="Es. Rossi"
+                          className={`text-senior-sm py-3 ${cgErrors.lastName ? "border-destructive" : ""}`}
+                        />
+                      </div>
+                    </div>
                     <StructuredAddressInput
                       via={cgVia}
                       civico={cgCivico}

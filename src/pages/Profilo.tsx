@@ -382,10 +382,6 @@ const Profilo = () => {
                     idPrefix="my-medical-notes"
                   />
 
-                  <div className="space-y-2">
-                    <Label className="text-senior-sm">Informazioni aggiuntive (consigliato)</Label>
-                    <Textarea value={additionalInfo} onChange={(e) => setAdditionalInfo(e.target.value)} placeholder="Inserisci eventuali informazioni utili (es. esigenze particolari, preferenze...)" className="text-senior-sm" rows={3} />
-                  </div>
                 </>
               ) : (
                 <div className="space-y-2">
