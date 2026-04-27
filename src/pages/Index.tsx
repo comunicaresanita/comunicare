@@ -101,7 +101,7 @@ const Index = () => {
           <h2 className="text-xl md:text-senior-3xl font-bold text-foreground mb-3 md:mb-4">
             Pronto per iniziare?
           </h2>
-          <p className="text-sm md:text-senior-base text-muted-foreground mb-6 md:mb-8 max-w-lg mx-auto">
+          <p className="text-sm text-muted-foreground mb-6 md:mb-8 md:text-senior-3xl max-w-lg mx-auto">
             Registrati gratuitamente e accedi ai nostri servizi sanitari a domicilio.
           </p>
           <Link to="/registrazione">
