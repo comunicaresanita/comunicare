@@ -21,6 +21,8 @@ import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import AddressAutocomplete from "@/components/AddressAutocomplete";
 import StructuredAddressInput, { parseAddressToFields, composeAddress } from "@/components/StructuredAddressInput";
+import HousingInfoFields, { HousingInfoErrors } from "@/components/HousingInfoFields";
+import MedicalNotesField from "@/components/MedicalNotesField";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
