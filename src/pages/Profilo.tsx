@@ -162,23 +162,11 @@ const Profilo = () => {
       };
       setAddressErrors(addrErr);
 
-      const cgErr = isCaregiver ? {
-        via: !caregiverVia.trim(),
-        civico: !caregiverCivico.trim(),
-        cap: !caregiverCap.trim(),
-        citta: !caregiverCitta.trim(),
-      } : {};
-      setCaregiverErrors(cgErr);
-
       const hasAddrError = Object.values(addrErr).some(Boolean);
-      const hasCgError = Object.values(cgErr).some(Boolean);
 
-      if (hasAddrError || hasCgError) {
+      if (hasAddrError) {
         toast({ title: "Campi obbligatori mancanti", description: "Compila tutti i campi dell'indirizzo prima di salvare.", variant: "destructive" });
-        // Scroll to first missing field
-        const firstErrorId = hasAddrError
-          ? (addrErr.via ? "via-field" : addrErr.civico ? "civico-field" : addrErr.cap ? "cap-field" : "citta-field")
-          : (cgErr.via ? "caregiver-via-field" : cgErr.civico ? "caregiver-civico-field" : cgErr.cap ? "caregiver-cap-field" : "caregiver-citta-field");
+        const firstErrorId = addrErr.via ? "via-field" : addrErr.civico ? "civico-field" : addrErr.cap ? "cap-field" : "citta-field";
         document.getElementById(firstErrorId)?.scrollIntoView({ behavior: "smooth", block: "center" });
         document.getElementById(firstErrorId)?.focus();
         return;
