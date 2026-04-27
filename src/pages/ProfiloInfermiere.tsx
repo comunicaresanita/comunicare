@@ -671,7 +671,7 @@ const ProfiloInfermiere = () => {
                     />
 
                     <div className="space-y-3">
-                      <p className="text-senior-sm font-semibold">Contatto di emergenza (opzionale)</p>
+                      <p className="text-senior-sm font-semibold">Contatto di emergenza</p>
                       <p className="text-xs text-muted-foreground -mt-2">
                         Nome e numero di un familiare o caregiver di riferimento da contattare in caso di necessità.
                       </p>
