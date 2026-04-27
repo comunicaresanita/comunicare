@@ -359,6 +359,18 @@ const Registrazione = () => {
                       required
                       label="Indirizzo di residenza *"
                     />
+                    <HousingInfoFields
+                      livesInCondominio={livesInCondominio}
+                      intercomName={intercomName}
+                      floorNumber={floorNumber}
+                      accessNotes={accessNotes}
+                      onLivesInCondominioChange={(v) => { setLivesInCondominio(v); setHousingErrors(e => ({ ...e, livesInCondominio: false })); }}
+                      onIntercomNameChange={(v) => { setIntercomName(v); setHousingErrors(e => ({ ...e, intercomName: false })); }}
+                      onFloorNumberChange={(v) => { setFloorNumber(v); setHousingErrors(e => ({ ...e, floorNumber: false })); }}
+                      onAccessNotesChange={setAccessNotes}
+                      errors={housingErrors}
+                      idPrefix="reg-housing"
+                    />
                     <div className="flex items-start space-x-3 p-4 rounded-lg border border-border bg-muted/30">
                       <Checkbox
                         id="caregiver_reg"
