@@ -82,6 +82,9 @@ const professionalFaqItems = [
 
 
 const Contatti = () => {
+  const { profile } = useAuth();
+  const faqItems = profile?.role === "professionista" ? professionalFaqItems : patientFaqItems;
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [messaggio, setMessaggio] = useState("");
