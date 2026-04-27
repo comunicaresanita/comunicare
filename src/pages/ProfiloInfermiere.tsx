@@ -648,9 +648,35 @@ const ProfiloInfermiere = () => {
                 {recipient === "other" && (
                   <div className="p-4 rounded-lg border border-primary/30 bg-secondary/30 space-y-5">
                     <p className="text-sm text-muted-foreground">
-                      Inserisci l'indirizzo della persona che riceverà la prestazione. Il professionista si recherà a questo indirizzo.
+                      Inserisci i dati della persona che riceverà la prestazione. Il professionista si recherà a questo indirizzo.
                       {hasSavedCaregiverAddr && " I dati saranno aggiornati per le prossime prenotazioni."}
                     </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <Label htmlFor="cg-first-name" className="text-senior-sm">
+                          Nome dell'assistito <span className="text-destructive">*</span>
+                        </Label>
+                        <Input
+                          id="cg-first-name"
+                          value={cgFirstName}
+                          onChange={(e) => { setCgFirstName(e.target.value); setCgErrors(er => ({ ...er, firstName: false })); }}
+                          placeholder="Es. Mario"
+                          className={`text-senior-sm py-3 ${cgErrors.firstName ? "border-destructive" : ""}`}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label htmlFor="cg-last-name" className="text-senior-sm">
+                          Cognome dell'assistito <span className="text-destructive">*</span>
+                        </Label>
+                        <Input
+                          id="cg-last-name"
+                          value={cgLastName}
+                          onChange={(e) => { setCgLastName(e.target.value); setCgErrors(er => ({ ...er, lastName: false })); }}
+                          placeholder="Es. Rossi"
+                          className={`text-senior-sm py-3 ${cgErrors.lastName ? "border-destructive" : ""}`}
+                        />
+                      </div>
+                    </div>
                     <StructuredAddressInput
                       via={cgVia}
                       civico={cgCivico}
