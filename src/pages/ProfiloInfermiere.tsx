@@ -750,7 +750,7 @@ const ProfiloInfermiere = () => {
                     <MedicalNotesField
                       value={selfMedicalNotes}
                       onChange={setSelfMedicalNotes}
-                      label="Note importanti sulla tua condizione (opzionale)"
+                      label="Note importanti sulla tua condizione"
                       idPrefix="self-medical-notes"
                     />
                     <p className="text-xs text-muted-foreground mt-2">
