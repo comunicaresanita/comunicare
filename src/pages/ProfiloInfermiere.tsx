@@ -9,6 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import StructuredAddressInput, { parseAddressToFields, composeAddress } from "@/components/StructuredAddressInput";
+import HousingInfoFields, { HousingInfoErrors } from "@/components/HousingInfoFields";
+import MedicalNotesField from "@/components/MedicalNotesField";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const NIGHT_START_HOUR = 20;
 
@@ -131,6 +135,19 @@ const ProfiloInfermiere = () => {
   const [cgCitta, setCgCitta] = useState("");
   const [cgErrors, setCgErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
   const hasSavedCaregiverAddr = Boolean((userProfile as any)?.caregiver_address);
+
+  // "Per me" medical notes (prefilled from profile, persisted on booking)
+  const [selfMedicalNotes, setSelfMedicalNotes] = useState("");
+
+  // "Per familiare" housing + emergency + medical
+  const [cgLivesInCondominio, setCgLivesInCondominio] = useState<boolean | null>(null);
+  const [cgIntercomName, setCgIntercomName] = useState("");
+  const [cgFloorNumber, setCgFloorNumber] = useState("");
+  const [cgAccessNotes, setCgAccessNotes] = useState("");
+  const [cgEmergencyName, setCgEmergencyName] = useState("");
+  const [cgEmergencyPhone, setCgEmergencyPhone] = useState("");
+  const [cgMedicalNotes, setCgMedicalNotes] = useState("");
+  const [cgHousingErrors, setCgHousingErrors] = useState<HousingInfoErrors>({});
 
   // Prefill caregiver address from saved profile, if any
   useEffect(() => {
