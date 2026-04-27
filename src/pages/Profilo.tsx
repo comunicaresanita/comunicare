@@ -21,6 +21,8 @@ import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import AddressAutocomplete from "@/components/AddressAutocomplete";
 import StructuredAddressInput, { parseAddressToFields, composeAddress } from "@/components/StructuredAddressInput";
+import HousingInfoFields, { HousingInfoErrors } from "@/components/HousingInfoFields";
+import MedicalNotesField from "@/components/MedicalNotesField";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
@@ -58,6 +60,12 @@ const Profilo = () => {
   const [uploading, setUploading] = useState(false);
   const [addressErrors, setAddressErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
   const [caregiverErrors, setCaregiverErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
+  const [livesInCondominio, setLivesInCondominio] = useState<boolean | null>(null);
+  const [intercomName, setIntercomName] = useState("");
+  const [floorNumber, setFloorNumber] = useState("");
+  const [accessNotes, setAccessNotes] = useState("");
+  const [medicalNotes, setMedicalNotes] = useState("");
+  const [housingErrors, setHousingErrors] = useState<HousingInfoErrors>({});
   const [deleting, setDeleting] = useState(false);
   const [bookings, setBookings] = useState<any[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(false);
@@ -107,6 +115,15 @@ const Profilo = () => {
       setAge((profile as any).age ? String((profile as any).age) : "");
       setAdditionalInfo((profile as any).additional_info || "");
       setIsCaregiver((profile as any).is_caregiver || false);
+      setLivesInCondominio(
+        (profile as any).lives_in_condominio === null || (profile as any).lives_in_condominio === undefined
+          ? null
+          : !!(profile as any).lives_in_condominio,
+      );
+      setIntercomName((profile as any).intercom_name || "");
+      setFloorNumber((profile as any).floor_number || "");
+      setAccessNotes((profile as any).access_notes || "");
+      setMedicalNotes((profile as any).medical_notes || "");
       // Parse caregiver address if available
       const caregiverAddr = (profile as any).caregiver_address || "";
       if (caregiverAddr) {
@@ -181,6 +198,23 @@ const Profilo = () => {
       return;
     }
 
+    // Validate housing info for patients
+    if (profile.role === "paziente") {
+      const housingErr: HousingInfoErrors = {
+        livesInCondominio: livesInCondominio === null,
+        intercomName: livesInCondominio === true && !intercomName.trim(),
+        floorNumber: livesInCondominio === true && !floorNumber.trim(),
+      };
+      setHousingErrors(housingErr);
+      if (Object.values(housingErr).some(Boolean)) {
+        toast({ title: "Informazioni abitazione mancanti", description: "Indica se abiti in un condominio e compila i campi richiesti.", variant: "destructive" });
+        const firstId = housingErr.livesInCondominio ? "housing-cond-yes" : housingErr.intercomName ? "housing-intercom" : "housing-floor";
+        document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById(firstId)?.focus();
+        return;
+      }
+    }
+
     setSaving(true);
     const updates: any = {
       first_name: firstName,
@@ -197,6 +231,11 @@ const Profilo = () => {
     if (profile.role === "paziente") {
       updates.age = age ? parseInt(age) : null;
       updates.additional_info = additionalInfo;
+      updates.lives_in_condominio = livesInCondominio;
+      updates.intercom_name = livesInCondominio ? intercomName : null;
+      updates.floor_number = livesInCondominio ? floorNumber : null;
+      updates.access_notes = livesInCondominio ? accessNotes : null;
+      updates.medical_notes = medicalNotes || null;
     }
     const { error } = await supabase.from("profiles").update(updates).eq("user_id", user!.id);
     setSaving(false);
@@ -323,9 +362,29 @@ const Profilo = () => {
                   </div>
                   {/* La scelta "sono un caregiver" è ora gestita in fase di prenotazione */}
 
+                  <HousingInfoFields
+                    livesInCondominio={livesInCondominio}
+                    intercomName={intercomName}
+                    floorNumber={floorNumber}
+                    accessNotes={accessNotes}
+                    onLivesInCondominioChange={(v) => { setLivesInCondominio(v); setHousingErrors(e => ({ ...e, livesInCondominio: false })); }}
+                    onIntercomNameChange={(v) => { setIntercomName(v); setHousingErrors(e => ({ ...e, intercomName: false })); }}
+                    onFloorNumberChange={(v) => { setFloorNumber(v); setHousingErrors(e => ({ ...e, floorNumber: false })); }}
+                    onAccessNotesChange={setAccessNotes}
+                    errors={housingErrors}
+                    idPrefix="housing"
+                  />
+
+                  <MedicalNotesField
+                    value={medicalNotes}
+                    onChange={setMedicalNotes}
+                    label="Note importanti sulla mia condizione (opzionale)"
+                    idPrefix="my-medical-notes"
+                  />
+
                   <div className="space-y-2">
                     <Label className="text-senior-sm">Informazioni aggiuntive (consigliato)</Label>
-                    <Textarea value={additionalInfo} onChange={(e) => setAdditionalInfo(e.target.value)} placeholder="Inserisci eventuali informazioni utili (es. patologie, allergie, esigenze particolari...)" className="text-senior-sm" rows={3} />
+                    <Textarea value={additionalInfo} onChange={(e) => setAdditionalInfo(e.target.value)} placeholder="Inserisci eventuali informazioni utili (es. esigenze particolari, preferenze...)" className="text-senior-sm" rows={3} />
                   </div>
                 </>
               ) : (

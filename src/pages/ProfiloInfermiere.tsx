@@ -9,6 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import StructuredAddressInput, { parseAddressToFields, composeAddress } from "@/components/StructuredAddressInput";
+import HousingInfoFields, { HousingInfoErrors } from "@/components/HousingInfoFields";
+import MedicalNotesField from "@/components/MedicalNotesField";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const NIGHT_START_HOUR = 20;
 
@@ -132,9 +136,24 @@ const ProfiloInfermiere = () => {
   const [cgErrors, setCgErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
   const hasSavedCaregiverAddr = Boolean((userProfile as any)?.caregiver_address);
 
-  // Prefill caregiver address from saved profile, if any
+  // "Per me" medical notes (prefilled from profile, persisted on booking)
+  const [selfMedicalNotes, setSelfMedicalNotes] = useState("");
+
+  // "Per familiare" housing + emergency + medical
+  const [cgLivesInCondominio, setCgLivesInCondominio] = useState<boolean | null>(null);
+  const [cgIntercomName, setCgIntercomName] = useState("");
+  const [cgFloorNumber, setCgFloorNumber] = useState("");
+  const [cgAccessNotes, setCgAccessNotes] = useState("");
+  const [cgEmergencyName, setCgEmergencyName] = useState("");
+  const [cgEmergencyPhone, setCgEmergencyPhone] = useState("");
+  const [cgMedicalNotes, setCgMedicalNotes] = useState("");
+  const [cgHousingErrors, setCgHousingErrors] = useState<HousingInfoErrors>({});
+
+  // Prefill from saved profile (caregiver address + medical/housing/emergency)
   useEffect(() => {
-    const savedAddr = (userProfile as any)?.caregiver_address;
+    if (!userProfile) return;
+    const p = userProfile as any;
+    const savedAddr = p.caregiver_address;
     if (savedAddr) {
       const parsed = parseAddressToFields(savedAddr);
       setCgVia(parsed.via);
@@ -142,6 +161,16 @@ const ProfiloInfermiere = () => {
       setCgCap(parsed.cap);
       setCgCitta(parsed.citta);
     }
+    setSelfMedicalNotes(p.medical_notes || "");
+    if (p.caregiver_lives_in_condominio !== null && p.caregiver_lives_in_condominio !== undefined) {
+      setCgLivesInCondominio(!!p.caregiver_lives_in_condominio);
+    }
+    setCgIntercomName(p.caregiver_intercom_name || "");
+    setCgFloorNumber(p.caregiver_floor_number || "");
+    setCgAccessNotes(p.caregiver_access_notes || "");
+    setCgEmergencyName(p.caregiver_emergency_name || "");
+    setCgEmergencyPhone(p.caregiver_emergency_phone || "");
+    setCgMedicalNotes(p.caregiver_medical_notes || "");
   }, [userProfile]);
 
   useEffect(() => {
@@ -305,6 +334,13 @@ const ProfiloInfermiere = () => {
     }
 
     let recipientAddress: string | null = null;
+    let bookingHousing: { lives_in_condominio: boolean | null; intercom_name: string | null; floor_number: string | null; access_notes: string | null } = {
+      lives_in_condominio: null, intercom_name: null, floor_number: null, access_notes: null,
+    };
+    let bookingEmergencyName: string | null = null;
+    let bookingEmergencyPhone: string | null = null;
+    let bookingMedicalNotes: string | null = null;
+
     if (recipient === "other") {
       const errs = {
         via: !cgVia.trim(),
@@ -320,11 +356,57 @@ const ProfiloInfermiere = () => {
         document.getElementById(firstId)?.focus();
         return;
       }
+      // Validate housing for caregiver
+      const hErr: HousingInfoErrors = {
+        livesInCondominio: cgLivesInCondominio === null,
+        intercomName: cgLivesInCondominio === true && !cgIntercomName.trim(),
+        floorNumber: cgLivesInCondominio === true && !cgFloorNumber.trim(),
+      };
+      setCgHousingErrors(hErr);
+      if (Object.values(hErr).some(Boolean)) {
+        toast({ title: "Informazioni abitazione mancanti", description: "Indica se l'assistito abita in un condominio e compila i campi richiesti.", variant: "destructive" });
+        const firstId = hErr.livesInCondominio ? "cg-housing-cond-yes" : hErr.intercomName ? "cg-housing-intercom" : "cg-housing-floor";
+        document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById(firstId)?.focus();
+        return;
+      }
+
       recipientAddress = composeAddress(cgVia, cgCivico, cgCap, cgCitta);
-      // Persist to profile so the user can reuse it next time
-      await supabase.from("profiles").update({ caregiver_address: recipientAddress } as any).eq("user_id", user.id);
+      bookingHousing = {
+        lives_in_condominio: cgLivesInCondominio,
+        intercom_name: cgLivesInCondominio ? cgIntercomName : null,
+        floor_number: cgLivesInCondominio ? cgFloorNumber : null,
+        access_notes: cgLivesInCondominio ? cgAccessNotes : null,
+      };
+      bookingEmergencyName = cgEmergencyName || null;
+      bookingEmergencyPhone = cgEmergencyPhone || null;
+      bookingMedicalNotes = cgMedicalNotes || null;
+
+      // Persist caregiver data to profile so the user can reuse it next time
+      await supabase.from("profiles").update({
+        caregiver_address: recipientAddress,
+        caregiver_lives_in_condominio: cgLivesInCondominio,
+        caregiver_intercom_name: bookingHousing.intercom_name,
+        caregiver_floor_number: bookingHousing.floor_number,
+        caregiver_access_notes: bookingHousing.access_notes,
+        caregiver_emergency_name: bookingEmergencyName,
+        caregiver_emergency_phone: bookingEmergencyPhone,
+        caregiver_medical_notes: bookingMedicalNotes,
+      } as any).eq("user_id", user.id);
     } else {
       recipientAddress = (userProfile as any)?.address || null;
+      const p = userProfile as any;
+      bookingHousing = {
+        lives_in_condominio: p?.lives_in_condominio ?? null,
+        intercom_name: p?.intercom_name ?? null,
+        floor_number: p?.floor_number ?? null,
+        access_notes: p?.access_notes ?? null,
+      };
+      bookingMedicalNotes = selfMedicalNotes || null;
+      // Persist updated medical notes back to profile
+      if ((p?.medical_notes || "") !== selfMedicalNotes) {
+        await supabase.from("profiles").update({ medical_notes: bookingMedicalNotes } as any).eq("user_id", user.id);
+      }
     }
 
     setPaymentLoading(true);
@@ -341,6 +423,14 @@ const ProfiloInfermiere = () => {
           time_slot: slotSelezionato,
           status: "confirmed",
           recipient_address: recipientAddress,
+          recipient_type: recipient,
+          lives_in_condominio: bookingHousing.lives_in_condominio,
+          intercom_name: bookingHousing.intercom_name,
+          floor_number: bookingHousing.floor_number,
+          access_notes: bookingHousing.access_notes,
+          emergency_contact_name: bookingEmergencyName,
+          emergency_contact_phone: bookingEmergencyPhone,
+          medical_notes: bookingMedicalNotes,
         } as any)
         .select()
         .single();
@@ -546,8 +636,8 @@ const ProfiloInfermiere = () => {
                 </div>
 
                 {recipient === "other" && (
-                  <div className="p-4 rounded-lg border border-primary/30 bg-secondary/30">
-                    <p className="text-sm text-muted-foreground mb-3">
+                  <div className="p-4 rounded-lg border border-primary/30 bg-secondary/30 space-y-5">
+                    <p className="text-sm text-muted-foreground">
                       Inserisci l'indirizzo della persona che riceverà la prestazione. Il professionista si recherà a questo indirizzo.
                       {hasSavedCaregiverAddr && " I dati saranno aggiornati per le prossime prenotazioni."}
                     </p>
@@ -565,6 +655,71 @@ const ProfiloInfermiere = () => {
                       idPrefix="cg"
                       required
                     />
+
+                    <HousingInfoFields
+                      livesInCondominio={cgLivesInCondominio}
+                      intercomName={cgIntercomName}
+                      floorNumber={cgFloorNumber}
+                      accessNotes={cgAccessNotes}
+                      onLivesInCondominioChange={(v) => { setCgLivesInCondominio(v); setCgHousingErrors(e => ({ ...e, livesInCondominio: false })); }}
+                      onIntercomNameChange={(v) => { setCgIntercomName(v); setCgHousingErrors(e => ({ ...e, intercomName: false })); }}
+                      onFloorNumberChange={(v) => { setCgFloorNumber(v); setCgHousingErrors(e => ({ ...e, floorNumber: false })); }}
+                      onAccessNotesChange={setCgAccessNotes}
+                      errors={cgHousingErrors}
+                      idPrefix="cg-housing"
+                      title="L'assistito abita in un condominio?"
+                    />
+
+                    <div className="space-y-3">
+                      <p className="text-senior-sm font-semibold">Contatto di emergenza (opzionale)</p>
+                      <p className="text-xs text-muted-foreground -mt-2">
+                        Nome e numero di un familiare o caregiver di riferimento da contattare in caso di necessità.
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <Label htmlFor="cg-emerg-name" className="text-senior-sm">Nome</Label>
+                          <Input
+                            id="cg-emerg-name"
+                            value={cgEmergencyName}
+                            onChange={(e) => setCgEmergencyName(e.target.value)}
+                            placeholder="Es. Maria Rossi"
+                            className="text-senior-sm py-3"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label htmlFor="cg-emerg-phone" className="text-senior-sm">Telefono</Label>
+                          <Input
+                            id="cg-emerg-phone"
+                            type="tel"
+                            value={cgEmergencyPhone}
+                            onChange={(e) => setCgEmergencyPhone(e.target.value)}
+                            placeholder="Es. +39 333 1234567"
+                            className="text-senior-sm py-3"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <MedicalNotesField
+                      value={cgMedicalNotes}
+                      onChange={setCgMedicalNotes}
+                      label="Note importanti sulla condizione dell'assistito (opzionale)"
+                      idPrefix="cg-medical-notes"
+                    />
+                  </div>
+                )}
+
+                {recipient === "self" && (
+                  <div className="p-4 rounded-lg border border-primary/30 bg-secondary/30">
+                    <MedicalNotesField
+                      value={selfMedicalNotes}
+                      onChange={setSelfMedicalNotes}
+                      label="Note importanti sulla tua condizione (opzionale)"
+                      idPrefix="self-medical-notes"
+                    />
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Le modifiche verranno salvate anche nel tuo profilo per le prossime prenotazioni.
+                    </p>
                   </div>
                 )}
               </CardContent>

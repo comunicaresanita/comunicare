@@ -11,9 +11,11 @@ import Footer from "@/components/Footer";
 import GoogleMapPicker from "@/components/GoogleMapPicker";
 import AddressAutocomplete from "@/components/AddressAutocomplete";
 import StructuredAddressInput, { composeAddress } from "@/components/StructuredAddressInput";
+import HousingInfoFields, { HousingInfoErrors } from "@/components/HousingInfoFields";
 import { User, Stethoscope, Upload, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 type Ruolo = "paziente" | "professionista";
 type TipoProfessionista = "infermiere" | "oss" | "fisioterapista";
@@ -51,6 +53,11 @@ const Registrazione = () => {
   const [numeroFnofi, setNumeroFnofi] = useState("");
   const [partitaIva, setPartitaIva] = useState("");
   const [phone, setPhone] = useState("");
+  const [livesInCondominio, setLivesInCondominio] = useState<boolean | null>(null);
+  const [intercomName, setIntercomName] = useState("");
+  const [floorNumber, setFloorNumber] = useState("");
+  const [accessNotes, setAccessNotes] = useState("");
+  const [housingErrors, setHousingErrors] = useState<HousingInfoErrors>({});
   
   const [mapLat, setMapLat] = useState<number | null>(null);
   const [mapLng, setMapLng] = useState<number | null>(null);
@@ -104,6 +111,23 @@ const Registrazione = () => {
       return;
     }
 
+    // Validate housing info for patients
+    if (ruolo === "paziente") {
+      const housingErr: HousingInfoErrors = {
+        livesInCondominio: livesInCondominio === null,
+        intercomName: livesInCondominio === true && !intercomName.trim(),
+        floorNumber: livesInCondominio === true && !floorNumber.trim(),
+      };
+      setHousingErrors(housingErr);
+      if (Object.values(housingErr).some(Boolean)) {
+        toast({ title: "Informazioni abitazione mancanti", description: "Indica se abiti in un condominio e compila i campi richiesti.", variant: "destructive" });
+        const firstId = housingErr.livesInCondominio ? "reg-housing-cond-yes" : housingErr.intercomName ? "reg-housing-intercom" : "reg-housing-floor";
+        document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById(firstId)?.focus();
+        return;
+      }
+    }
+
     if (ruolo === "professionista" && !mapLat) {
       toast({ title: "Posizione obbligatoria", description: "Indica sulla mappa il punto in cui vuoi essere visibile.", variant: "destructive" });
       return;
@@ -144,6 +168,22 @@ const Registrazione = () => {
     if (error) {
       toast({ title: "Errore di registrazione", description: error.message, variant: "destructive" });
       return;
+    }
+
+    // Persist patient-only housing fields after signup (not handled by trigger)
+    if (ruolo === "paziente") {
+      const { data: { user: signedUser } } = await supabase.auth.getUser();
+      if (signedUser) {
+        await supabase
+          .from("profiles")
+          .update({
+            lives_in_condominio: livesInCondominio,
+            intercom_name: livesInCondominio ? intercomName : null,
+            floor_number: livesInCondominio ? floorNumber : null,
+            access_notes: livesInCondominio ? accessNotes : null,
+          } as any)
+          .eq("user_id", signedUser.id);
+      }
     }
 
     toast({ title: "Registrazione completata!", description: "Il tuo account è stato creato con successo." });
@@ -318,6 +358,18 @@ const Registrazione = () => {
                       onCittaChange={setCitta}
                       required
                       label="Indirizzo di residenza *"
+                    />
+                    <HousingInfoFields
+                      livesInCondominio={livesInCondominio}
+                      intercomName={intercomName}
+                      floorNumber={floorNumber}
+                      accessNotes={accessNotes}
+                      onLivesInCondominioChange={(v) => { setLivesInCondominio(v); setHousingErrors(e => ({ ...e, livesInCondominio: false })); }}
+                      onIntercomNameChange={(v) => { setIntercomName(v); setHousingErrors(e => ({ ...e, intercomName: false })); }}
+                      onFloorNumberChange={(v) => { setFloorNumber(v); setHousingErrors(e => ({ ...e, floorNumber: false })); }}
+                      onAccessNotesChange={setAccessNotes}
+                      errors={housingErrors}
+                      idPrefix="reg-housing"
                     />
                     <div className="flex items-start space-x-3 p-4 rounded-lg border border-border bg-muted/30">
                       <Checkbox

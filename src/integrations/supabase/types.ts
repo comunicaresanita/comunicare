@@ -89,39 +89,63 @@ export type Database = {
       }
       bookings: {
         Row: {
+          access_notes: string | null
           created_at: string
           day: string
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          floor_number: string | null
           id: string
+          intercom_name: string | null
+          lives_in_condominio: boolean | null
+          medical_notes: string | null
           patient_id: string
           price: number
           professional_id: string
           recipient_address: string | null
+          recipient_type: string | null
           service_name: string
           status: string
           stripe_session_id: string | null
           time_slot: string
         }
         Insert: {
+          access_notes?: string | null
           created_at?: string
           day: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          floor_number?: string | null
           id?: string
+          intercom_name?: string | null
+          lives_in_condominio?: boolean | null
+          medical_notes?: string | null
           patient_id: string
           price: number
           professional_id: string
           recipient_address?: string | null
+          recipient_type?: string | null
           service_name: string
           status?: string
           stripe_session_id?: string | null
           time_slot: string
         }
         Update: {
+          access_notes?: string | null
           created_at?: string
           day?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          floor_number?: string | null
           id?: string
+          intercom_name?: string | null
+          lives_in_condominio?: boolean | null
+          medical_notes?: string | null
           patient_id?: string
           price?: number
           professional_id?: string
           recipient_address?: string | null
+          recipient_type?: string | null
           service_name?: string
           status?: string
           stripe_session_id?: string | null
@@ -146,19 +170,31 @@ export type Database = {
       }
       profiles: {
         Row: {
+          access_notes: string | null
           additional_info: string | null
           address: string | null
           age: number | null
           bio: string | null
+          caregiver_access_notes: string | null
           caregiver_address: string | null
+          caregiver_emergency_name: string | null
+          caregiver_emergency_phone: string | null
+          caregiver_floor_number: string | null
+          caregiver_intercom_name: string | null
+          caregiver_lives_in_condominio: boolean | null
+          caregiver_medical_notes: string | null
           created_at: string
           email: string
           first_name: string
+          floor_number: string | null
           id: string
+          intercom_name: string | null
           is_caregiver: boolean | null
           last_name: string
           lat: number | null
+          lives_in_condominio: boolean | null
           lng: number | null
+          medical_notes: string | null
           numero_fnofi: string | null
           numero_opi: string | null
           partita_iva: string | null
@@ -171,19 +207,31 @@ export type Database = {
           zona: string | null
         }
         Insert: {
+          access_notes?: string | null
           additional_info?: string | null
           address?: string | null
           age?: number | null
           bio?: string | null
+          caregiver_access_notes?: string | null
           caregiver_address?: string | null
+          caregiver_emergency_name?: string | null
+          caregiver_emergency_phone?: string | null
+          caregiver_floor_number?: string | null
+          caregiver_intercom_name?: string | null
+          caregiver_lives_in_condominio?: boolean | null
+          caregiver_medical_notes?: string | null
           created_at?: string
           email: string
           first_name: string
+          floor_number?: string | null
           id?: string
+          intercom_name?: string | null
           is_caregiver?: boolean | null
           last_name: string
           lat?: number | null
+          lives_in_condominio?: boolean | null
           lng?: number | null
+          medical_notes?: string | null
           numero_fnofi?: string | null
           numero_opi?: string | null
           partita_iva?: string | null
@@ -196,19 +244,31 @@ export type Database = {
           zona?: string | null
         }
         Update: {
+          access_notes?: string | null
           additional_info?: string | null
           address?: string | null
           age?: number | null
           bio?: string | null
+          caregiver_access_notes?: string | null
           caregiver_address?: string | null
+          caregiver_emergency_name?: string | null
+          caregiver_emergency_phone?: string | null
+          caregiver_floor_number?: string | null
+          caregiver_intercom_name?: string | null
+          caregiver_lives_in_condominio?: boolean | null
+          caregiver_medical_notes?: string | null
           created_at?: string
           email?: string
           first_name?: string
+          floor_number?: string | null
           id?: string
+          intercom_name?: string | null
           is_caregiver?: boolean | null
           last_name?: string
           lat?: number | null
+          lives_in_condominio?: boolean | null
           lng?: number | null
+          medical_notes?: string | null
           numero_fnofi?: string | null
           numero_opi?: string | null
           partita_iva?: string | null
