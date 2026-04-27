@@ -1,3 +1,5 @@
+import ossArticleImage from "@/assets/oss-article.jpg";
+
 export interface BlogArticle {
   slug: string;
   title: string;
