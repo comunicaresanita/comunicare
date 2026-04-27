@@ -15,6 +15,7 @@ import HousingInfoFields, { HousingInfoErrors } from "@/components/HousingInfoFi
 import { User, Stethoscope, Upload, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 type Ruolo = "paziente" | "professionista";
 type TipoProfessionista = "infermiere" | "oss" | "fisioterapista";
