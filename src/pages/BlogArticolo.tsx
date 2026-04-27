@@ -24,7 +24,7 @@ const BlogArticolo = () => {
         <main className="flex-1 bg-background py-12 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-xl font-bold mb-4">Articolo non trovato</h1>
-            <Button onClick={() => navigate("/blog")}>Torna al Blog</Button>
+            <Button onClick={() => navigate(-1)}>Torna indietro</Button>
           </div>
         </main>
         <Footer />
@@ -37,7 +37,7 @@ const BlogArticolo = () => {
       <AuthHeader />
       <main className="flex-1 bg-background py-6 md:py-12">
         <div className="container mx-auto px-4 md:px-6 max-w-3xl">
-          <Button variant="ghost" onClick={() => navigate("/blog")} className="mb-4 gap-2">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4 gap-2">
             <ArrowLeft className="w-4 h-4" /> Torna indietro
           </Button>
 
