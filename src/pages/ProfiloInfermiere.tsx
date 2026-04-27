@@ -123,6 +123,27 @@ const ProfiloInfermiere = () => {
   const [overrides, setOverrides] = useState<{ specific_date: string; start_time: string; end_time: string; is_unavailable: boolean }[]>([]);
   const [bookedSlots, setBookedSlots] = useState<{ day: string; time_slot: string }[]>([]);
 
+  // Recipient selection: "self" = paziente stesso, "other" = familiare/assistito
+  const [recipient, setRecipient] = useState<"self" | "other">("self");
+  const [cgVia, setCgVia] = useState("");
+  const [cgCivico, setCgCivico] = useState("");
+  const [cgCap, setCgCap] = useState("");
+  const [cgCitta, setCgCitta] = useState("");
+  const [cgErrors, setCgErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
+  const hasSavedCaregiverAddr = Boolean((userProfile as any)?.caregiver_address);
+
+  // Prefill caregiver address from saved profile, if any
+  useEffect(() => {
+    const savedAddr = (userProfile as any)?.caregiver_address;
+    if (savedAddr) {
+      const parsed = parseAddressToFields(savedAddr);
+      setCgVia(parsed.via);
+      setCgCivico(parsed.civico);
+      setCgCap(parsed.cap);
+      setCgCitta(parsed.citta);
+    }
+  }, [userProfile]);
+
   useEffect(() => {
     if (!id) return;
     const fetchData = async () => {
