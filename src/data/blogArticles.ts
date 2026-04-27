@@ -49,7 +49,7 @@ export const articles: BlogArticle[] = [
     slug: "oss-assistenza-socio-sanitaria",
     title: "OSS: una figura essenziale nell'assistenza socio-sanitaria",
     date: "1 Aprile 2026",
-    imageUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=80",
+    imageUrl: "/user-uploads/aae5814c-f607-4aae-80c5-a2eaf6cc3bd8.jpg",
     imageAlt: "Operatore socio-sanitario che assiste una persona anziana nelle attività quotidiane",
     summary: "L'Operatore Socio-Sanitario svolge un ruolo fondamentale nel supporto alle persone con ridotta autonomia, contribuendo all'igiene personale, alla mobilizzazione e al supporto nelle attività quotidiane.",
     source: "Ministero della Salute",
