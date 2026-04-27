@@ -256,11 +256,11 @@ const DashboardPaziente = () => {
           handleSelectProfessionista(p);
           setTimeout(() => {
             const el = document.getElementById(`prof-card-selected`);
-            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
           }, 100);
         } else {
           const el = document.getElementById(`prof-card-${p.profileId}`);
-          if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       });
       markersRef.current.push(marker);
