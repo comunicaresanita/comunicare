@@ -390,6 +390,8 @@ const ProfiloInfermiere = () => {
 
       // Persist caregiver data to profile so the user can reuse it next time
       await supabase.from("profiles").update({
+        caregiver_first_name: cgFirstName,
+        caregiver_last_name: cgLastName,
         caregiver_address: recipientAddress,
         caregiver_lives_in_condominio: cgLivesInCondominio,
         caregiver_intercom_name: bookingHousing.intercom_name,
