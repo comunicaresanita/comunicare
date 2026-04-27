@@ -11,20 +11,21 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { articles } from "@/data/blogArticles";
 
-const faqItems = [
+const patientFaqItems = [
   {
     q: "Come posso prenotare una prestazione?",
     a: "Accedi al tuo account, cerca il professionista o la prestazione che ti interessa dalla pagina 'Trova il tuo professionista', seleziona data e orario disponibili e procedi con la prenotazione e il pagamento."
   },
   {
-    q: "Posso cancellare una prenotazione?",
-    a: "Sì, puoi cancellare una prenotazione dalla tua dashboard. È obbligatorio avvisare almeno 24 ore prima della prestazione. In caso contrario, l'importo non sarà rimborsato."
+    q: "Posso prenotare una prestazione per un familiare o un'altra persona?",
+    a: "Sì. Durante la prenotazione, dopo aver scelto data e orario, puoi indicare se la prestazione è per te o per un familiare/assistito. Selezionando 'Per un familiare / assistito' potrai inserire l'indirizzo della persona che riceverà la prestazione: il professionista si recherà a quell'indirizzo invece che al tuo. L'indirizzo del familiare viene salvato in automatico, così alle prenotazioni successive ti basterà sceglierlo con un clic."
   },
   {
-    q: "Come faccio a registrarmi come professionista?",
-    a: "Dalla pagina di registrazione seleziona 'Professionista', compila i campi richiesti (incluso numero di iscrizione all'albo e partita IVA), imposta i tuoi servizi, le tariffe e le disponibilità."
+    q: "Posso cancellare una prenotazione?",
+    a: "Sì, puoi cancellare una prenotazione dalla tua dashboard. È obbligatorio avvisare almeno 24 ore prima della prestazione. In caso contrario, l'importo non sarà rimborsato."
   },
   {
     q: "I pagamenti sono sicuri?",
@@ -44,7 +45,46 @@ const faqItems = [
   },
 ];
 
+const professionalFaqItems = [
+  {
+    q: "Come imposto i miei servizi e le mie tariffe?",
+    a: "Dalla tua dashboard professionista accedi alla sezione 'Servizi e tariffe': puoi aggiungere o rimuovere prestazioni e impostare il prezzo base di ogni servizio. Le maggiorazioni per prestazioni notturne e festive vengono calcolate automaticamente al momento della prenotazione."
+  },
+  {
+    q: "Come gestisco le mie disponibilità settimanali e le eccezioni?",
+    a: "Dalla sezione 'Disponibilità' puoi indicare le fasce orarie in cui sei disponibile per ogni giorno della settimana. Puoi inoltre impostare giorni o orari specifici come non disponibili (es. ferie) o aggiungere slot extra in determinate date tramite gli override."
+  },
+  {
+    q: "Cosa devo fare quando ricevo una nuova prenotazione?",
+    a: "Le prenotazioni vengono confermate automaticamente in base alle tue disponibilità. Riceverai una notifica via email con tutti i dettagli: paziente, prestazione, data, orario e indirizzo dove recarti. Controlla sempre l'indirizzo: se il paziente prenota come caregiver, l'indirizzo sarà quello dell'assistito, non del paziente."
+  },
+  {
+    q: "Come funziona il pagamento delle prestazioni?",
+    a: "Il pagamento viene gestito direttamente con il paziente al momento della prestazione, salvo diversa indicazione. La piattaforma non trattiene commissioni sui pagamenti diretti. In caso di pagamenti gestiti tramite Stripe, gli accrediti seguono i tempi standard di Stripe."
+  },
+  {
+    q: "Cosa succede se il paziente cancella o non si presenta?",
+    a: "Il paziente è tenuto a cancellare almeno 24 ore prima della prestazione. In caso di cancellazione tardiva o di mancata presentazione, hai diritto al compenso per la prestazione prenotata. Segnala eventuali abusi tramite il modulo di contatto."
+  },
+  {
+    q: "Come posso aggiornare il numero OPI/FNOFI o la partita IVA?",
+    a: "Vai su 'Il mio profilo' dalla dashboard professionista. Da lì puoi modificare il numero di iscrizione all'albo (OPI per infermieri, FNOFI per fisioterapisti), la partita IVA, la bio e la zona di operatività."
+  },
+  {
+    q: "Quali sono le mie responsabilità professionali sulla piattaforma?",
+    a: "ComuniCARE è un servizio di intermediazione: la responsabilità clinica e professionale della prestazione è esclusivamente tua, in base alla normativa vigente per la tua professione. Devi essere regolarmente iscritto all'albo, in possesso di assicurazione professionale e operare nel rispetto del codice deontologico."
+  },
+  {
+    q: "Cosa devo fare se riscontro un problema tecnico o con un paziente?",
+    a: "Compila il modulo di contatto in questa pagina descrivendo dettagliatamente il problema, oppure scrivici a comunicaresanita@gmail.com. Per situazioni urgenti relative alla sicurezza tua o del paziente, segnalalo subito anche alle autorità competenti."
+  },
+];
+
+
 const Contatti = () => {
+  const { profile } = useAuth();
+  const faqItems = profile?.role === "professionista" ? professionalFaqItems : patientFaqItems;
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [messaggio, setMessaggio] = useState("");

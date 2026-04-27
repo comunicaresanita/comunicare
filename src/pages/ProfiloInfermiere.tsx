@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import StructuredAddressInput, { parseAddressToFields, composeAddress } from "@/components/StructuredAddressInput";
 
 const NIGHT_START_HOUR = 20;
 
@@ -121,6 +122,27 @@ const ProfiloInfermiere = () => {
 
   const [overrides, setOverrides] = useState<{ specific_date: string; start_time: string; end_time: string; is_unavailable: boolean }[]>([]);
   const [bookedSlots, setBookedSlots] = useState<{ day: string; time_slot: string }[]>([]);
+
+  // Recipient selection: "self" = paziente stesso, "other" = familiare/assistito
+  const [recipient, setRecipient] = useState<"self" | "other">("self");
+  const [cgVia, setCgVia] = useState("");
+  const [cgCivico, setCgCivico] = useState("");
+  const [cgCap, setCgCap] = useState("");
+  const [cgCitta, setCgCitta] = useState("");
+  const [cgErrors, setCgErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
+  const hasSavedCaregiverAddr = Boolean((userProfile as any)?.caregiver_address);
+
+  // Prefill caregiver address from saved profile, if any
+  useEffect(() => {
+    const savedAddr = (userProfile as any)?.caregiver_address;
+    if (savedAddr) {
+      const parsed = parseAddressToFields(savedAddr);
+      setCgVia(parsed.via);
+      setCgCivico(parsed.civico);
+      setCgCap(parsed.cap);
+      setCgCitta(parsed.citta);
+    }
+  }, [userProfile]);
 
   useEffect(() => {
     if (!id) return;
@@ -282,6 +304,29 @@ const ProfiloInfermiere = () => {
       return;
     }
 
+    let recipientAddress: string | null = null;
+    if (recipient === "other") {
+      const errs = {
+        via: !cgVia.trim(),
+        civico: !cgCivico.trim(),
+        cap: !cgCap.trim(),
+        citta: !cgCitta.trim(),
+      };
+      setCgErrors(errs);
+      if (Object.values(errs).some(Boolean)) {
+        toast({ title: "Indirizzo del familiare incompleto", description: "Compila tutti i campi dell'indirizzo dell'assistito.", variant: "destructive" });
+        const firstId = errs.via ? "cg-via-field" : errs.civico ? "cg-civico-field" : errs.cap ? "cg-cap-field" : "cg-citta-field";
+        document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById(firstId)?.focus();
+        return;
+      }
+      recipientAddress = composeAddress(cgVia, cgCivico, cgCap, cgCitta);
+      // Persist to profile so the user can reuse it next time
+      await supabase.from("profiles").update({ caregiver_address: recipientAddress } as any).eq("user_id", user.id);
+    } else {
+      recipientAddress = (userProfile as any)?.address || null;
+    }
+
     setPaymentLoading(true);
     try {
       const dayStr = formatSelectedDate(selectedDate);
@@ -295,7 +340,8 @@ const ProfiloInfermiere = () => {
           day: dayStr,
           time_slot: slotSelezionato,
           status: "confirmed",
-        })
+          recipient_address: recipientAddress,
+        } as any)
         .select()
         .single();
 
@@ -462,6 +508,68 @@ const ProfiloInfermiere = () => {
               )}
             </CardContent>
           </Card>
+
+          {/* Per chi stai prenotando? */}
+          {servizioSelezionato && slotSelezionato && selectedDate && (
+            <Card className="mb-6 md:mb-8">
+              <CardHeader>
+                <CardTitle className="text-base md:text-senior-lg">Per chi stai prenotando?</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setRecipient("self")}
+                    className={`text-left p-3 rounded-lg border-2 transition-colors ${
+                      recipient === "self" ? "border-primary bg-secondary" : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    <p className="font-semibold text-sm">Per me</p>
+                    <p className="text-xs text-muted-foreground mt-1 truncate">
+                      {(userProfile as any)?.address || "Il tuo indirizzo di residenza"}
+                    </p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRecipient("other")}
+                    className={`text-left p-3 rounded-lg border-2 transition-colors ${
+                      recipient === "other" ? "border-primary bg-secondary" : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    <p className="font-semibold text-sm">Per un familiare / assistito</p>
+                    <p className="text-xs text-muted-foreground mt-1 truncate">
+                      {hasSavedCaregiverAddr
+                        ? (userProfile as any).caregiver_address
+                        : "Inserisci l'indirizzo dove recapitare la prestazione"}
+                    </p>
+                  </button>
+                </div>
+
+                {recipient === "other" && (
+                  <div className="p-4 rounded-lg border border-primary/30 bg-secondary/30">
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Inserisci l'indirizzo della persona che riceverà la prestazione. Il professionista si recherà a questo indirizzo.
+                      {hasSavedCaregiverAddr && " I dati saranno aggiornati per le prossime prenotazioni."}
+                    </p>
+                    <StructuredAddressInput
+                      via={cgVia}
+                      civico={cgCivico}
+                      cap={cgCap}
+                      citta={cgCitta}
+                      onViaChange={(v) => { setCgVia(v); setCgErrors(e => ({ ...e, via: false })); }}
+                      onCivicoChange={(v) => { setCgCivico(v); setCgErrors(e => ({ ...e, civico: false })); }}
+                      onCapChange={(v) => { setCgCap(v); setCgErrors(e => ({ ...e, cap: false })); }}
+                      onCittaChange={(v) => { setCgCitta(v); setCgErrors(e => ({ ...e, citta: false })); }}
+                      label="Indirizzo del familiare / assistito"
+                      errors={cgErrors}
+                      idPrefix="cg"
+                      required
+                    />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Riepilogo e prenotazione (pagamento temporaneamente disabilitato) */}
           {servizioSelezionato && slotSelezionato && selectedDate && (
