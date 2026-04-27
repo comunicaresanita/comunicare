@@ -197,8 +197,6 @@ const Profilo = () => {
     if (profile.role === "paziente") {
       updates.age = age ? parseInt(age) : null;
       updates.additional_info = additionalInfo;
-      updates.is_caregiver = isCaregiver;
-      updates.caregiver_address = isCaregiver ? composeAddress(caregiverVia, caregiverCivico, caregiverCap, caregiverCitta) : null;
     }
     const { error } = await supabase.from("profiles").update(updates).eq("user_id", user!.id);
     setSaving(false);
