@@ -163,6 +163,8 @@ const ProfiloInfermiere = () => {
       setCgCap(parsed.cap);
       setCgCitta(parsed.citta);
     }
+    setCgFirstName(p.caregiver_first_name || "");
+    setCgLastName(p.caregiver_last_name || "");
     setSelfMedicalNotes(p.medical_notes || "");
     if (p.caregiver_lives_in_condominio !== null && p.caregiver_lives_in_condominio !== undefined) {
       setCgLivesInCondominio(!!p.caregiver_lives_in_condominio);
