@@ -60,6 +60,12 @@ const Profilo = () => {
   const [uploading, setUploading] = useState(false);
   const [addressErrors, setAddressErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
   const [caregiverErrors, setCaregiverErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
+  const [livesInCondominio, setLivesInCondominio] = useState<boolean | null>(null);
+  const [intercomName, setIntercomName] = useState("");
+  const [floorNumber, setFloorNumber] = useState("");
+  const [accessNotes, setAccessNotes] = useState("");
+  const [medicalNotes, setMedicalNotes] = useState("");
+  const [housingErrors, setHousingErrors] = useState<HousingInfoErrors>({});
   const [deleting, setDeleting] = useState(false);
   const [bookings, setBookings] = useState<any[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(false);
