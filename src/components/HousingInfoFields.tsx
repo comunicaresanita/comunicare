@@ -90,7 +90,7 @@ const HousingInfoFields = ({
               id={`${idPrefix}-access-notes`}
               value={accessNotes}
               onChange={(e) => onAccessNotesChange(e.target.value)}
-              placeholder='Es. "C\u2019è facilità di parcheggio?", "C\u2019è l\u2019ascensore?"'
+              placeholder='Es. "C&apos;è facilità di parcheggio?", "C&apos;è l&apos;ascensore?"'
               rows={2}
               className="text-senior-sm"
             />
