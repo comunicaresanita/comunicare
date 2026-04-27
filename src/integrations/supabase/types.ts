@@ -95,6 +95,7 @@ export type Database = {
           patient_id: string
           price: number
           professional_id: string
+          recipient_address: string | null
           service_name: string
           status: string
           stripe_session_id: string | null
@@ -107,6 +108,7 @@ export type Database = {
           patient_id: string
           price: number
           professional_id: string
+          recipient_address?: string | null
           service_name: string
           status?: string
           stripe_session_id?: string | null
@@ -119,6 +121,7 @@ export type Database = {
           patient_id?: string
           price?: number
           professional_id?: string
+          recipient_address?: string | null
           service_name?: string
           status?: string
           stripe_session_id?: string | null
