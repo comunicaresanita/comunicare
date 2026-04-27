@@ -509,8 +509,8 @@ const ProfiloInfermiere = () => {
             </CardContent>
           </Card>
 
-          {/* Per chi stai prenotando? */}
-          {servizioSelezionato && slotSelezionato && selectedDate && (
+          {/* Per chi stai prenotando? — solo per pazienti */}
+          {userProfile?.role !== "professionista" && servizioSelezionato && slotSelezionato && selectedDate && (
             <Card className="mb-6 md:mb-8">
               <CardHeader>
                 <CardTitle className="text-base md:text-senior-lg">Per chi stai prenotando?</CardTitle>
