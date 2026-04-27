@@ -347,6 +347,8 @@ const ProfiloInfermiere = () => {
 
     if (recipient === "other") {
       const errs = {
+        firstName: !cgFirstName.trim(),
+        lastName: !cgLastName.trim(),
         via: !cgVia.trim(),
         civico: !cgCivico.trim(),
         cap: !cgCap.trim(),
@@ -354,8 +356,8 @@ const ProfiloInfermiere = () => {
       };
       setCgErrors(errs);
       if (Object.values(errs).some(Boolean)) {
-        toast({ title: "Indirizzo del familiare incompleto", description: "Compila tutti i campi dell'indirizzo dell'assistito.", variant: "destructive" });
-        const firstId = errs.via ? "cg-via-field" : errs.civico ? "cg-civico-field" : errs.cap ? "cg-cap-field" : "cg-citta-field";
+        toast({ title: "Dati del familiare incompleti", description: "Compila nome, cognome e indirizzo dell'assistito.", variant: "destructive" });
+        const firstId = errs.firstName ? "cg-first-name" : errs.lastName ? "cg-last-name" : errs.via ? "cg-via-field" : errs.civico ? "cg-civico-field" : errs.cap ? "cg-cap-field" : "cg-citta-field";
         document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
         document.getElementById(firstId)?.focus();
         return;
