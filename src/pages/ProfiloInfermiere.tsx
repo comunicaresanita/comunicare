@@ -334,6 +334,13 @@ const ProfiloInfermiere = () => {
     }
 
     let recipientAddress: string | null = null;
+    let bookingHousing: { lives_in_condominio: boolean | null; intercom_name: string | null; floor_number: string | null; access_notes: string | null } = {
+      lives_in_condominio: null, intercom_name: null, floor_number: null, access_notes: null,
+    };
+    let bookingEmergencyName: string | null = null;
+    let bookingEmergencyPhone: string | null = null;
+    let bookingMedicalNotes: string | null = null;
+
     if (recipient === "other") {
       const errs = {
         via: !cgVia.trim(),
@@ -349,11 +356,57 @@ const ProfiloInfermiere = () => {
         document.getElementById(firstId)?.focus();
         return;
       }
+      // Validate housing for caregiver
+      const hErr: HousingInfoErrors = {
+        livesInCondominio: cgLivesInCondominio === null,
+        intercomName: cgLivesInCondominio === true && !cgIntercomName.trim(),
+        floorNumber: cgLivesInCondominio === true && !cgFloorNumber.trim(),
+      };
+      setCgHousingErrors(hErr);
+      if (Object.values(hErr).some(Boolean)) {
+        toast({ title: "Informazioni abitazione mancanti", description: "Indica se l'assistito abita in un condominio e compila i campi richiesti.", variant: "destructive" });
+        const firstId = hErr.livesInCondominio ? "cg-housing-cond-yes" : hErr.intercomName ? "cg-housing-intercom" : "cg-housing-floor";
+        document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById(firstId)?.focus();
+        return;
+      }
+
       recipientAddress = composeAddress(cgVia, cgCivico, cgCap, cgCitta);
-      // Persist to profile so the user can reuse it next time
-      await supabase.from("profiles").update({ caregiver_address: recipientAddress } as any).eq("user_id", user.id);
+      bookingHousing = {
+        lives_in_condominio: cgLivesInCondominio,
+        intercom_name: cgLivesInCondominio ? cgIntercomName : null,
+        floor_number: cgLivesInCondominio ? cgFloorNumber : null,
+        access_notes: cgLivesInCondominio ? cgAccessNotes : null,
+      };
+      bookingEmergencyName = cgEmergencyName || null;
+      bookingEmergencyPhone = cgEmergencyPhone || null;
+      bookingMedicalNotes = cgMedicalNotes || null;
+
+      // Persist caregiver data to profile so the user can reuse it next time
+      await supabase.from("profiles").update({
+        caregiver_address: recipientAddress,
+        caregiver_lives_in_condominio: cgLivesInCondominio,
+        caregiver_intercom_name: bookingHousing.intercom_name,
+        caregiver_floor_number: bookingHousing.floor_number,
+        caregiver_access_notes: bookingHousing.access_notes,
+        caregiver_emergency_name: bookingEmergencyName,
+        caregiver_emergency_phone: bookingEmergencyPhone,
+        caregiver_medical_notes: bookingMedicalNotes,
+      } as any).eq("user_id", user.id);
     } else {
       recipientAddress = (userProfile as any)?.address || null;
+      const p = userProfile as any;
+      bookingHousing = {
+        lives_in_condominio: p?.lives_in_condominio ?? null,
+        intercom_name: p?.intercom_name ?? null,
+        floor_number: p?.floor_number ?? null,
+        access_notes: p?.access_notes ?? null,
+      };
+      bookingMedicalNotes = selfMedicalNotes || null;
+      // Persist updated medical notes back to profile
+      if ((p?.medical_notes || "") !== selfMedicalNotes) {
+        await supabase.from("profiles").update({ medical_notes: bookingMedicalNotes } as any).eq("user_id", user.id);
+      }
     }
 
     setPaymentLoading(true);
@@ -370,6 +423,14 @@ const ProfiloInfermiere = () => {
           time_slot: slotSelezionato,
           status: "confirmed",
           recipient_address: recipientAddress,
+          recipient_type: recipient,
+          lives_in_condominio: bookingHousing.lives_in_condominio,
+          intercom_name: bookingHousing.intercom_name,
+          floor_number: bookingHousing.floor_number,
+          access_notes: bookingHousing.access_notes,
+          emergency_contact_name: bookingEmergencyName,
+          emergency_contact_phone: bookingEmergencyPhone,
+          medical_notes: bookingMedicalNotes,
         } as any)
         .select()
         .single();
