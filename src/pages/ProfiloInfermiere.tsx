@@ -636,8 +636,8 @@ const ProfiloInfermiere = () => {
                 </div>
 
                 {recipient === "other" && (
-                  <div className="p-4 rounded-lg border border-primary/30 bg-secondary/30">
-                    <p className="text-sm text-muted-foreground mb-3">
+                  <div className="p-4 rounded-lg border border-primary/30 bg-secondary/30 space-y-5">
+                    <p className="text-sm text-muted-foreground">
                       Inserisci l'indirizzo della persona che riceverà la prestazione. Il professionista si recherà a questo indirizzo.
                       {hasSavedCaregiverAddr && " I dati saranno aggiornati per le prossime prenotazioni."}
                     </p>
@@ -655,6 +655,71 @@ const ProfiloInfermiere = () => {
                       idPrefix="cg"
                       required
                     />
+
+                    <HousingInfoFields
+                      livesInCondominio={cgLivesInCondominio}
+                      intercomName={cgIntercomName}
+                      floorNumber={cgFloorNumber}
+                      accessNotes={cgAccessNotes}
+                      onLivesInCondominioChange={(v) => { setCgLivesInCondominio(v); setCgHousingErrors(e => ({ ...e, livesInCondominio: false })); }}
+                      onIntercomNameChange={(v) => { setCgIntercomName(v); setCgHousingErrors(e => ({ ...e, intercomName: false })); }}
+                      onFloorNumberChange={(v) => { setCgFloorNumber(v); setCgHousingErrors(e => ({ ...e, floorNumber: false })); }}
+                      onAccessNotesChange={setCgAccessNotes}
+                      errors={cgHousingErrors}
+                      idPrefix="cg-housing"
+                      title="L'assistito abita in un condominio?"
+                    />
+
+                    <div className="space-y-3">
+                      <p className="text-senior-sm font-semibold">Contatto di emergenza (opzionale)</p>
+                      <p className="text-xs text-muted-foreground -mt-2">
+                        Nome e numero di un familiare o caregiver di riferimento da contattare in caso di necessità.
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <Label htmlFor="cg-emerg-name" className="text-senior-sm">Nome</Label>
+                          <Input
+                            id="cg-emerg-name"
+                            value={cgEmergencyName}
+                            onChange={(e) => setCgEmergencyName(e.target.value)}
+                            placeholder="Es. Maria Rossi"
+                            className="text-senior-sm py-3"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label htmlFor="cg-emerg-phone" className="text-senior-sm">Telefono</Label>
+                          <Input
+                            id="cg-emerg-phone"
+                            type="tel"
+                            value={cgEmergencyPhone}
+                            onChange={(e) => setCgEmergencyPhone(e.target.value)}
+                            placeholder="Es. +39 333 1234567"
+                            className="text-senior-sm py-3"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <MedicalNotesField
+                      value={cgMedicalNotes}
+                      onChange={setCgMedicalNotes}
+                      label="Note importanti sulla condizione dell'assistito (opzionale)"
+                      idPrefix="cg-medical-notes"
+                    />
+                  </div>
+                )}
+
+                {recipient === "self" && (
+                  <div className="p-4 rounded-lg border border-primary/30 bg-secondary/30">
+                    <MedicalNotesField
+                      value={selfMedicalNotes}
+                      onChange={setSelfMedicalNotes}
+                      label="Note importanti sulla tua condizione (opzionale)"
+                      idPrefix="self-medical-notes"
+                    />
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Le modifiche verranno salvate anche nel tuo profilo per le prossime prenotazioni.
+                    </p>
                   </div>
                 )}
               </CardContent>
