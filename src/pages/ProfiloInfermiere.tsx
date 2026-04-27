@@ -304,6 +304,29 @@ const ProfiloInfermiere = () => {
       return;
     }
 
+    let recipientAddress: string | null = null;
+    if (recipient === "other") {
+      const errs = {
+        via: !cgVia.trim(),
+        civico: !cgCivico.trim(),
+        cap: !cgCap.trim(),
+        citta: !cgCitta.trim(),
+      };
+      setCgErrors(errs);
+      if (Object.values(errs).some(Boolean)) {
+        toast({ title: "Indirizzo del familiare incompleto", description: "Compila tutti i campi dell'indirizzo dell'assistito.", variant: "destructive" });
+        const firstId = errs.via ? "cg-via-field" : errs.civico ? "cg-civico-field" : errs.cap ? "cg-cap-field" : "cg-citta-field";
+        document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById(firstId)?.focus();
+        return;
+      }
+      recipientAddress = composeAddress(cgVia, cgCivico, cgCap, cgCitta);
+      // Persist to profile so the user can reuse it next time
+      await supabase.from("profiles").update({ caregiver_address: recipientAddress } as any).eq("user_id", user.id);
+    } else {
+      recipientAddress = (userProfile as any)?.address || null;
+    }
+
     setPaymentLoading(true);
     try {
       const dayStr = formatSelectedDate(selectedDate);
@@ -317,7 +340,8 @@ const ProfiloInfermiere = () => {
           day: dayStr,
           time_slot: slotSelezionato,
           status: "confirmed",
-        })
+          recipient_address: recipientAddress,
+        } as any)
         .select()
         .single();
 
