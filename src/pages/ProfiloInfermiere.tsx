@@ -432,6 +432,8 @@ const ProfiloInfermiere = () => {
           status: "confirmed",
           recipient_address: recipientAddress,
           recipient_type: recipient,
+          recipient_first_name: recipient === "other" ? cgFirstName : null,
+          recipient_last_name: recipient === "other" ? cgLastName : null,
           lives_in_condominio: bookingHousing.lives_in_condominio,
           intercom_name: bookingHousing.intercom_name,
           floor_number: bookingHousing.floor_number,
