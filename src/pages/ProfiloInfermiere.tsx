@@ -129,11 +129,13 @@ const ProfiloInfermiere = () => {
 
   // Recipient selection: "self" = paziente stesso, "other" = familiare/assistito
   const [recipient, setRecipient] = useState<"self" | "other">("self");
+  const [cgFirstName, setCgFirstName] = useState("");
+  const [cgLastName, setCgLastName] = useState("");
   const [cgVia, setCgVia] = useState("");
   const [cgCivico, setCgCivico] = useState("");
   const [cgCap, setCgCap] = useState("");
   const [cgCitta, setCgCitta] = useState("");
-  const [cgErrors, setCgErrors] = useState<{ via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
+  const [cgErrors, setCgErrors] = useState<{ firstName?: boolean; lastName?: boolean; via?: boolean; civico?: boolean; cap?: boolean; citta?: boolean }>({});
   const hasSavedCaregiverAddr = Boolean((userProfile as any)?.caregiver_address);
 
   // "Per me" medical notes (prefilled from profile, persisted on booking)
