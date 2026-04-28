@@ -166,6 +166,7 @@ const DashboardPaziente = () => {
     setProfessionistaSelezionato(p);
     setRicerca(p.nome);
     setPrestazioneSelezionata("");
+    addRecentProfSearch(p.nome);
   };
 
   // --- Maps & data loading (unchanged) ---
