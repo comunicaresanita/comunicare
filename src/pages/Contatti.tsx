@@ -68,7 +68,7 @@ const professionalFaqItems = [
   },
   {
     q: "Come posso aggiornare il numero OPI/FNOFI o la partita IVA?",
-    a: "Vai su 'Il mio profilo' dalla dashboard professionista. Da lì puoi modificare il numero di iscrizione all'albo (OPI per infermieri, FNOFI per fisioterapisti), la partita IVA, la bio e la zona di operatività."
+    a: "Vai su 'Il mio profilo' dal Menù. Da lì puoi modificare il numero di iscrizione all'albo (OPI per infermieri, FNOFI per fisioterapisti), la partita IVA, la bio e la zona di operatività."
   },
   {
     q: "Quali sono le mie responsabilità professionali sulla piattaforma?",
