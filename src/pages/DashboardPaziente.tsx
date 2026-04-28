@@ -398,7 +398,8 @@ const DashboardPaziente = () => {
       <AuthHeader />
       <main className="flex-1 bg-background py-6 md:py-12">
         <div className="container mx-auto px-4 md:px-6 max-w-4xl">
-          <h1 className="md:text-senior-3xl font-bold mb-2 text-2xl">Trova il tuo professionista</h1>
+          <h1 className="md:text-senior-3xl font-bold mb-2 text-2xl">Trova la prestazione o il professionista</h1>
+          <p className="md:text-senior-base mb-6 md:mb-8 font-bold text-black text-xs">​</p>
 
           <Card className="mb-6 md:mb-8">
             <CardHeader className="p-4 md:p-6">
