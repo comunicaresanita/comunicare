@@ -79,6 +79,26 @@ const DashboardPaziente = () => {
   const [professionistaSelezionato, setProfessionistaSelezionato] = useState<ProfessionistaData | null>(null);
   const [ricerca, setRicerca] = useState("");
   const [searchMode, setSearchMode] = useState<SearchMode>("prestazione");
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem("recentServiceSearches");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const addRecentSearch = (term: string) => {
+    setRecentSearches((prev) => {
+      const next = [term, ...prev.filter((t) => t !== term)].slice(0, 3);
+      try {
+        localStorage.setItem("recentServiceSearches", JSON.stringify(next));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  };
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
