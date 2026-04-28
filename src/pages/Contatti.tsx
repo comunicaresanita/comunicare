@@ -51,7 +51,7 @@ const professionalFaqItems = [
     a: "Dalla tua dashboard professionista accedi alla sezione 'Servizi e tariffe': puoi aggiungere o rimuovere prestazioni e impostare il prezzo base di ogni servizio. Le maggiorazioni per prestazioni notturne e festive vengono calcolate automaticamente al momento della prenotazione."
   },
   {
-    q: "Come gestisco le mie disponibilità settimanali e le eccezioni?",
+    q: "Come gestisco le mie disponibilità settimanali?",
     a: "Dalla sezione 'Disponibilità' puoi indicare le fasce orarie in cui sei disponibile per ogni giorno della settimana."
   },
   {
