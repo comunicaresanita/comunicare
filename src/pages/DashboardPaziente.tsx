@@ -87,12 +87,32 @@ const DashboardPaziente = () => {
       return [];
     }
   });
+  const [recentProfSearches, setRecentProfSearches] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem("recentProfessionalSearches");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const addRecentSearch = (term: string) => {
     setRecentSearches((prev) => {
       const next = [term, ...prev.filter((t) => t !== term)].slice(0, 3);
       try {
         localStorage.setItem("recentServiceSearches", JSON.stringify(next));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  };
+
+  const addRecentProfSearch = (term: string) => {
+    setRecentProfSearches((prev) => {
+      const next = [term, ...prev.filter((t) => t !== term)].slice(0, 3);
+      try {
+        localStorage.setItem("recentProfessionalSearches", JSON.stringify(next));
       } catch {
         /* ignore */
       }
