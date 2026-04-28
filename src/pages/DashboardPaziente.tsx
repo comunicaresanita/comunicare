@@ -540,7 +540,7 @@ const DashboardPaziente = () => {
                         </div>
                         {servizio && (
                           <div className="text-right flex-shrink-0">
-                            <p className="text-base md:text-senior-lg font-bold text-primary">€0</p>
+                            <p className="text-base md:text-senior-lg font-bold text-primary">€{servizio.price}</p>
                             <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">per questa prestazione</p>
                           </div>
                         )}
@@ -610,7 +610,7 @@ const DashboardPaziente = () => {
                       className="flex w-full justify-between items-start gap-2 p-2 rounded-md bg-secondary/50 text-xs md:text-sm text-left transition-colors hover:bg-secondary"
                     >
                       <span className="break-words whitespace-normal leading-snug flex-1 min-w-0">{s.name}</span>
-                      <span className="font-bold text-primary flex-shrink-0">€0</span>
+                      <span className="font-bold text-primary flex-shrink-0">€{s.price}</span>
                     </button>
                   ))}
                   {professionistaSelezionato.servizi.length === 0 && (
