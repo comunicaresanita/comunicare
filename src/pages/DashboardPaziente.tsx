@@ -558,10 +558,10 @@ const DashboardPaziente = () => {
                       key={s.name}
                       type="button"
                       onClick={() => navigate(`/profilo-infermiere/${professionistaSelezionato.profileId}?servizio=${encodeURIComponent(s.name)}`)}
-                      className="flex w-full justify-between items-center p-2 rounded-md bg-secondary/50 text-xs md:text-sm text-left transition-colors hover:bg-secondary"
+                      className="flex w-full justify-between items-start gap-2 p-2 rounded-md bg-secondary/50 text-xs md:text-sm text-left transition-colors hover:bg-secondary"
                     >
-                      <span>{s.name}</span>
-                      <span className="font-bold text-primary ml-2 flex-shrink-0">€{s.price}</span>
+                      <span className="break-words whitespace-normal leading-snug flex-1 min-w-0">{s.name}</span>
+                      <span className="font-bold text-primary flex-shrink-0">€0</span>
                     </button>
                   ))}
                   {professionistaSelezionato.servizi.length === 0 && (
