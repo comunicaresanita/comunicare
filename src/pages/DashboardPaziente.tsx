@@ -391,16 +391,35 @@ const DashboardPaziente = () => {
               {searchMode === "prestazione" && ricerca.trim() && !prestazioneSelezionata && prestazioniFiltrate.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 md:max-h-64 overflow-y-auto mt-2">
                   {prestazioniFiltrate.map((p) => (
-                    <button key={p} onClick={() => { setPrestazioneSelezionata(p); setRicerca(p); setProfessionistaSelezionato(null); }}
-                      className="text-left p-2.5 md:p-3 rounded-lg border border-border hover:border-primary/50 transition-colors text-sm md:text-senior-sm"
+                    <button key={p} onClick={() => { setPrestazioneSelezionata(p); setRicerca(p); setProfessionistaSelezionato(null); addRecentSearch(p); }}
+                      className="text-left p-2.5 md:p-3 rounded-lg border border-border hover:border-primary/50 transition-colors text-sm md:text-senior-sm break-words whitespace-normal leading-snug"
                     >{p}</button>
                   ))}
                 </div>
               )}
               {prestazioneSelezionata && (
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-sm text-primary font-medium">Prestazione selezionata: {prestazioneSelezionata}</span>
-                  <button onClick={() => { setPrestazioneSelezionata(""); setRicerca(""); }} className="text-xs text-muted-foreground underline hover:text-foreground">Cambia</button>
+                  <span className="text-sm text-primary font-medium break-words">Prestazione selezionata: {prestazioneSelezionata}</span>
+                  <button onClick={() => { setPrestazioneSelezionata(""); setRicerca(""); }} className="text-xs text-muted-foreground underline hover:text-foreground flex-shrink-0">Cambia</button>
+                </div>
+              )}
+
+              {/* Recent searches */}
+              {searchMode === "prestazione" && !prestazioneSelezionata && recentSearches.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-xs text-muted-foreground mb-1.5">Ultime ricerche:</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {recentSearches.map((r) => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => { setPrestazioneSelezionata(r); setRicerca(r); setProfessionistaSelezionato(null); addRecentSearch(r); }}
+                        className="px-2.5 py-1 rounded-full bg-secondary text-xs md:text-sm text-foreground hover:bg-primary hover:text-primary-foreground transition-colors break-words text-left max-w-full"
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </CardContent>
