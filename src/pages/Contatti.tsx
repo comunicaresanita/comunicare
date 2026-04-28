@@ -52,7 +52,7 @@ const professionalFaqItems = [
   },
   {
     q: "Come gestisco le mie disponibilità settimanali e le eccezioni?",
-    a: "Dalla sezione 'Disponibilità' puoi indicare le fasce orarie in cui sei disponibile per ogni giorno della settimana. Puoi inoltre impostare giorni o orari specifici come non disponibili (es. ferie) o aggiungere slot extra in determinate date tramite gli override."
+    a: "Dalla sezione 'Disponibilità' puoi indicare le fasce orarie in cui sei disponibile per ogni giorno della settimana."
   },
   {
     q: "Cosa devo fare quando ricevo una nuova prenotazione?",
