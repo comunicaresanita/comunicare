@@ -43,44 +43,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const INACTIVITY_TIMEOUT = 10 * 60 * 1000; // 10 minutes
-
-  const handleInactivityLogout = useCallback(async () => {
-    await supabase.auth.signOut();
-    setProfile(null);
-    setUser(null);
-    setSession(null);
-    localStorage.removeItem("comunicare_remember");
-    navigate("/");
-  }, [navigate]);
-
-  const resetInactivityTimer = useCallback(() => {
-    if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
-    if (user) {
-      inactivityTimer.current = setTimeout(handleInactivityLogout, INACTIVITY_TIMEOUT);
-    }
-  }, [user, handleInactivityLogout]);
-
-  // Set up inactivity listeners
-  useEffect(() => {
-    if (!user) {
-      if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
-      return;
-    }
-
-    const events = ["mousedown", "mousemove", "keydown", "scroll", "touchstart", "click"];
-    const handler = () => resetInactivityTimer();
-
-    events.forEach(e => window.addEventListener(e, handler, { passive: true }));
-    resetInactivityTimer(); // start timer
-
-    return () => {
-      events.forEach(e => window.removeEventListener(e, handler));
-      if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
-    };
-  }, [user, resetInactivityTimer]);
 
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
