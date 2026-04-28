@@ -45,6 +45,7 @@ const getBookingPricing = (basePrice: number, date: Date | null, slot: string | 
   const finalPrice = Math.round(basePrice * (1 + surchargeRate));
 
   return {
+    basePrice,
     finalPrice,
     surchargeRate,
     surchargeReason,
