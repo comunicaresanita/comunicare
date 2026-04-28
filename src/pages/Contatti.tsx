@@ -60,7 +60,7 @@ const professionalFaqItems = [
   },
   {
     q: "Come funziona il pagamento delle prestazioni?",
-    a: "Il pagamento viene gestito direttamente con il paziente al momento della prestazione, salvo diversa indicazione. La piattaforma non trattiene commissioni sui pagamenti diretti. In caso di pagamenti gestiti tramite Stripe, gli accrediti seguono i tempi standard di Stripe."
+    a: "Il pagamento viene gestito direttamente dalla piattaforma con pagamento online. Essendo i pagamenti gestiti tramite Stripe, gli accrediti seguono i tempi standard di tale piattaforma di pagamento."
   },
   {
     q: "Cosa succede se il paziente cancella o non si presenta?",
