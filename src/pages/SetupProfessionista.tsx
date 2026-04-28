@@ -319,7 +319,7 @@ const SetupProfessionista = () => {
                         onCheckedChange={() => toggleServizio(servizio.id)}
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm md:text-senior-sm font-medium truncate">{servizio.nome}</p>
+                        <p className="text-sm md:text-senior-sm font-medium break-words whitespace-normal leading-snug">{servizio.nome}</p>
                         {servizio.attivo && (
                           <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
                             <Info className="w-3 h-3" />
