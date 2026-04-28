@@ -17,7 +17,7 @@ import { articles } from "@/data/blogArticles";
 const patientFaqItems = [
   {
     q: "Come posso prenotare una prestazione?",
-    a: "Accedi al tuo account, cerca il professionista o la prestazione che ti interessa dalla pagina 'Trova il tuo professionista', seleziona data e orario disponibili e procedi con la prenotazione e il pagamento."
+    a: "Accedi al tuo account, cerca il professionista o la prestazione che ti interessa dalla pagina 'Trova la prestazione o il professionista', seleziona data e orario disponibili e procedi con la prenotazione e il pagamento."
   },
   {
     q: "Posso prenotare una prestazione per un familiare o un'altra persona?",
