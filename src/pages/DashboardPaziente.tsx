@@ -491,7 +491,7 @@ const DashboardPaziente = () => {
                         </div>
                         {servizio && (
                           <div className="text-right flex-shrink-0">
-                            <p className="text-base md:text-senior-lg font-bold text-primary">€{servizio.price}</p>
+                            <p className="text-base md:text-senior-lg font-bold text-primary">€0</p>
                             <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">per questa prestazione</p>
                           </div>
                         )}

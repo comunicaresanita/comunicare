@@ -426,7 +426,7 @@ const ProfiloInfermiere = () => {
           patient_id: userProfile.id,
           professional_id: professional.id,
           service_name: servizioSelezionato,
-          price: bookingPricing.finalPrice,
+          price: 0,
           day: dayStr,
           time_slot: slotSelezionato,
           status: "confirmed",
@@ -514,7 +514,7 @@ const ProfiloInfermiere = () => {
               <CardContent>
                 <div className="flex items-center justify-between p-3 md:p-4 rounded-lg border border-primary bg-secondary">
                   <span className="text-sm md:text-senior-sm font-medium">{selectedService.name}</span>
-                  <span className="text-base md:text-senior-base font-bold text-primary">€{selectedService.price}</span>
+                  <span className="text-base md:text-senior-base font-bold text-primary">€0</span>
                 </div>
               </CardContent>
             </Card>
@@ -771,8 +771,8 @@ const ProfiloInfermiere = () => {
                   <p><strong>Servizio:</strong> {servizioSelezionato}</p>
                   <p><strong>Giorno:</strong> {formatSelectedDate(selectedDate)}</p>
                   <p><strong>Orario:</strong> {slotSelezionato}</p>
-                  <p><strong>Tariffa base:</strong> €{selectedService?.price}</p>
-                  <p><strong>Prezzo finale:</strong> €{bookingPricing.finalPrice}</p>
+                  <p><strong>Tariffa base:</strong> €0</p>
+                  <p><strong>Prezzo finale:</strong> €0 <span className="text-xs text-muted-foreground">(modalità test)</span></p>
                   {bookingPricing.surchargeReason && (
                     <p className="text-xs text-muted-foreground">
                       {bookingPricing.surchargeReason}
