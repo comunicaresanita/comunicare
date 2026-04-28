@@ -79,6 +79,26 @@ const DashboardPaziente = () => {
   const [professionistaSelezionato, setProfessionistaSelezionato] = useState<ProfessionistaData | null>(null);
   const [ricerca, setRicerca] = useState("");
   const [searchMode, setSearchMode] = useState<SearchMode>("prestazione");
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem("recentServiceSearches");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const addRecentSearch = (term: string) => {
+    setRecentSearches((prev) => {
+      const next = [term, ...prev.filter((t) => t !== term)].slice(0, 3);
+      try {
+        localStorage.setItem("recentServiceSearches", JSON.stringify(next));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  };
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
@@ -371,16 +391,35 @@ const DashboardPaziente = () => {
               {searchMode === "prestazione" && ricerca.trim() && !prestazioneSelezionata && prestazioniFiltrate.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 md:max-h-64 overflow-y-auto mt-2">
                   {prestazioniFiltrate.map((p) => (
-                    <button key={p} onClick={() => { setPrestazioneSelezionata(p); setRicerca(p); setProfessionistaSelezionato(null); }}
-                      className="text-left p-2.5 md:p-3 rounded-lg border border-border hover:border-primary/50 transition-colors text-sm md:text-senior-sm"
+                    <button key={p} onClick={() => { setPrestazioneSelezionata(p); setRicerca(p); setProfessionistaSelezionato(null); addRecentSearch(p); }}
+                      className="text-left p-2.5 md:p-3 rounded-lg border border-border hover:border-primary/50 transition-colors text-sm md:text-senior-sm break-words whitespace-normal leading-snug"
                     >{p}</button>
                   ))}
                 </div>
               )}
               {prestazioneSelezionata && (
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-sm text-primary font-medium">Prestazione selezionata: {prestazioneSelezionata}</span>
-                  <button onClick={() => { setPrestazioneSelezionata(""); setRicerca(""); }} className="text-xs text-muted-foreground underline hover:text-foreground">Cambia</button>
+                  <span className="text-sm text-primary font-medium break-words">Prestazione selezionata: {prestazioneSelezionata}</span>
+                  <button onClick={() => { setPrestazioneSelezionata(""); setRicerca(""); }} className="text-xs text-muted-foreground underline hover:text-foreground flex-shrink-0">Cambia</button>
+                </div>
+              )}
+
+              {/* Recent searches */}
+              {searchMode === "prestazione" && !prestazioneSelezionata && recentSearches.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-xs text-muted-foreground mb-1.5">Ultime ricerche:</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {recentSearches.map((r) => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => { setPrestazioneSelezionata(r); setRicerca(r); setProfessionistaSelezionato(null); addRecentSearch(r); }}
+                        className="px-2.5 py-1 rounded-full bg-secondary text-xs md:text-sm text-foreground hover:bg-primary hover:text-primary-foreground transition-colors break-words text-left max-w-full"
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </CardContent>
@@ -452,7 +491,7 @@ const DashboardPaziente = () => {
                         </div>
                         {servizio && (
                           <div className="text-right flex-shrink-0">
-                            <p className="text-base md:text-senior-lg font-bold text-primary">€{servizio.price}</p>
+                            <p className="text-base md:text-senior-lg font-bold text-primary">€0</p>
                             <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">per questa prestazione</p>
                           </div>
                         )}
@@ -519,10 +558,10 @@ const DashboardPaziente = () => {
                       key={s.name}
                       type="button"
                       onClick={() => navigate(`/profilo-infermiere/${professionistaSelezionato.profileId}?servizio=${encodeURIComponent(s.name)}`)}
-                      className="flex w-full justify-between items-center p-2 rounded-md bg-secondary/50 text-xs md:text-sm text-left transition-colors hover:bg-secondary"
+                      className="flex w-full justify-between items-start gap-2 p-2 rounded-md bg-secondary/50 text-xs md:text-sm text-left transition-colors hover:bg-secondary"
                     >
-                      <span>{s.name}</span>
-                      <span className="font-bold text-primary ml-2 flex-shrink-0">€{s.price}</span>
+                      <span className="break-words whitespace-normal leading-snug flex-1 min-w-0">{s.name}</span>
+                      <span className="font-bold text-primary flex-shrink-0">€0</span>
                     </button>
                   ))}
                   {professionistaSelezionato.servizi.length === 0 && (
