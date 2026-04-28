@@ -443,6 +443,34 @@ const DashboardPaziente = () => {
                   </div>
                 </div>
               )}
+
+              {/* Recent professional searches */}
+              {searchMode === "professionista" && !professionistaSelezionato && recentProfSearches.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-xs text-muted-foreground mb-1.5">Ultime ricerche:</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {recentProfSearches.map((r) => {
+                      const found = professionisti.find((p) => p.nome === r);
+                      return (
+                        <button
+                          key={r}
+                          type="button"
+                          onClick={() => {
+                            if (found) {
+                              handleSelectProfessionista(found);
+                            } else {
+                              setRicerca(r);
+                            }
+                          }}
+                          className="px-2.5 py-1 rounded-full bg-secondary text-xs md:text-sm text-foreground hover:bg-primary hover:text-primary-foreground transition-colors break-words text-left max-w-full"
+                        >
+                          {r}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
