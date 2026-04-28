@@ -12,47 +12,96 @@ import { fuzzySearchServices, haversineKm } from "@/lib/searchUtils";
 
 const prestazioniDisponibili = [
   // Infermieristici
-  "Iniezione intramuscolare", "Iniezione sottocutanea", "Iniezione endovenosa",
-  "Prelievo ematico a domicilio", "Medicazione semplice", "Medicazione complessa",
-  "Medicazione ferita chirurgica", "Medicazione ulcera da pressione", "Medicazione ulcera venosa",
-  "Rimozione punti di sutura", "Rimozione graffette chirurgiche",
-  "Cateterismo vescicale maschile", "Cateterismo vescicale femminile",
-  "Gestione e sostituzione catetere vescicale", "Clistere evacuativo",
-  "Infusione endovenosa (flebo)", "Terapia infusionale sottocutanea",
-  "Somministrazione terapia intramuscolare", "Somministrazione terapia orale",
-  "Somministrazione insulina", "Misurazione glicemia capillare",
-  "Misurazione parametri vitali completa", "Misurazione pressione arteriosa",
-  "ECG a domicilio", "Gestione stomie (colostomia, ileostomia, urostomia)",
-  "Sostituzione sacca stomia", "Gestione nutrizione enterale (SNG/PEG)",
-  "Gestione nutrizione parenterale", "Aspirazione tracheale", "Gestione tracheostomia",
-  "Gestione drenaggi", "Bendaggio compressivo", "Bendaggio elastocompressivo arti inferiori",
-  "Assistenza post-operatoria a domicilio", "Assistenza post-dimissione ospedaliera",
-  "Educazione sanitaria al paziente e caregiver", "Educazione alla gestione del diabete",
-  "Prelievo per test rapido (tampone, urine)", "Lavaggio auricolare",
-  "Aerosolterapia a domicilio", "Ossigenoterapia domiciliare - avvio e monitoraggio",
-  "Assistenza domiciliare continuativa (per ora)", "Assistenza infermieristica notturna (per ora)",
+  "Iniezione intramuscolare",
+  "Iniezione sottocutanea",
+  "Iniezione endovenosa",
+  "Prelievo ematico a domicilio",
+  "Medicazione semplice",
+  "Medicazione complessa",
+  "Medicazione ferita chirurgica",
+  "Medicazione ulcera da pressione",
+  "Medicazione ulcera venosa",
+  "Rimozione punti di sutura",
+  "Rimozione graffette chirurgiche",
+  "Cateterismo vescicale maschile",
+  "Cateterismo vescicale femminile",
+  "Gestione e sostituzione catetere vescicale",
+  "Clistere evacuativo",
+  "Infusione endovenosa (flebo)",
+  "Terapia infusionale sottocutanea",
+  "Somministrazione terapia intramuscolare",
+  "Somministrazione terapia orale",
+  "Somministrazione insulina",
+  "Misurazione glicemia capillare",
+  "Misurazione parametri vitali completa",
+  "Misurazione pressione arteriosa",
+  "ECG a domicilio",
+  "Gestione stomie (colostomia, ileostomia, urostomia)",
+  "Sostituzione sacca stomia",
+  "Gestione nutrizione enterale (SNG/PEG)",
+  "Gestione nutrizione parenterale",
+  "Aspirazione tracheale",
+  "Gestione tracheostomia",
+  "Gestione drenaggi",
+  "Bendaggio compressivo",
+  "Bendaggio elastocompressivo arti inferiori",
+  "Assistenza post-operatoria a domicilio",
+  "Assistenza post-dimissione ospedaliera",
+  "Educazione sanitaria al paziente e caregiver",
+  "Educazione alla gestione del diabete",
+  "Prelievo per test rapido (tampone, urine)",
+  "Lavaggio auricolare",
+  "Aerosolterapia a domicilio",
+  "Ossigenoterapia domiciliare - avvio e monitoraggio",
+  "Assistenza domiciliare continuativa (per ora)",
+  "Assistenza infermieristica notturna (per ora)",
   "Assistenza infermieristica diurna (per ora)",
   // Fisioterapia
-  "Riabilitazione motoria a domicilio", "Riabilitazione post-operatoria (protesi anca/ginocchio)",
-  "Riabilitazione post-frattura", "Riabilitazione post-ictus", "Riabilitazione neurologica",
-  "Riabilitazione respiratoria", "Riabilitazione pavimento pelvico", "Riabilitazione sportiva",
-  "Linfodrenaggio manuale", "Massoterapia decontratturante", "Terapia manuale ortopedica",
-  "Ginnastica posturale a domicilio", "Ginnastica dolce per anziani",
-  "Rieducazione alla deambulazione", "Mobilizzazione articolare",
-  "Trattamento cervicalgia/lombalgia", "Kinesio taping",
-  "Esercizio terapeutico personalizzato", "Stretching terapeutico",
-  "Laser terapia", "Laser terapia YAG", "Tecar terapia",
-  "Onde d'urto", "Elettrostimolazione", "Ultrasuono", "Valutazione ecografica",
+  "Riabilitazione motoria a domicilio",
+  "Riabilitazione post-operatoria (protesi anca/ginocchio)",
+  "Riabilitazione post-frattura",
+  "Riabilitazione post-ictus",
+  "Riabilitazione neurologica",
+  "Riabilitazione respiratoria",
+  "Riabilitazione pavimento pelvico",
+  "Riabilitazione sportiva",
+  "Linfodrenaggio manuale",
+  "Massoterapia decontratturante",
+  "Terapia manuale ortopedica",
+  "Ginnastica posturale a domicilio",
+  "Ginnastica dolce per anziani",
+  "Rieducazione alla deambulazione",
+  "Mobilizzazione articolare",
+  "Trattamento cervicalgia/lombalgia",
+  "Kinesio taping",
+  "Esercizio terapeutico personalizzato",
+  "Stretching terapeutico",
+  "Laser terapia",
+  "Laser terapia YAG",
+  "Tecar terapia",
+  "Onde d'urto",
+  "Elettrostimolazione",
+  "Ultrasuono",
+  "Valutazione ecografica",
   // OSS
-  "Igiene personale completa a letto", "Bagno assistito in vasca/doccia",
-  "Vestizione e svestizione assistita", "Cambio pannolone e igiene intima",
-  "Mobilizzazione e cambio postura a letto", "Trasferimento letto-carrozzina/poltrona",
-  "Assistenza alla deambulazione", "Assistenza ai pasti e imboccamento",
-  "Preparazione pasti a domicilio", "Compagnia e sorveglianza diurna (per ora)",
-  "Sorveglianza notturna (per ora)", "Accompagnamento a visite mediche",
-  "Accompagnamento a passeggiate", "Piccola spesa e commissioni",
-  "Stimolazione cognitiva e attività ricreative", "Supporto nella gestione della casa leggera",
-  "Assistenza continuativa diurna (per ora)", "Assistenza continuativa notturna (per ora)",
+  "Igiene personale completa a letto",
+  "Bagno assistito in vasca/doccia",
+  "Vestizione e svestizione assistita",
+  "Cambio pannolone e igiene intima",
+  "Mobilizzazione e cambio postura a letto",
+  "Trasferimento letto-carrozzina/poltrona",
+  "Assistenza alla deambulazione",
+  "Assistenza ai pasti e imboccamento",
+  "Preparazione pasti a domicilio",
+  "Compagnia e sorveglianza diurna (per ora)",
+  "Sorveglianza notturna (per ora)",
+  "Accompagnamento a visite mediche",
+  "Accompagnamento a passeggiate",
+  "Piccola spesa e commissioni",
+  "Stimolazione cognitiva e attività ricreative",
+  "Supporto nella gestione della casa leggera",
+  "Assistenza continuativa diurna (per ora)",
+  "Assistenza continuativa notturna (per ora)",
 ];
 
 interface ProfessionistaData {
@@ -128,8 +177,8 @@ const DashboardPaziente = () => {
 
   // Fuzzy search for services
   const prestazioniFiltrate = useMemo(
-    () => searchMode === "prestazione" ? fuzzySearchServices(ricerca, prestazioniDisponibili) : [],
-    [ricerca, searchMode]
+    () => (searchMode === "prestazione" ? fuzzySearchServices(ricerca, prestazioniDisponibili) : []),
+    [ricerca, searchMode],
   );
 
   // Fuzzy search for professional names
@@ -142,9 +191,7 @@ const DashboardPaziente = () => {
   // Filter professionals by selected service
   const professionistiFiltrati = useMemo(() => {
     if (!prestazioneSelezionata) return [];
-    const filtered = professionisti.filter((p) =>
-      p.servizi.some((s) => s.name === prestazioneSelezionata)
-    );
+    const filtered = professionisti.filter((p) => p.servizi.some((s) => s.name === prestazioneSelezionata));
     if (userCoords) {
       filtered.forEach((p: any) => {
         p._distKm = haversineKm(userCoords.lat, userCoords.lng, p.lat, p.lng);
@@ -233,9 +280,10 @@ const DashboardPaziente = () => {
         .map((p) => {
           const profServices = (services || []).filter((s) => s.professional_id === p.id);
           const profReviews = (reviews || []).filter((r) => r.professional_id === p.id);
-          const avg = profReviews.length > 0
-            ? Math.round((profReviews.reduce((sum, r) => sum + r.rating, 0) / profReviews.length) * 10) / 10
-            : 0;
+          const avg =
+            profReviews.length > 0
+              ? Math.round((profReviews.reduce((sum, r) => sum + r.rating, 0) / profReviews.length) * 10) / 10
+              : 0;
           return {
             profileId: p.id,
             nome: `${p.first_name} ${p.last_name}`,
@@ -271,7 +319,8 @@ const DashboardPaziente = () => {
     const center = userCoords || { lat: 43.7696, lng: 11.2558 };
     if (!mapInstanceRef.current) {
       mapInstanceRef.current = new google.maps.Map(mapRef.current, {
-        center, zoom: 11,
+        center,
+        zoom: 11,
         streetViewControl: false,
         styles: [{ featureType: "poi", stylers: [{ visibility: "simplified" }] }],
       });
@@ -287,7 +336,11 @@ const DashboardPaziente = () => {
         title: p.nome,
         icon: {
           path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
-          fillColor: "#4A90D9", fillOpacity: 1, strokeColor: "#2a6cb6", strokeWeight: 1.5, scale: 1.8,
+          fillColor: "#4A90D9",
+          fillOpacity: 1,
+          strokeColor: "#2a6cb6",
+          strokeWeight: 1.5,
+          scale: 1.8,
           anchor: new google.maps.Point(12, 22),
         },
       });
@@ -309,8 +362,17 @@ const DashboardPaziente = () => {
 
     if (userCoords) {
       const userMarker = new google.maps.Marker({
-        position: userCoords, map: mapInstanceRef.current, title: "La tua posizione",
-        icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: "#22c55e", fillOpacity: 1, strokeColor: "#16a34a", strokeWeight: 2, scale: 8 },
+        position: userCoords,
+        map: mapInstanceRef.current,
+        title: "La tua posizione",
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: "#22c55e",
+          fillOpacity: 1,
+          strokeColor: "#16a34a",
+          strokeWeight: 2,
+          scale: 8,
+        },
       });
       markersRef.current.push(userMarker);
     }
@@ -329,19 +391,14 @@ const DashboardPaziente = () => {
     }
   }, [mapProfessionals, mapsLoaded, userCoords, prestazioneSelezionata]);
 
-  const typeLabel = (t: string) => t === "oss" ? "OSS" : t === "fisioterapista" ? "Fisioterapista" : "Infermiere";
+  const typeLabel = (t: string) => (t === "oss" ? "OSS" : t === "fisioterapista" ? "Fisioterapista" : "Infermiere");
 
   return (
     <div className="min-h-screen flex flex-col">
       <AuthHeader />
       <main className="flex-1 bg-background py-6 md:py-12">
         <div className="container mx-auto px-4 md:px-6 max-w-4xl">
-          <h1 className="md:text-senior-3xl font-bold mb-2 text-2xl">
-            Trova il tuo professionista
-          </h1>
-          <p className="text-sm md:text-senior-base text-muted-foreground mb-6 md:mb-8">
-            Seleziona la prestazione di cui hai bisogno o il nome dello specialista più vicino a te.
-          </p>
+          <h1 className="md:text-senior-3xl font-bold mb-2 text-2xl">Trova il tuo professionista</h1>
 
           <Card className="mb-6 md:mb-8">
             <CardHeader className="p-4 md:p-6">
@@ -374,54 +431,82 @@ const DashboardPaziente = () => {
             <CardContent className="p-4 md:p-6 pt-0 md:pt-0">
               <div className="relative">
                 <input
-                  type="text" value={ricerca}
+                  type="text"
+                  value={ricerca}
                   onChange={(e) => {
                     setRicerca(e.target.value);
                     if (searchMode === "professionista") setProfessionistaSelezionato(null);
                   }}
-                  placeholder={searchMode === "prestazione" ? "Cerca una prestazione..." : "Cerca per nome e cognome..."}
+                  placeholder={
+                    searchMode === "prestazione" ? "Cerca una prestazione..." : "Cerca per nome e cognome..."
+                  }
                   className="w-full border rounded-md p-3 text-sm md:text-senior-sm bg-background mb-4"
                 />
                 {/* Name autocomplete dropdown */}
-                {searchMode === "professionista" && ricerca.trim() && !professionistaSelezionato && professionistiSuggeriti.length > 0 && (
-                  <div className="absolute z-20 left-0 right-0 top-12 bg-background border rounded-md shadow-lg max-h-48 overflow-y-auto">
-                    {professionistiSuggeriti.map((p) => (
+                {searchMode === "professionista" &&
+                  ricerca.trim() &&
+                  !professionistaSelezionato &&
+                  professionistiSuggeriti.length > 0 && (
+                    <div className="absolute z-20 left-0 right-0 top-12 bg-background border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                      {professionistiSuggeriti.map((p) => (
+                        <button
+                          key={p.profileId}
+                          onClick={() => handleSelectProfessionista(p)}
+                          className="w-full text-left px-4 py-2.5 hover:bg-secondary flex items-center gap-3 text-sm border-b last:border-b-0"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
+                            {p.photoUrl ? (
+                              <img src={p.photoUrl} alt={p.nome} className="w-full h-full object-cover" />
+                            ) : (
+                              <User className="w-4 h-4 text-muted-foreground" />
+                            )}
+                          </div>
+                          <div>
+                            <span className="font-medium">{p.nome}</span>
+                            <span className="text-xs text-muted-foreground ml-2">{typeLabel(p.professionalType)}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+              </div>
+
+              {/* Service suggestions (only when typing) */}
+              {searchMode === "prestazione" &&
+                ricerca.trim() &&
+                !prestazioneSelezionata &&
+                prestazioniFiltrate.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 md:max-h-64 overflow-y-auto mt-2">
+                    {prestazioniFiltrate.map((p) => (
                       <button
-                        key={p.profileId}
-                        onClick={() => handleSelectProfessionista(p)}
-                        className="w-full text-left px-4 py-2.5 hover:bg-secondary flex items-center gap-3 text-sm border-b last:border-b-0"
+                        key={p}
+                        onClick={() => {
+                          setPrestazioneSelezionata(p);
+                          setRicerca(p);
+                          setProfessionistaSelezionato(null);
+                          addRecentSearch(p);
+                        }}
+                        className="text-left p-2.5 md:p-3 rounded-lg border border-border hover:border-primary/50 transition-colors text-sm md:text-senior-sm break-words whitespace-normal leading-snug"
                       >
-                        <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
-                          {p.photoUrl ? (
-                            <img src={p.photoUrl} alt={p.nome} className="w-full h-full object-cover" />
-                          ) : (
-                            <User className="w-4 h-4 text-muted-foreground" />
-                          )}
-                        </div>
-                        <div>
-                          <span className="font-medium">{p.nome}</span>
-                          <span className="text-xs text-muted-foreground ml-2">{typeLabel(p.professionalType)}</span>
-                        </div>
+                        {p}
                       </button>
                     ))}
                   </div>
                 )}
-              </div>
-
-              {/* Service suggestions (only when typing) */}
-              {searchMode === "prestazione" && ricerca.trim() && !prestazioneSelezionata && prestazioniFiltrate.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 md:max-h-64 overflow-y-auto mt-2">
-                  {prestazioniFiltrate.map((p) => (
-                    <button key={p} onClick={() => { setPrestazioneSelezionata(p); setRicerca(p); setProfessionistaSelezionato(null); addRecentSearch(p); }}
-                      className="text-left p-2.5 md:p-3 rounded-lg border border-border hover:border-primary/50 transition-colors text-sm md:text-senior-sm break-words whitespace-normal leading-snug"
-                    >{p}</button>
-                  ))}
-                </div>
-              )}
               {prestazioneSelezionata && (
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-sm text-primary font-medium break-words">Prestazione selezionata: {prestazioneSelezionata}</span>
-                  <button onClick={() => { setPrestazioneSelezionata(""); setRicerca(""); }} className="text-xs text-muted-foreground underline hover:text-foreground flex-shrink-0">Cambia</button>
+                  <span className="text-sm text-primary font-medium break-words">
+                    Prestazione selezionata: {prestazioneSelezionata}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setPrestazioneSelezionata("");
+                      setRicerca("");
+                    }}
+                    className="text-xs text-muted-foreground underline hover:text-foreground flex-shrink-0"
+                  >
+                    Cambia
+                  </button>
                 </div>
               )}
 
@@ -434,7 +519,12 @@ const DashboardPaziente = () => {
                       <button
                         key={r}
                         type="button"
-                        onClick={() => { setPrestazioneSelezionata(r); setRicerca(r); setProfessionistaSelezionato(null); addRecentSearch(r); }}
+                        onClick={() => {
+                          setPrestazioneSelezionata(r);
+                          setRicerca(r);
+                          setProfessionistaSelezionato(null);
+                          addRecentSearch(r);
+                        }}
                         className="px-2.5 py-1 rounded-full bg-secondary text-xs md:text-sm text-foreground hover:bg-primary hover:text-primary-foreground transition-colors break-words text-left max-w-full"
                       >
                         {r}
@@ -497,8 +587,15 @@ const DashboardPaziente = () => {
                   const servizio = p.servizi.find((s) => s.name === prestazioneSelezionata);
                   const distKm = (p as any)._distKm as number | undefined;
                   return (
-                    <Card id={`prof-card-${p.profileId}`} key={p.profileId} className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
-                      onClick={() => navigate(`/profilo-infermiere/${p.profileId}?servizio=${encodeURIComponent(prestazioneSelezionata)}`)}
+                    <Card
+                      id={`prof-card-${p.profileId}`}
+                      key={p.profileId}
+                      className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary"
+                      onClick={() =>
+                        navigate(
+                          `/profilo-infermiere/${p.profileId}?servizio=${encodeURIComponent(prestazioneSelezionata)}`,
+                        )
+                      }
                     >
                       <CardContent className="p-4 md:p-6 flex items-start md:items-center gap-3 md:gap-6">
                         <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
@@ -512,13 +609,18 @@ const DashboardPaziente = () => {
                           <div className="flex items-center gap-2">
                             <h3 className="text-sm md:text-senior-lg font-semibold">{p.nome}</h3>
                             {p.verified && (
-                              <span className="inline-flex items-center gap-0.5 text-white text-xs font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: "#0097B2" }}>
+                              <span
+                                className="inline-flex items-center gap-0.5 text-white text-xs font-medium px-1.5 py-0.5 rounded"
+                                style={{ backgroundColor: "#0097B2" }}
+                              >
                                 <ShieldCheck className="w-3 h-3" /> Verificato
                               </span>
                             )}
                           </div>
                           <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">{typeLabel(p.professionalType)}</span>
+                            <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">
+                              {typeLabel(p.professionalType)}
+                            </span>
                             {p.valutazione > 0 && (
                               <span className="flex items-center gap-0.5 text-sm">
                                 <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
@@ -529,10 +631,15 @@ const DashboardPaziente = () => {
                           <p className="text-xs md:text-senior-sm text-muted-foreground truncate mt-1">{p.bio}</p>
                           {(p.zona || distKm !== undefined) && (
                             <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                              {p.zona && (<span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {p.zona}</span>)}
+                              {p.zona && (
+                                <span className="flex items-center gap-1">
+                                  <MapPin className="w-4 h-4" /> {p.zona}
+                                </span>
+                              )}
                               {distKm !== undefined && (
                                 <span className="flex items-center gap-1 font-medium text-primary">
-                                  <Navigation className="w-3.5 h-3.5" /> ~{distKm < 1 ? `${Math.round(distKm * 1000)}m` : `${Math.round(distKm)} km`}
+                                  <Navigation className="w-3.5 h-3.5" /> ~
+                                  {distKm < 1 ? `${Math.round(distKm * 1000)}m` : `${Math.round(distKm)} km`}
                                 </span>
                               )}
                             </div>
@@ -541,7 +648,9 @@ const DashboardPaziente = () => {
                         {servizio && (
                           <div className="text-right flex-shrink-0">
                             <p className="text-base md:text-senior-lg font-bold text-primary">€{servizio.price}</p>
-                            <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">per questa prestazione</p>
+                            <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">
+                              per questa prestazione
+                            </p>
                           </div>
                         )}
                       </CardContent>
@@ -566,7 +675,11 @@ const DashboardPaziente = () => {
                 <div className="flex items-start md:items-center gap-3 md:gap-6 mb-4">
                   <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
                     {professionistaSelezionato.photoUrl ? (
-                      <img src={professionistaSelezionato.photoUrl} alt={professionistaSelezionato.nome} className="w-full h-full object-cover" />
+                      <img
+                        src={professionistaSelezionato.photoUrl}
+                        alt={professionistaSelezionato.nome}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <Stethoscope className="w-7 h-7 md:w-10 md:h-10 text-primary" />
                     )}
@@ -575,21 +688,29 @@ const DashboardPaziente = () => {
                     <div className="flex items-center gap-2">
                       <h3 className="text-base md:text-senior-xl font-semibold">{professionistaSelezionato.nome}</h3>
                       {professionistaSelezionato.verified && (
-                        <span className="inline-flex items-center gap-0.5 text-white text-xs font-medium px-1.5 py-0.5 rounded" style={{ backgroundColor: "#0097B2" }}>
+                        <span
+                          className="inline-flex items-center gap-0.5 text-white text-xs font-medium px-1.5 py-0.5 rounded"
+                          style={{ backgroundColor: "#0097B2" }}
+                        >
                           <ShieldCheck className="w-3 h-3" /> Verificato
                         </span>
                       )}
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">{typeLabel(professionistaSelezionato.professionalType)}</span>
+                      <span className="text-xs font-medium text-primary bg-secondary px-2 py-0.5 rounded">
+                        {typeLabel(professionistaSelezionato.professionalType)}
+                      </span>
                       {professionistaSelezionato.valutazione > 0 && (
                         <span className="flex items-center gap-0.5 text-sm">
-                          <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" /> {professionistaSelezionato.valutazione}
+                          <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />{" "}
+                          {professionistaSelezionato.valutazione}
                         </span>
                       )}
                     </div>
                     {professionistaSelezionato.bio && (
-                      <p className="text-xs md:text-senior-sm text-muted-foreground mt-1">{professionistaSelezionato.bio}</p>
+                      <p className="text-xs md:text-senior-sm text-muted-foreground mt-1">
+                        {professionistaSelezionato.bio}
+                      </p>
                     )}
                     {professionistaSelezionato.zona && (
                       <span className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
@@ -600,13 +721,19 @@ const DashboardPaziente = () => {
                 </div>
 
                 <h4 className="text-sm md:text-senior-base font-semibold mb-2 mt-2">Prestazioni offerte:</h4>
-                <p className="text-xs text-muted-foreground mb-2">Seleziona una prestazione per accedere al calendario delle disponibilità.</p>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Seleziona una prestazione per accedere al calendario delle disponibilità.
+                </p>
                 <div className="space-y-1.5">
                   {professionistaSelezionato.servizi.map((s) => (
                     <button
                       key={s.name}
                       type="button"
-                      onClick={() => navigate(`/profilo-infermiere/${professionistaSelezionato.profileId}?servizio=${encodeURIComponent(s.name)}`)}
+                      onClick={() =>
+                        navigate(
+                          `/profilo-infermiere/${professionistaSelezionato.profileId}?servizio=${encodeURIComponent(s.name)}`,
+                        )
+                      }
                       className="flex w-full justify-between items-start gap-2 p-2 rounded-md bg-secondary/50 text-xs md:text-sm text-left transition-colors hover:bg-secondary"
                     >
                       <span className="break-words whitespace-normal leading-snug flex-1 min-w-0">{s.name}</span>
@@ -622,14 +749,14 @@ const DashboardPaziente = () => {
           )}
         </div>
       </main>
-      <ChatbotWidget 
+      <ChatbotWidget
         onSelectService={(service) => {
           setSearchMode("prestazione");
           setRicerca(service);
           setPrestazioneSelezionata(service);
           setProfessionistaSelezionato(null);
         }}
-        professionals={professionisti.map(p => ({ profileId: p.profileId, nome: p.nome }))}
+        professionals={professionisti.map((p) => ({ profileId: p.profileId, nome: p.nome }))}
       />
       <Footer />
     </div>
