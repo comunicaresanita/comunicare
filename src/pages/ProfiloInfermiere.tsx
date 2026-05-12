@@ -421,7 +421,7 @@ const ProfiloInfermiere = () => {
     setPaymentLoading(true);
     try {
       const dayStr = formatSelectedDate(selectedDate);
-      const { error: bookingError } = await supabase
+      const { data: newBooking, error: bookingError } = await supabase
         .from("bookings")
         .insert({
           patient_id: userProfile.id,
@@ -430,7 +430,7 @@ const ProfiloInfermiere = () => {
           price: bookingPricing.finalPrice,
           day: dayStr,
           time_slot: slotSelezionato,
-          status: "confirmed",
+          status: "pending",
           recipient_address: recipientAddress,
           recipient_type: recipient,
           recipient_first_name: recipient === "other" ? cgFirstName : null,
@@ -447,9 +447,21 @@ const ProfiloInfermiere = () => {
         .single();
 
       if (bookingError) throw bookingError;
+      if (!newBooking) throw new Error("Impossibile creare la prenotazione.");
 
-      toast({ title: "Prenotazione confermata!", description: "La tua prenotazione è stata registrata con successo." });
-      navigate("/dashboard-paziente");
+      const { data: payData, error: payError } = await supabase.functions.invoke("create-payment", {
+        body: {
+          bookingId: (newBooking as any).id,
+          serviceName: servizioSelezionato,
+          price: bookingPricing.finalPrice,
+          professionalName: `${professional.first_name} ${professional.last_name}`,
+        },
+      });
+
+      if (payError) throw payError;
+      if (!payData?.url) throw new Error("URL di pagamento non disponibile.");
+
+      window.location.href = payData.url as string;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Errore durante la prenotazione.";
       toast({ title: "Errore", description: message, variant: "destructive" });
