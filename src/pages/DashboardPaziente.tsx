@@ -174,6 +174,24 @@ const DashboardPaziente = () => {
   const [mapsLoaded, setMapsLoaded] = useState(false);
   const [professionisti, setProfessionisti] = useState<ProfessionistaData[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loadingBookings, setLoadingBookings] = useState(false);
+
+  // Fetch booking history
+  useEffect(() => {
+    const fetchBookings = async () => {
+      if (!profile || profile.role === "professionista") return;
+      setLoadingBookings(true);
+      const { data } = await supabase
+        .from("bookings")
+        .select("*, professional:professional_id(first_name, last_name)")
+        .eq("patient_id", profile.id)
+        .order("day", { ascending: false });
+      setBookings(data || []);
+      setLoadingBookings(false);
+    };
+    fetchBookings();
+  }, [profile]);
 
   // Fuzzy search for services
   const prestazioniFiltrate = useMemo(
