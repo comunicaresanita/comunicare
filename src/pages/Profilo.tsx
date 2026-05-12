@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,16 +24,16 @@ import StructuredAddressInput, { parseAddressToFields, composeAddress } from "@/
 import HousingInfoFields, { HousingInfoErrors } from "@/components/HousingInfoFields";
 import MedicalNotesField from "@/components/MedicalNotesField";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Camera, ArrowLeft, Trash2, ClipboardList, UserCog } from "lucide-react";
+import { Camera, ArrowLeft, Trash2 } from "lucide-react";
 
 const Profilo = () => {
   const { user, profile, loading: authLoading, refreshProfile, signOut } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
+  
   const { toast } = useToast();
 
   const [firstName, setFirstName] = useState("");
@@ -67,27 +67,6 @@ const Profilo = () => {
   const [medicalNotes, setMedicalNotes] = useState("");
   const [housingErrors, setHousingErrors] = useState<HousingInfoErrors>({});
   const [deleting, setDeleting] = useState(false);
-  const [bookings, setBookings] = useState<any[]>([]);
-  const [loadingBookings, setLoadingBookings] = useState(false);
-
-  const defaultTab = location.hash === "#storico" ? "dashboard" : "dati";
-  const [activeTab, setActiveTab] = useState(defaultTab);
-
-  // Fetch booking history for patients
-  useEffect(() => {
-    const fetchBookings = async () => {
-      if (!profile || profile.role === "professionista") return;
-      setLoadingBookings(true);
-      const { data } = await supabase
-        .from("bookings")
-        .select("*, professional:professional_id(first_name, last_name)")
-        .eq("patient_id", profile.id)
-        .order("day", { ascending: false });
-      setBookings(data || []);
-      setLoadingBookings(false);
-    };
-    fetchBookings();
-  }, [profile]);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/login");
@@ -293,16 +272,8 @@ const Profilo = () => {
           </Button>
           <h1 className="text-xl md:text-senior-3xl font-bold mb-4">Il mio profilo</h1>
 
-          {profile.role !== "professionista" && (
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="dati" className="gap-2"><UserCog className="w-4 h-4" />Dati personali</TabsTrigger>
-                <TabsTrigger value="dashboard" className="gap-2"><ClipboardList className="w-4 h-4" />Dashboard</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          )}
+          {(
 
-          {(activeTab === "dati" || profile.role === "professionista") && (
           <Card className="border-0 shadow-lg">
             <CardContent className="space-y-6 pt-6">
               {profile.role === "professionista" && (
@@ -458,50 +429,6 @@ const Profilo = () => {
           </Card>
           )}
 
-          {activeTab === "dashboard" && profile.role !== "professionista" && (
-            <Card className="border-0 shadow-lg">
-              <CardContent className="space-y-4 pt-6">
-                <h3 className="text-senior-lg font-semibold flex items-center gap-2">
-                  <ClipboardList className="w-5 h-5" />
-                  Storico prestazioni
-                </h3>
-                {loadingBookings ? (
-                  <p className="text-sm text-muted-foreground">Caricamento...</p>
-                ) : bookings.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    Non hai ancora effettuato prestazioni. Quando prenoterai e completerai una prestazione, apparirà qui il tuo storico.
-                  </p>
-                ) : (
-                  <div className="space-y-3">
-                    {bookings.map((b) => (
-                      <Card key={b.id} className="p-3">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="font-medium text-sm">{b.service_name}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(b.day).toLocaleDateString("it-IT")} — {b.time_slot}
-                            </p>
-                            {b.professional && (
-                              <p className="text-xs text-muted-foreground">
-                                {b.professional.first_name} {b.professional.last_name}
-                              </p>
-                            )}
-                          </div>
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            b.status === "confermato" ? "bg-primary/10 text-primary" :
-                            b.status === "completato" ? "bg-primary/20 text-primary" :
-                            "bg-muted text-muted-foreground"
-                          }`}>
-                            {b.status}
-                          </span>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
         </div>
       </main>
       <Footer />

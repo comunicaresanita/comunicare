@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import { MapPin, Search, Star, ShieldCheck, Stethoscope, Navigation, User } from "lucide-react";
+import { MapPin, Search, Star, ShieldCheck, Stethoscope, Navigation, User, ClipboardList } from "lucide-react";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -174,6 +174,24 @@ const DashboardPaziente = () => {
   const [mapsLoaded, setMapsLoaded] = useState(false);
   const [professionisti, setProfessionisti] = useState<ProfessionistaData[]>([]);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loadingBookings, setLoadingBookings] = useState(false);
+
+  // Fetch booking history
+  useEffect(() => {
+    const fetchBookings = async () => {
+      if (!profile || profile.role === "professionista") return;
+      setLoadingBookings(true);
+      const { data } = await supabase
+        .from("bookings")
+        .select("*, professional:professional_id(first_name, last_name)")
+        .eq("patient_id", profile.id)
+        .order("day", { ascending: false });
+      setBookings(data || []);
+      setLoadingBookings(false);
+    };
+    fetchBookings();
+  }, [profile]);
 
   // Fuzzy search for services
   const prestazioniFiltrate = useMemo(
@@ -745,6 +763,50 @@ const DashboardPaziente = () => {
                     <p className="text-sm text-muted-foreground">Nessuna prestazione configurata.</p>
                   )}
                 </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {profile?.role !== "professionista" && (
+            <Card className="mt-6 md:mt-8">
+              <CardHeader className="p-4 md:p-6">
+                <CardTitle className="text-lg md:text-senior-lg flex items-center gap-2">
+                  <ClipboardList className="w-5 h-5" /> Storico prestazioni
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 md:p-6 pt-0 md:pt-0 space-y-3">
+                {loadingBookings ? (
+                  <p className="text-sm text-muted-foreground">Caricamento...</p>
+                ) : bookings.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    Non hai ancora effettuato prestazioni. Quando prenoterai una prestazione, apparirà qui il tuo storico.
+                  </p>
+                ) : (
+                  bookings.map((b) => (
+                    <Card key={b.id} className="p-3">
+                      <div className="flex justify-between items-start gap-2">
+                        <div>
+                          <p className="font-medium text-sm">{b.service_name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(b.day).toLocaleDateString("it-IT")} — {b.time_slot}
+                          </p>
+                          {b.professional && (
+                            <p className="text-xs text-muted-foreground">
+                              {b.professional.first_name} {b.professional.last_name}
+                            </p>
+                          )}
+                        </div>
+                        <span className={`text-xs px-2 py-1 rounded-full whitespace-nowrap ${
+                          b.status === "paid" || b.status === "confermato" ? "bg-primary/10 text-primary" :
+                          b.status === "completato" ? "bg-primary/20 text-primary" :
+                          "bg-muted text-muted-foreground"
+                        }`}>
+                          {b.status}
+                        </span>
+                      </div>
+                    </Card>
+                  ))
+                )}
               </CardContent>
             </Card>
           )}
