@@ -76,7 +76,7 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
-    await serviceClient.from("bookings").update({ stripe_session_id: session.id, status: "paid" }).eq("id", bookingId);
+    await serviceClient.from("bookings").update({ stripe_session_id: session.id }).eq("id", bookingId);
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
