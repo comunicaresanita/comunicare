@@ -16,9 +16,14 @@ const PagamentoSuccesso = () => {
     if (!bookingId || notifiedRef.current) return;
     notifiedRef.current = true;
 
-    supabase.functions.invoke("send-booking-notifications", {
-      body: { bookingId },
-    }).catch(console.error);
+    (async () => {
+      try {
+        await supabase.functions.invoke("verify-payment", { body: { bookingId } });
+        await supabase.functions.invoke("send-booking-notifications", { body: { bookingId } });
+      } catch (e) {
+        console.error(e);
+      }
+    })();
   }, [bookingId]);
 
   return (
