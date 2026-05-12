@@ -461,7 +461,20 @@ const ProfiloInfermiere = () => {
       if (payError) throw payError;
       if (!payData?.url) throw new Error("URL di pagamento non disponibile.");
 
-      window.location.href = payData.url as string;
+      // Open Stripe Checkout in a new tab to avoid being blocked by the
+      // preview iframe's X-Frame-Options (which causes the page to look stuck/looping).
+      const checkoutUrl = payData.url as string;
+      const newWindow = window.open(checkoutUrl, "_blank");
+      if (!newWindow) {
+        // Popup blocked — fall back to top-level navigation
+        try {
+          if (window.top) window.top.location.href = checkoutUrl;
+          else window.location.href = checkoutUrl;
+        } catch {
+          window.location.href = checkoutUrl;
+        }
+      }
+      toast({ title: "Reindirizzamento al pagamento", description: "Completa il pagamento nella nuova scheda." });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Errore durante la prenotazione.";
       toast({ title: "Errore", description: message, variant: "destructive" });
