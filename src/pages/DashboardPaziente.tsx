@@ -638,6 +638,8 @@ const DashboardPaziente = () => {
               )}
             </CardContent>
           </Card>
+          {isPaziente && <HistoryCard className="hidden md:block" />}
+          </div>
 
           {/* Map always visible */}
           <div ref={mapRef} className="w-full h-56 md:h-80 rounded-lg overflow-hidden border mb-4 md:mb-6 bg-secondary">
@@ -650,6 +652,8 @@ const DashboardPaziente = () => {
               </div>
             )}
           </div>
+
+          {isPaziente && <HistoryCard className="md:hidden mb-4" />}
 
           {/* === Results: by service === */}
           {prestazioneSelezionata && !professionistaSelezionato && (
