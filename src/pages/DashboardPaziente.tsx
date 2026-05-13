@@ -826,50 +826,6 @@ const DashboardPaziente = () => {
               </CardContent>
             </Card>
           )}
-
-          {profile?.role !== "professionista" && (
-            <Card className="mt-6 md:mt-8">
-              <CardHeader className="p-4 md:p-6">
-                <CardTitle className="text-lg md:text-senior-lg flex items-center gap-2">
-                  <ClipboardList className="w-5 h-5" /> Storico prestazioni
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 md:p-6 pt-0 md:pt-0 space-y-3">
-                {loadingBookings ? (
-                  <p className="text-sm text-muted-foreground">Caricamento...</p>
-                ) : bookings.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    Non hai ancora effettuato prestazioni. Quando prenoterai una prestazione, apparirà qui il tuo storico.
-                  </p>
-                ) : (
-                  bookings.map((b) => (
-                    <Card key={b.id} className="p-3">
-                      <div className="flex justify-between items-start gap-2">
-                        <div>
-                          <p className="font-medium text-sm">{b.service_name}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(b.day).toLocaleDateString("it-IT")} — {b.time_slot}
-                          </p>
-                          {b.professional && (
-                            <p className="text-xs text-muted-foreground">
-                              {b.professional.first_name} {b.professional.last_name}
-                            </p>
-                          )}
-                        </div>
-                        <span className={`text-xs px-2 py-1 rounded-full whitespace-nowrap ${
-                          b.status === "paid" || b.status === "confermato" ? "bg-primary/10 text-primary" :
-                          b.status === "completato" ? "bg-primary/20 text-primary" :
-                          "bg-muted text-muted-foreground"
-                        }`}>
-                          {b.status}
-                        </span>
-                      </div>
-                    </Card>
-                  ))
-                )}
-              </CardContent>
-            </Card>
-          )}
         </div>
       </main>
       <ChatbotWidget
