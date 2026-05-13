@@ -2,7 +2,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/comunicare-logo.png";
-import { Menu, LogOut, Phone, Home, User, LayoutDashboard, HelpCircle } from "lucide-react";
+import { Menu, LogOut, Phone, Home, User, LayoutDashboard, HelpCircle, ClipboardList } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,6 +61,11 @@ const AuthHeader = () => {
               <DropdownMenuItem asChild>
                 <Link to="/profilo" className="cursor-pointer"><User className="w-4 h-4 mr-2" />Il mio profilo</Link>
               </DropdownMenuItem>
+              {profile?.role !== "professionista" && (
+                <DropdownMenuItem asChild>
+                  <Link to="/storico-prestazioni" className="cursor-pointer"><ClipboardList className="w-4 h-4 mr-2" />Storico</Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem asChild>
                 <Link to="/contatti" className="cursor-pointer"><Phone className="w-4 h-4 mr-2" />Contatti</Link>
               </DropdownMenuItem>
