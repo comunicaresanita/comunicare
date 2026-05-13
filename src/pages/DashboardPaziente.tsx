@@ -9,6 +9,7 @@ import ChatbotWidget from "@/components/ChatbotWidget";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { fuzzySearchServices, haversineKm } from "@/lib/searchUtils";
+import { cn } from "@/lib/utils";
 
 const prestazioniDisponibili = [
   // Infermieristici
