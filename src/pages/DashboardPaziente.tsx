@@ -411,15 +411,71 @@ const DashboardPaziente = () => {
 
   const typeLabel = (t: string) => (t === "oss" ? "OSS" : t === "fisioterapista" ? "Fisioterapista" : "Infermiere");
 
+  const isPaziente = profile?.role !== "professionista";
+  const recentBookings = bookings.slice(0, 2);
+
+  const HistoryCard = ({ className = "" }: { className?: string }) => (
+    <Card className={className}>
+      <CardHeader className="p-4 md:p-6">
+        <CardTitle className="text-lg md:text-senior-lg flex items-center gap-2">
+          <ClipboardList className="w-5 h-5" /> Storico prestazioni
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-4 md:p-6 pt-0 md:pt-0 space-y-3">
+        {loadingBookings ? (
+          <p className="text-sm text-muted-foreground">Caricamento...</p>
+        ) : bookings.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            Non hai ancora effettuato prestazioni. Quando prenoterai una prestazione, apparirà qui il tuo storico.
+          </p>
+        ) : (
+          <>
+            {recentBookings.map((b) => (
+              <Card key={b.id} className="p-3">
+                <div className="flex justify-between items-start gap-2">
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm break-words">{b.service_name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(b.day).toLocaleDateString("it-IT")} — {b.time_slot}
+                    </p>
+                    {b.professional && (
+                      <p className="text-xs text-muted-foreground">
+                        {b.professional.first_name} {b.professional.last_name}
+                      </p>
+                    )}
+                  </div>
+                  <span className={`text-xs px-2 py-1 rounded-full whitespace-nowrap ${
+                    b.status === "paid" || b.status === "confermato" ? "bg-primary/10 text-primary" :
+                    b.status === "completato" ? "bg-primary/20 text-primary" :
+                    "bg-muted text-muted-foreground"
+                  }`}>
+                    {b.status}
+                  </span>
+                </div>
+              </Card>
+            ))}
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => navigate("/storico-prestazioni")}
+            >
+              Mostra altro
+            </Button>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="min-h-screen flex flex-col">
       <AuthHeader />
       <main className="flex-1 bg-background py-6 md:py-12">
-        <div className="container mx-auto px-4 md:px-6 max-w-4xl">
+        <div className="container mx-auto px-4 md:px-6 max-w-6xl">
           <h1 className="md:text-senior-3xl font-bold mb-2 text-2xl">Trova la prestazione o il professionista</h1>
-          
 
-          <Card className="mb-6 md:mb-8">
+          <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8 items-start">
+          <Card className="md:col-span-2">
             <CardHeader className="p-4 md:p-6">
               <CardTitle className="text-lg md:text-senior-lg flex items-center gap-2">
                 <Search className="w-5 h-5" /> Cerca per
