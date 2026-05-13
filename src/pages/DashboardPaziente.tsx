@@ -415,48 +415,56 @@ const DashboardPaziente = () => {
   const recentBookings = bookings.slice(0, 2);
 
   const HistoryCard = ({ className = "" }: { className?: string }) => (
-    <Card className={className}>
+    <Card className={cn("flex flex-col h-full", className)}>
       <CardHeader className="p-4 md:p-6">
         <CardTitle className="text-lg md:text-senior-lg flex items-center gap-2">
-          <ClipboardList className="w-5 h-5" /> Storico prestazioni
+          <ClipboardList className="w-5 h-5 text-primary" /> Storico prestazioni
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4 md:p-6 pt-0 md:pt-0 space-y-3">
+      <CardContent className="p-4 md:p-6 pt-0 md:pt-0 flex flex-col gap-3 flex-1">
         {loadingBookings ? (
-          <p className="text-sm text-muted-foreground">Caricamento...</p>
+          <div className="flex-1 flex items-center justify-center">
+            <p className="text-sm text-muted-foreground">Caricamento...</p>
+          </div>
         ) : bookings.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Non hai ancora effettuato prestazioni. Quando prenoterai una prestazione, apparirà qui il tuo storico.
-          </p>
+          <div className="flex-1 flex items-center justify-center">
+            <p className="text-sm text-muted-foreground text-center">
+              Non hai ancora effettuato prestazioni.
+            </p>
+          </div>
         ) : (
           <>
-            {recentBookings.map((b) => (
-              <Card key={b.id} className="p-3">
-                <div className="flex justify-between items-start gap-2">
-                  <div className="min-w-0">
-                    <p className="font-medium text-sm break-words">{b.service_name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(b.day).toLocaleDateString("it-IT")} — {b.time_slot}
-                    </p>
-                    {b.professional && (
-                      <p className="text-xs text-muted-foreground">
-                        {b.professional.first_name} {b.professional.last_name}
+            <div className="flex flex-col gap-3 flex-1">
+              {recentBookings.map((b) => (
+                <div key={b.id} className="p-3 rounded-lg border border-border/60 bg-secondary/30 hover:bg-secondary/60 transition-colors">
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm break-words leading-tight">{b.service_name}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {new Date(b.day).toLocaleDateString("it-IT")} — {b.time_slot}
                       </p>
-                    )}
+                      {b.professional && (
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {b.professional.first_name} {b.professional.last_name}
+                        </p>
+                      )}
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full whitespace-nowrap font-medium ${
+                      b.status === "paid" || b.status === "confermato" ? "bg-primary/10 text-primary" :
+                      b.status === "completato" ? "bg-emerald-100 text-emerald-700" :
+                      "bg-muted text-muted-foreground"
+                    }`}>
+                      {b.status === "paid" || b.status === "confermato" ? "Confermato" :
+                       b.status === "completato" ? "Completato" :
+                       b.status === "pending" ? "In attesa" : b.status}
+                    </span>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded-full whitespace-nowrap ${
-                    b.status === "paid" || b.status === "confermato" ? "bg-primary/10 text-primary" :
-                    b.status === "completato" ? "bg-primary/20 text-primary" :
-                    "bg-muted text-muted-foreground"
-                  }`}>
-                    {b.status}
-                  </span>
                 </div>
-              </Card>
-            ))}
+              ))}
+            </div>
             <Button
               variant="outline"
-              className="w-full"
+              className="w-full mt-auto"
               onClick={() => navigate("/storico-prestazioni")}
             >
               Mostra altro
