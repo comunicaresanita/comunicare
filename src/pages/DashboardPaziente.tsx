@@ -364,16 +364,18 @@ const DashboardPaziente = () => {
         },
       });
       marker.addListener("click", () => {
+        const scrollToCard = (id: string) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const offset = 100; // leave space above so the name is visible
+          const top = el.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top, behavior: "smooth" });
+        };
         if (!prestazioneSelezionata) {
-          // No service selected: show this professional's card
           handleSelectProfessionista(p);
-          setTimeout(() => {
-            const el = document.getElementById(`prof-card-selected`);
-            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-          }, 100);
+          setTimeout(() => scrollToCard("prof-card-selected"), 100);
         } else {
-          const el = document.getElementById(`prof-card-${p.profileId}`);
-          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          scrollToCard(`prof-card-${p.profileId}`);
         }
       });
       markersRef.current.push(marker);
