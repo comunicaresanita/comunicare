@@ -494,13 +494,13 @@ const DashboardPaziente = () => {
               <div className="flex gap-2 mt-2 text-sm">
                 <button
                   onClick={() => handleModeSwitch("prestazione")}
-                  className={`px-3 py-1.5 rounded-full text-sm md:text-sm font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-full text-sm md:text-sm font-medium transition-colors flex items-center gap-1 ${
                     searchMode === "prestazione"
                       ? "bg-primary text-primary-foreground"
                       : "bg-secondary text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  Prestazione
+                  <Stethoscope className="w-3.5 h-3.5" /> Prestazione
                 </button>
                 <button
                   onClick={() => handleModeSwitch("professionista")}
