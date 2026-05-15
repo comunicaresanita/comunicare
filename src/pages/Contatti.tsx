@@ -96,7 +96,12 @@ const Contatti = () => {
   useEffect(() => {
     if (location.hash === "#faq") {
       setTimeout(() => {
-        document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" });
+        const el = document.getElementById("faq");
+        if (el) {
+          const offset = 120;
+          const top = el.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top, behavior: "smooth" });
+        }
       }, 300);
     }
   }, [location.hash]);
