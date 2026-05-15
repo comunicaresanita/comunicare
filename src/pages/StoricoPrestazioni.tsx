@@ -65,12 +65,16 @@ const StoricoPrestazioni = () => {
                           </p>
                         )}
                       </div>
-                      <span className={`text-xs px-2 py-1 rounded-full whitespace-nowrap ${
+                      <span className={`text-xs px-2 py-1 rounded-full whitespace-nowrap font-medium ${
                         b.status === "paid" || b.status === "confermato" ? "bg-primary/10 text-primary" :
-                        b.status === "completato" ? "bg-primary/20 text-primary" :
+                        b.status === "completato" ? "bg-emerald-100 text-emerald-700" :
                         "bg-muted text-muted-foreground"
                       }`}>
-                        {b.status}
+                        {b.status === "paid" || b.status === "confermato" ? "Confermato" :
+                         b.status === "completato" ? "Completato" :
+                         b.status === "pending" ? "In attesa" :
+                         b.status === "cancelled" || b.status === "cancellato" ? "Cancellato" :
+                         b.status}
                       </span>
                     </div>
                   </Card>
