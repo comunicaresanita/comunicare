@@ -32,7 +32,14 @@ const features = [
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="ComuniCARE — Assistenza sanitaria a domicilio a Firenze"
+        description="Trova infermieri, OSS e fisioterapisti qualificati per prestazioni a domicilio a Firenze. Prenota online cure professionali direttamente a casa tua."
+        path="/"
+      />
       <AuthHeader />
+      <main>
+
 
       {/* Hero Section */}
       <section style={{ backgroundColor: 'hsl(195, 60%, 97%)' }} className="py-8 md:py-16">
