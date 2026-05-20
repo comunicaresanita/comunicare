@@ -105,6 +105,11 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Accedi — ComuniCARE"
+        description="Accedi al tuo account ComuniCARE per gestire prenotazioni e profilo sulla piattaforma di assistenza sanitaria a domicilio."
+        path="/login"
+      />
       <Header />
       <main className="flex-1 bg-background py-16 flex items-center justify-center">
         <Card className="w-full max-w-md mx-6 shadow-lg">
