@@ -283,6 +283,11 @@ const Registrazione = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Registrazione — ComuniCARE"
+        description="Crea il tuo account ComuniCARE come utente o professionista sanitario per prenotare o offrire prestazioni a domicilio a Firenze."
+        path="/registrazione"
+      />
       <Header />
       <main className="flex-1 bg-background py-6 md:py-12">
         <div className="container mx-auto px-4 md:px-6 max-w-2xl">
