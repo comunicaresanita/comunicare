@@ -10,6 +10,11 @@ const Privacy = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Privacy Policy — ComuniCARE"
+        description="Informativa privacy ComuniCARE: titolare del trattamento, dati raccolti, basi giuridiche, conservazione e diritti dell'interessato ai sensi del GDPR."
+        path="/privacy"
+      />
       <AuthHeader />
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-3xl">
