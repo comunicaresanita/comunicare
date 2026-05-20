@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { MapPin, Star, Clock, ArrowLeft, BadgeCheck, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -485,6 +486,21 @@ const ProfiloInfermiere = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title={`${professional.first_name} ${professional.last_name} — ${professional.professional_type || "Professionista sanitario"} a domicilio`}
+        description={(professional.bio || `Prenota una prestazione a domicilio con ${professional.first_name} ${professional.last_name}${professional.zona ? ` nella zona di ${professional.zona}` : ""} su ComuniCARE.`).slice(0, 158)}
+        path={`/profilo-infermiere/${professional.id}`}
+        image={professional.photo_url || undefined}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ProfessionalService",
+          name: `${professional.first_name} ${professional.last_name}`,
+          description: professional.bio || undefined,
+          image: professional.photo_url || undefined,
+          areaServed: professional.zona || "Firenze",
+          provider: { "@type": "Organization", name: "ComuniCARE" },
+        }}
+      />
       <AuthHeader />
       <main className="flex-1 bg-background py-6 md:py-12">
         <div className="container mx-auto px-4 md:px-6 max-w-3xl">

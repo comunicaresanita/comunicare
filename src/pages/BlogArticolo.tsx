@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ExternalLink, Calendar } from "lucide-react";
@@ -34,6 +35,28 @@ const BlogArticolo = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title={`${article.title} — Blog ComuniCARE`}
+        description={article.summary.slice(0, 158)}
+        path={`/blog/${article.slug}`}
+        type="article"
+        image={article.imageUrl}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: article.title,
+          description: article.summary,
+          image: article.imageUrl,
+          datePublished: article.date,
+          author: { "@type": "Organization", name: "ComuniCARE" },
+          publisher: {
+            "@type": "Organization",
+            name: "ComuniCARE",
+            logo: { "@type": "ImageObject", url: "https://comunicare.lovable.app/favicon.ico" },
+          },
+          mainEntityOfPage: `https://comunicare.lovable.app/blog/${article.slug}`,
+        }}
+      />
       <AuthHeader />
       <main className="flex-1 bg-background py-6 md:py-12">
         <div className="container mx-auto px-4 md:px-6 max-w-3xl">

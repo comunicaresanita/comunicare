@@ -1,5 +1,6 @@
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -130,6 +131,11 @@ const Contatti = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Contatti e FAQ — ComuniCARE"
+        description="Contatta ComuniCARE per informazioni sui servizi sanitari a domicilio e leggi le domande frequenti su come funziona la piattaforma."
+        path="/contatti"
+      />
       <AuthHeader />
       <main className="flex-1 bg-background py-6 md:py-12">
         <div className="container mx-auto px-4 md:px-6 max-w-3xl">

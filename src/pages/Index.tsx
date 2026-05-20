@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Heart, MapPin, Calendar, UserCheck } from "lucide-react";
 
 const features = [
@@ -31,7 +32,14 @@ const features = [
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="ComuniCARE — Assistenza sanitaria a domicilio a Firenze"
+        description="Trova infermieri, OSS e fisioterapisti qualificati per prestazioni a domicilio a Firenze. Prenota online cure professionali direttamente a casa tua."
+        path="/"
+      />
       <AuthHeader />
+      <main>
+
 
       {/* Hero Section */}
       <section style={{ backgroundColor: 'hsl(195, 60%, 97%)' }} className="py-8 md:py-16">
@@ -111,6 +119,7 @@ const Index = () => {
           </Link>
         </div>
       </section>
+      </main>
 
       <Footer />
     </div>
