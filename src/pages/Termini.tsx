@@ -10,6 +10,11 @@ const Termini = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Termini e Condizioni — ComuniCARE"
+        description="Termini e condizioni d'uso della piattaforma ComuniCARE: ruoli, responsabilità, prenotazioni, pagamenti e foro competente."
+        path="/termini"
+      />
       <AuthHeader />
       <main className="flex-1 bg-background py-12">
         <div className="container mx-auto px-6 max-w-3xl">
