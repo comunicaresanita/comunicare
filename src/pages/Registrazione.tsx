@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import GoogleMapPicker from "@/components/GoogleMapPicker";
 import AddressAutocomplete from "@/components/AddressAutocomplete";
 import StructuredAddressInput, { composeAddress } from "@/components/StructuredAddressInput";
