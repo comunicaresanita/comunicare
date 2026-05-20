@@ -1,5 +1,6 @@
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ExternalLink, Calendar } from "lucide-react";
