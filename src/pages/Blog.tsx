@@ -12,6 +12,11 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Blog ComuniCARE — Approfondimenti sull'assistenza domiciliare"
+        description="Articoli e approfondimenti su assistenza infermieristica, fisioterapia e supporto socio-sanitario a domicilio."
+        path="/blog"
+      />
       <AuthHeader />
       <main className="flex-1 bg-background py-6 md:py-12">
         <div className="container mx-auto px-4 md:px-6 max-w-3xl">
