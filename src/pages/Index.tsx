@@ -119,6 +119,7 @@ const Index = () => {
           </Link>
         </div>
       </section>
+      </main>
 
       <Footer />
     </div>
