@@ -1,0 +1,20 @@
+# ComuniCARE
+
+> Piattaforma di intermediazione che connette utenti e professionisti sanitari qualificati (infermieri, OSS, fisioterapisti) per prestazioni a domicilio nella zona di Firenze.
+
+ComuniCARE è un fornitore di servizi di intermediazione. La responsabilità della prestazione sanitaria è esclusivamente in capo al professionista abilitato.
+
+## Pages
+
+- [Home](/): Cosa è ComuniCARE e come funziona l'assistenza sanitaria a domicilio.
+- [Contatti e FAQ](/contatti): Informazioni di contatto e domande frequenti.
+- [Blog](/blog): Articoli e approfondimenti sull'assistenza domiciliare.
+- [Registrazione](/registrazione): Iscriviti come utente o come professionista.
+- [Termini e Condizioni](/termini): Condizioni d'uso della piattaforma.
+- [Privacy Policy](/privacy): Informativa sul trattamento dei dati personali.
+
+## Blog
+
+- [L'importanza dell'assistenza infermieristica domiciliare per gli anziani](/blog/assistenza-infermieristica-domiciliare-anziani)
+- [Il ruolo del fisioterapista nella riabilitazione post-operatoria](/blog/fisioterapista-riabilitazione-post-operatoria)
+- [OSS: una figura essenziale nell'assistenza socio-sanitaria](/blog/oss-assistenza-socio-sanitaria)
