@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS recent_service_searches text[] NOT NULL DEFAULT '{}'::text[]; ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS recent_professional_searches text[] NOT NULL DEFAULT '{}'::text[];
