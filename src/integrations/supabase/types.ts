@@ -209,6 +209,8 @@ export type Database = {
           phone: string | null
           photo_url: string | null
           professional_type: string | null
+          recent_professional_searches: string[]
+          recent_service_searches: string[]
           role: string
           user_id: string
           verified: boolean
@@ -248,6 +250,8 @@ export type Database = {
           phone?: string | null
           photo_url?: string | null
           professional_type?: string | null
+          recent_professional_searches?: string[]
+          recent_service_searches?: string[]
           role: string
           user_id: string
           verified?: boolean
@@ -287,6 +291,8 @@ export type Database = {
           phone?: string | null
           photo_url?: string | null
           professional_type?: string | null
+          recent_professional_searches?: string[]
+          recent_service_searches?: string[]
           role?: string
           user_id?: string
           verified?: boolean

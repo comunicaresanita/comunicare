@@ -146,6 +146,36 @@ const DashboardPaziente = () => {
     }
   });
 
+  // Load recent searches from the user's profile (persists across logout / devices)
+  useEffect(() => {
+    if (!profile?.id) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("recent_service_searches, recent_professional_searches")
+        .eq("id", profile.id)
+        .maybeSingle();
+      if (cancelled || !data) return;
+      const svc = (data as any).recent_service_searches as string[] | null;
+      const prof = (data as any).recent_professional_searches as string[] | null;
+      if (svc && svc.length) {
+        setRecentSearches(svc);
+        try { localStorage.setItem("recentServiceSearches", JSON.stringify(svc)); } catch { /* ignore */ }
+      }
+      if (prof && prof.length) {
+        setRecentProfSearches(prof);
+        try { localStorage.setItem("recentProfessionalSearches", JSON.stringify(prof)); } catch { /* ignore */ }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [profile?.id]);
+
+  const persistToProfile = (column: "recent_service_searches" | "recent_professional_searches", values: string[]) => {
+    if (!profile?.id) return;
+    supabase.from("profiles").update({ [column]: values } as any).eq("id", profile.id).then(() => {}, () => {});
+  };
+
   const addRecentSearch = (term: string) => {
     setRecentSearches((prev) => {
       const next = [term, ...prev.filter((t) => t !== term)].slice(0, 3);
@@ -154,6 +184,7 @@ const DashboardPaziente = () => {
       } catch {
         /* ignore */
       }
+      persistToProfile("recent_service_searches", next);
       return next;
     });
   };
@@ -166,6 +197,7 @@ const DashboardPaziente = () => {
       } catch {
         /* ignore */
       }
+      persistToProfile("recent_professional_searches", next);
       return next;
     });
   };
