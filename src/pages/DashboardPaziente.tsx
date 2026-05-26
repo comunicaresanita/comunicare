@@ -513,7 +513,7 @@ const DashboardPaziente = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <AuthHeader />
-      <main className="flex-1 bg-background py-6 md:py-12">
+      <main className="flex-1 bg-background md:py-12 py-0">
         <div className="container mx-auto px-4 md:px-6 max-w-6xl">
           <h1 className="md:text-senior-3xl font-bold mb-2 text-2xl">Trova la prestazione o il professionista</h1>
 

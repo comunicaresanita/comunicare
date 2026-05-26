@@ -289,7 +289,7 @@ const Registrazione = () => {
         path="/registrazione"
       />
       <Header />
-      <main className="flex-1 bg-background py-6 md:py-12">
+      <main className="flex-1 bg-background md:py-12 py-0">
         <div className="container mx-auto px-4 md:px-6 max-w-2xl">
           <Button variant="ghost" className="mb-6 text-senior-sm" onClick={() => {
             if (ruolo === "professionista") {
