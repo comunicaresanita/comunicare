@@ -710,7 +710,7 @@ const DashboardPaziente = () => {
           {/* === Results: by service === */}
           {prestazioneSelezionata && !professionistaSelezionato && (
             <>
-              <h2 className="text-base md:text-senior-xl font-semibold mb-4">
+              <h2 id="results-by-service" className="text-base md:text-senior-xl font-semibold mb-4 scroll-mt-24">
                 Professionisti disponibili per: <span className="text-primary">{prestazioneSelezionata}</span>
               </h2>
               <div className="space-y-4">
