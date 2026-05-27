@@ -681,7 +681,7 @@ const DashboardPaziente = () => {
               )}
             </CardContent>
           </Card>
-          {isPaziente && <HistoryCard className="hidden md:block md:col-span-2" />}
+          {isPaziente && <HistoryCard className="hidden md:block md:col-span-2 lg:col-span-1" />}
           </div>
 
           {/* Map always visible */}
