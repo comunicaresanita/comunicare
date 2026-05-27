@@ -260,12 +260,31 @@ const DashboardPaziente = () => {
     setProfessionistaSelezionato(null);
   };
 
+  const scrollToResult = (id: string) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: "smooth" });
+    }, 120);
+  };
+
   const handleSelectProfessionista = (p: ProfessionistaData) => {
     setProfessionistaSelezionato(p);
     setRicerca(p.nome);
     setPrestazioneSelezionata("");
     addRecentProfSearch(p.nome);
+    scrollToResult("prof-card-selected");
   };
+
+  const handleSelectPrestazione = (p: string) => {
+    setPrestazioneSelezionata(p);
+    setRicerca(p);
+    setProfessionistaSelezionato(null);
+    addRecentSearch(p);
+    scrollToResult("results-by-service");
+  };
+
 
   // --- Maps & data loading (unchanged) ---
   useEffect(() => {
@@ -598,12 +617,7 @@ const DashboardPaziente = () => {
                     {prestazioniFiltrate.map((p) => (
                       <button
                         key={p}
-                        onClick={() => {
-                          setPrestazioneSelezionata(p);
-                          setRicerca(p);
-                          setProfessionistaSelezionato(null);
-                          addRecentSearch(p);
-                        }}
+                        onClick={() => handleSelectPrestazione(p)}
                         className="text-left p-2.5 md:p-3 rounded-lg border border-border hover:border-primary/50 transition-colors text-sm md:text-senior-sm break-words whitespace-normal leading-snug"
                       >
                         {p}
@@ -637,12 +651,7 @@ const DashboardPaziente = () => {
                       <button
                         key={r}
                         type="button"
-                        onClick={() => {
-                          setPrestazioneSelezionata(r);
-                          setRicerca(r);
-                          setProfessionistaSelezionato(null);
-                          addRecentSearch(r);
-                        }}
+                        onClick={() => handleSelectPrestazione(r)}
                         className="px-2.5 py-1 rounded-full bg-secondary text-xs md:text-sm text-foreground hover:bg-primary hover:text-primary-foreground transition-colors break-words text-left max-w-full"
                       >
                         {r}
@@ -701,7 +710,7 @@ const DashboardPaziente = () => {
           {/* === Results: by service === */}
           {prestazioneSelezionata && !professionistaSelezionato && (
             <>
-              <h2 className="text-base md:text-senior-xl font-semibold mb-4">
+              <h2 id="results-by-service" className="text-base md:text-senior-xl font-semibold mb-4 scroll-mt-24">
                 Professionisti disponibili per: <span className="text-primary">{prestazioneSelezionata}</span>
               </h2>
               <div className="space-y-4">
@@ -877,6 +886,7 @@ const DashboardPaziente = () => {
           setRicerca(service);
           setPrestazioneSelezionata(service);
           setProfessionistaSelezionato(null);
+          scrollToResult("results-by-service");
         }}
         professionals={professionisti.map((p) => ({ profileId: p.profileId, nome: p.nome }))}
       />
