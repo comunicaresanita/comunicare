@@ -886,6 +886,7 @@ const DashboardPaziente = () => {
           setRicerca(service);
           setPrestazioneSelezionata(service);
           setProfessionistaSelezionato(null);
+          scrollToResult("results-by-service");
         }}
         professionals={professionisti.map((p) => ({ profileId: p.profileId, nome: p.nome }))}
       />
