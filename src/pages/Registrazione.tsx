@@ -329,7 +329,7 @@ const Registrazione = () => {
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-senior-sm">Password *</Label>
                   <div className="relative">
-                    <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Minimo 8 caratteri" required minLength={8} className="text-senior-sm py-3 pr-12" />
+                    <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value.replace(/\s/g, ""))} onKeyDown={(e) => { if (e.key === " ") e.preventDefault(); }} placeholder="Minimo 8 caratteri" required minLength={8} className="text-senior-sm py-3 pr-12" />
                     <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
