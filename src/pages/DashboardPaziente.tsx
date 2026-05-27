@@ -260,12 +260,31 @@ const DashboardPaziente = () => {
     setProfessionistaSelezionato(null);
   };
 
+  const scrollToResult = (id: string) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: "smooth" });
+    }, 120);
+  };
+
   const handleSelectProfessionista = (p: ProfessionistaData) => {
     setProfessionistaSelezionato(p);
     setRicerca(p.nome);
     setPrestazioneSelezionata("");
     addRecentProfSearch(p.nome);
+    scrollToResult("prof-card-selected");
   };
+
+  const handleSelectPrestazione = (p: string) => {
+    setPrestazioneSelezionata(p);
+    setRicerca(p);
+    setProfessionistaSelezionato(null);
+    addRecentSearch(p);
+    scrollToResult("results-by-service");
+  };
+
 
   // --- Maps & data loading (unchanged) ---
   useEffect(() => {
