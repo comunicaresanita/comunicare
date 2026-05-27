@@ -651,12 +651,7 @@ const DashboardPaziente = () => {
                       <button
                         key={r}
                         type="button"
-                        onClick={() => {
-                          setPrestazioneSelezionata(r);
-                          setRicerca(r);
-                          setProfessionistaSelezionato(null);
-                          addRecentSearch(r);
-                        }}
+                        onClick={() => handleSelectPrestazione(r)}
                         className="px-2.5 py-1 rounded-full bg-secondary text-xs md:text-sm text-foreground hover:bg-primary hover:text-primary-foreground transition-colors break-words text-left max-w-full"
                       >
                         {r}
