@@ -548,10 +548,21 @@ const ProfiloInfermiere = () => {
           </Card>
 
           {/* Servizio selezionato (solo quello ricercato) */}
-          {selectedService && (
+          {selectedService ? (
             <Card className="mb-6 md:mb-8">
               <CardHeader>
-                <CardTitle className="text-base md:text-senior-lg">Prestazione selezionata</CardTitle>
+                <CardTitle className="text-base md:text-senior-lg flex items-center justify-between gap-2">
+                  <span>Prestazione selezionata</span>
+                  {services.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => { setServizioSelezionato(null); setSlotSelezionato(null); }}
+                      className="text-xs text-primary underline font-normal"
+                    >
+                      Cambia
+                    </button>
+                  )}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between p-3 md:p-4 rounded-lg border border-primary bg-secondary">
@@ -560,7 +571,31 @@ const ProfiloInfermiere = () => {
                 </div>
               </CardContent>
             </Card>
-          )}
+          ) : services.length > 0 ? (
+            <Card className="mb-6 md:mb-8">
+              <CardHeader>
+                <CardTitle className="text-base md:text-senior-lg">Scegli la prestazione</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs md:text-sm text-muted-foreground mb-3">
+                  Seleziona una prestazione per procedere con la prenotazione.
+                </p>
+                <div className="space-y-1.5">
+                  {services.map((s) => (
+                    <button
+                      key={s.id ?? s.name}
+                      type="button"
+                      onClick={() => { setServizioSelezionato(s.name); setSlotSelezionato(null); }}
+                      className="flex w-full justify-between items-start gap-2 p-3 rounded-md border border-border hover:border-primary text-xs md:text-sm text-left transition-colors"
+                    >
+                      <span className="break-words whitespace-normal leading-snug flex-1 min-w-0">{s.name}</span>
+                      <span className="font-bold text-primary flex-shrink-0">€{s.price}</span>
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
 
           {/* Calendario disponibilità */}
           <Card className="mb-6 md:mb-8">
