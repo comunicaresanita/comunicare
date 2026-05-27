@@ -617,12 +617,7 @@ const DashboardPaziente = () => {
                     {prestazioniFiltrate.map((p) => (
                       <button
                         key={p}
-                        onClick={() => {
-                          setPrestazioneSelezionata(p);
-                          setRicerca(p);
-                          setProfessionistaSelezionato(null);
-                          addRecentSearch(p);
-                        }}
+                        onClick={() => handleSelectPrestazione(p)}
                         className="text-left p-2.5 md:p-3 rounded-lg border border-border hover:border-primary/50 transition-colors text-sm md:text-senior-sm break-words whitespace-normal leading-snug"
                       >
                         {p}
