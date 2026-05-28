@@ -710,6 +710,7 @@ const DashboardPaziente = () => {
           {isPaziente && <HistoryCard className="md:hidden mb-4" />}
 
           <div className="lg:grid lg:grid-cols-2 lg:gap-6 lg:items-start">
+          {isPaziente && <HistoryCard className="hidden lg:block lg:col-span-1" />}
           <div className="lg:col-span-1">
           {/* === Results: by service === */}
           {prestazioneSelezionata && !professionistaSelezionato && (
