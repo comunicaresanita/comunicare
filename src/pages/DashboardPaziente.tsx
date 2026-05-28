@@ -884,7 +884,6 @@ const DashboardPaziente = () => {
             </Card>
           )}
           </div>
-          {isPaziente && <HistoryCard className="hidden lg:block" />}
           </div>
         </div>
       </main>
