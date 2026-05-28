@@ -691,11 +691,11 @@ const DashboardPaziente = () => {
               )}
             </CardContent>
           </Card>
-          {isPaziente && <HistoryCard className="hidden md:block md:col-span-2 lg:col-span-1" />}
+          {isPaziente && <HistoryCard className="hidden md:block md:col-span-2 lg:hidden" />}
           </div>
 
           {/* Map always visible */}
-          <div ref={mapRef} className="w-full h-56 md:h-80 rounded-lg overflow-hidden border mb-4 md:mb-6 bg-secondary">
+          <div ref={mapRef} className="w-full h-56 md:h-80 lg:h-auto lg:min-h-[500px] rounded-lg overflow-hidden border mb-4 md:mb-6 lg:mb-0 bg-secondary">
             {!mapsLoaded && (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
@@ -704,6 +704,7 @@ const DashboardPaziente = () => {
                 </div>
               </div>
             )}
+          </div>
           </div>
 
           {isPaziente && <HistoryCard className="md:hidden mb-4" />}
