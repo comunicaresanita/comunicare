@@ -536,8 +536,9 @@ const DashboardPaziente = () => {
         <div className="container mx-auto px-4 md:px-6 max-w-6xl">
           <h1 className="md:text-senior-3xl font-bold mb-2 text-2xl">Trova la prestazione o il professionista</h1>
 
-          <div className="grid md:grid-cols-5 lg:grid-cols-1 gap-4 md:gap-6 mb-6 md:mb-8">
-          <Card className="md:col-span-3 lg:col-span-1 h-full">
+          <div className="lg:grid lg:grid-cols-2 lg:gap-6 lg:items-stretch lg:mb-6">
+          <div className="grid md:grid-cols-5 gap-4 md:gap-6 mb-6 md:mb-8 lg:mb-0 lg:contents">
+          <Card className="md:col-span-3 lg:col-span-1 h-full flex flex-col">
             <CardHeader className="p-4 md:p-6">
               <CardTitle className="text-lg md:text-senior-lg flex items-center gap-2">
                 <Search className="w-5 h-5" /> Cerca per
@@ -690,11 +691,11 @@ const DashboardPaziente = () => {
               )}
             </CardContent>
           </Card>
-          {isPaziente && <HistoryCard className="hidden md:block md:col-span-2 lg:col-span-1" />}
+          {isPaziente && <HistoryCard className="hidden md:block md:col-span-2 lg:hidden" />}
           </div>
 
           {/* Map always visible */}
-          <div ref={mapRef} className="w-full h-56 md:h-80 rounded-lg overflow-hidden border mb-4 md:mb-6 bg-secondary">
+          <div ref={mapRef} className="w-full h-56 md:h-80 lg:h-auto lg:min-h-[500px] rounded-lg overflow-hidden border mb-4 md:mb-6 lg:mb-0 bg-secondary">
             {!mapsLoaded && (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
@@ -704,9 +705,12 @@ const DashboardPaziente = () => {
               </div>
             )}
           </div>
+          </div>
 
           {isPaziente && <HistoryCard className="md:hidden mb-4" />}
 
+          <div className="lg:grid lg:grid-cols-2 lg:gap-6 lg:items-start">
+          <div className="lg:col-span-1">
           {/* === Results: by service === */}
           {prestazioneSelezionata && !professionistaSelezionato && (
             <>
@@ -878,6 +882,9 @@ const DashboardPaziente = () => {
               </CardContent>
             </Card>
           )}
+          </div>
+          {isPaziente && <HistoryCard className="hidden lg:block" />}
+          </div>
         </div>
       </main>
       <ChatbotWidget
