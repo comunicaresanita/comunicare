@@ -34,50 +34,71 @@ const AuthHeader = () => {
     }
   };
 
+  const isProfessionista = profile?.role === "professionista";
+
   return (
     <header className="bg-card shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
-        <Link to={logoTarget} className="flex items-center">
+      <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-2">
+        <Link to={logoTarget} className="flex items-center flex-shrink-0">
           <img src={logo} alt="ComuniCARE" className="h-12 md:h-20" />
         </Link>
         {user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-1.5 md:gap-2 text-xs md:text-sm px-3 md:px-4">
-                <Menu className="w-4 h-4" />
-                <span>Menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {profile?.role === "professionista" ? (
-                <DropdownMenuItem asChild>
-                  <Link to="/dashboard-professionista" className="cursor-pointer"><LayoutDashboard className="w-4 h-4 mr-2" />Dashboard</Link>
-                </DropdownMenuItem>
+          <div className="flex items-center gap-1 md:gap-2">
+            <nav className="flex items-center gap-0.5 md:gap-1">
+              {isProfessionista ? (
+                <Button asChild variant="ghost" size="sm" className="gap-1.5 px-2 md:px-3">
+                  <Link to="/dashboard-professionista">
+                    <LayoutDashboard className="w-4 h-4" />
+                    <span className="hidden sm:inline text-xs md:text-sm">Dashboard</span>
+                  </Link>
+                </Button>
               ) : (
-                <DropdownMenuItem onClick={handleHomeClick} className="cursor-pointer">
-                  <Home className="w-4 h-4 mr-2" />Home
-                </DropdownMenuItem>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleHomeClick}
+                  className="gap-1.5 px-2 md:px-3"
+                >
+                  <Home className="w-4 h-4" />
+                  <span className="hidden sm:inline text-xs md:text-sm">Home</span>
+                </Button>
               )}
-              <DropdownMenuItem asChild>
-                <Link to="/profilo" className="cursor-pointer"><User className="w-4 h-4 mr-2" />Il mio profilo</Link>
-              </DropdownMenuItem>
-              {profile?.role !== "professionista" && (
+              <Button asChild variant="ghost" size="sm" className="gap-1.5 px-2 md:px-3">
+                <Link to="/profilo">
+                  <User className="w-4 h-4" />
+                  <span className="hidden sm:inline text-xs md:text-sm">Profilo</span>
+                </Link>
+              </Button>
+              {!isProfessionista && (
+                <Button asChild variant="ghost" size="sm" className="gap-1.5 px-2 md:px-3">
+                  <Link to="/storico-prestazioni">
+                    <ClipboardList className="w-4 h-4" />
+                    <span className="hidden sm:inline text-xs md:text-sm">Storico</span>
+                  </Link>
+                </Button>
+              )}
+            </nav>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-1.5 px-2 md:px-3">
+                  <Menu className="w-4 h-4" />
+                  <span className="hidden sm:inline text-xs md:text-sm">Menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <Link to="/storico-prestazioni" className="cursor-pointer"><ClipboardList className="w-4 h-4 mr-2" />Storico</Link>
+                  <Link to="/contatti" className="cursor-pointer"><Phone className="w-4 h-4 mr-2" />Contatti</Link>
                 </DropdownMenuItem>
-              )}
-              <DropdownMenuItem asChild>
-                <Link to="/contatti" className="cursor-pointer"><Phone className="w-4 h-4 mr-2" />Contatti</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/contatti#faq" className="cursor-pointer"><HelpCircle className="w-4 h-4 mr-2" />FAQ</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
-                <LogOut className="w-4 h-4 mr-2" />
-                Esci
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenuItem asChild>
+                  <Link to="/contatti#faq" className="cursor-pointer"><HelpCircle className="w-4 h-4 mr-2" />FAQ</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Esci
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         ) : (
           <Link to="/login">
             <Button className="px-5 py-3 md:px-8 md:py-5 text-sm md:text-base">Accedi</Button>
