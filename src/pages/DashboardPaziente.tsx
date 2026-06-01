@@ -478,7 +478,8 @@ const DashboardPaziente = () => {
           <div className="lg:grid lg:grid-cols-2 lg:gap-6 lg:items-stretch lg:mb-6">
           <div className="mb-6 md:mb-8 lg:mb-0 lg:contents">
 
-          <Card className="md:col-span-3 lg:col-span-1 flex flex-col">
+          <Card className="lg:col-span-1 flex flex-col">
+
             <CardHeader className="p-4 md:p-6">
               <CardTitle className="text-lg md:text-senior-lg flex items-center gap-2">
                 <Search className="w-5 h-5" /> Cerca per
