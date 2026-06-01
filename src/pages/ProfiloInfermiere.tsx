@@ -184,7 +184,7 @@ const ProfiloInfermiere = () => {
     const fetchData = async () => {
       setLoading(true);
       const [profileRes, servicesRes, availRes, reviewsRes, overridesRes, bookingsRes] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", id).single(),
+        supabase.from("public_professionals" as any).select("*").eq("id", id).single(),
         supabase.from("services").select("*").eq("professional_id", id),
         supabase.from("availability").select("*").eq("professional_id", id),
         supabase.from("reviews").select("*").eq("professional_id", id).order("created_at", { ascending: false }),
