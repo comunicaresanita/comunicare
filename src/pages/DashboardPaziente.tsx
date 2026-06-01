@@ -821,7 +821,7 @@ const DashboardPaziente = () => {
             </Card>
           )}
           </div>
-          </div>
+
         </div>
       </main>
       <ChatbotWidget
