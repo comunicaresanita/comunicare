@@ -44,13 +44,6 @@ export type Database = {
             foreignKeyName: "availability_professional_id_fkey"
             columns: ["professional_id"]
             isOneToOne: false
-            referencedRelation: "my_profile"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "availability_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -92,13 +85,6 @@ export type Database = {
           start_time?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "availability_overrides_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "my_profile"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "availability_overrides_professional_id_fkey"
             columns: ["professional_id"]
@@ -190,13 +176,6 @@ export type Database = {
             foreignKeyName: "bookings_patient_id_fkey"
             columns: ["patient_id"]
             isOneToOne: false
-            referencedRelation: "my_profile"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bookings_patient_id_fkey"
-            columns: ["patient_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -205,13 +184,6 @@ export type Database = {
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "public_professionals"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bookings_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "my_profile"
             referencedColumns: ["id"]
           },
           {
@@ -396,13 +368,6 @@ export type Database = {
             foreignKeyName: "reviews_patient_id_fkey"
             columns: ["patient_id"]
             isOneToOne: false
-            referencedRelation: "my_profile"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reviews_patient_id_fkey"
-            columns: ["patient_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -411,13 +376,6 @@ export type Database = {
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "public_professionals"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reviews_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "my_profile"
             referencedColumns: ["id"]
           },
           {
@@ -463,13 +421,6 @@ export type Database = {
             foreignKeyName: "services_professional_id_fkey"
             columns: ["professional_id"]
             isOneToOne: false
-            referencedRelation: "my_profile"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "services_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -484,132 +435,6 @@ export type Database = {
       }
     }
     Views: {
-      my_profile: {
-        Row: {
-          access_notes: string | null
-          additional_info: string | null
-          address: string | null
-          age: number | null
-          bio: string | null
-          caregiver_access_notes: string | null
-          caregiver_address: string | null
-          caregiver_emergency_name: string | null
-          caregiver_emergency_phone: string | null
-          caregiver_first_name: string | null
-          caregiver_floor_number: string | null
-          caregiver_intercom_name: string | null
-          caregiver_last_name: string | null
-          caregiver_lives_in_condominio: boolean | null
-          caregiver_medical_notes: string | null
-          created_at: string | null
-          email: string | null
-          first_name: string | null
-          floor_number: string | null
-          id: string | null
-          intercom_name: string | null
-          is_caregiver: boolean | null
-          last_name: string | null
-          lat: number | null
-          lives_in_condominio: boolean | null
-          lng: number | null
-          medical_notes: string | null
-          numero_fnofi: string | null
-          numero_opi: string | null
-          partita_iva: string | null
-          phone: string | null
-          photo_url: string | null
-          professional_type: string | null
-          recent_professional_searches: string[] | null
-          recent_service_searches: string[] | null
-          role: string | null
-          user_id: string | null
-          verified: boolean | null
-          zona: string | null
-        }
-        Insert: {
-          access_notes?: string | null
-          additional_info?: string | null
-          address?: string | null
-          age?: number | null
-          bio?: string | null
-          caregiver_access_notes?: string | null
-          caregiver_address?: string | null
-          caregiver_emergency_name?: string | null
-          caregiver_emergency_phone?: string | null
-          caregiver_first_name?: string | null
-          caregiver_floor_number?: string | null
-          caregiver_intercom_name?: string | null
-          caregiver_last_name?: string | null
-          caregiver_lives_in_condominio?: boolean | null
-          caregiver_medical_notes?: string | null
-          created_at?: string | null
-          email?: string | null
-          first_name?: string | null
-          floor_number?: string | null
-          id?: string | null
-          intercom_name?: string | null
-          is_caregiver?: boolean | null
-          last_name?: string | null
-          lat?: number | null
-          lives_in_condominio?: boolean | null
-          lng?: number | null
-          medical_notes?: string | null
-          numero_fnofi?: string | null
-          numero_opi?: string | null
-          partita_iva?: string | null
-          phone?: string | null
-          photo_url?: string | null
-          professional_type?: string | null
-          recent_professional_searches?: string[] | null
-          recent_service_searches?: string[] | null
-          role?: string | null
-          user_id?: string | null
-          verified?: boolean | null
-          zona?: string | null
-        }
-        Update: {
-          access_notes?: string | null
-          additional_info?: string | null
-          address?: string | null
-          age?: number | null
-          bio?: string | null
-          caregiver_access_notes?: string | null
-          caregiver_address?: string | null
-          caregiver_emergency_name?: string | null
-          caregiver_emergency_phone?: string | null
-          caregiver_first_name?: string | null
-          caregiver_floor_number?: string | null
-          caregiver_intercom_name?: string | null
-          caregiver_last_name?: string | null
-          caregiver_lives_in_condominio?: boolean | null
-          caregiver_medical_notes?: string | null
-          created_at?: string | null
-          email?: string | null
-          first_name?: string | null
-          floor_number?: string | null
-          id?: string | null
-          intercom_name?: string | null
-          is_caregiver?: boolean | null
-          last_name?: string | null
-          lat?: number | null
-          lives_in_condominio?: boolean | null
-          lng?: number | null
-          medical_notes?: string | null
-          numero_fnofi?: string | null
-          numero_opi?: string | null
-          partita_iva?: string | null
-          phone?: string | null
-          photo_url?: string | null
-          professional_type?: string | null
-          recent_professional_searches?: string[] | null
-          recent_service_searches?: string[] | null
-          role?: string | null
-          user_id?: string | null
-          verified?: boolean | null
-          zona?: string | null
-        }
-        Relationships: []
-      }
       public_professionals: {
         Row: {
           bio: string | null
