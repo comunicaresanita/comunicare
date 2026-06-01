@@ -632,11 +632,10 @@ const DashboardPaziente = () => {
               )}
             </CardContent>
           </Card>
-          {isPaziente && <HistoryCard className="hidden md:block md:col-span-2 lg:hidden" />}
           </div>
 
           {/* Map always visible */}
-          <div ref={mapRef} className="w-full h-56 md:h-80 lg:h-auto lg:min-h-[500px] rounded-lg overflow-hidden border mb-4 md:mb-6 lg:mb-0 bg-secondary">
+          <div ref={mapRef} className="w-full h-56 md:h-80 lg:h-full lg:min-h-0 rounded-lg overflow-hidden border mb-4 md:mb-6 lg:mb-0 bg-secondary">
             {!mapsLoaded && (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
@@ -648,11 +647,8 @@ const DashboardPaziente = () => {
           </div>
           </div>
 
-          {isPaziente && <HistoryCard className="md:hidden mb-4" />}
+          <div>
 
-          <div className="lg:grid lg:grid-cols-2 lg:gap-6 lg:items-start">
-          {isPaziente && <HistoryCard className="hidden lg:block lg:col-span-1" />}
-          <div className="lg:col-span-1">
           {/* === Results: by service === */}
           {prestazioneSelezionata && !professionistaSelezionato && (
             <>
