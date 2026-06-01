@@ -192,7 +192,7 @@ const ProfiloInfermiere = () => {
         supabase.from("bookings").select("day, time_slot").eq("professional_id", id).in("status", ["pending", "confirmed"]),
       ]);
 
-      if (profileRes.data) setProfessional(profileRes.data as ProfessionalProfile);
+      if (profileRes.data) setProfessional(profileRes.data as unknown as ProfessionalProfile);
       if (servicesRes.data) setServices(servicesRes.data);
       if (availRes.data) setAvailability(availRes.data);
       if (reviewsRes.data) setReviews(reviewsRes.data);
