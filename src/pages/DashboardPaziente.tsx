@@ -332,10 +332,10 @@ const DashboardPaziente = () => {
 
   useEffect(() => {
     const fetchProfessionisti = async () => {
-      const { data: professionals } = await supabase
-        .from("profiles")
-        .select("id, first_name, last_name, bio, lat, lng, zona, professional_type, photo_url, verified")
-        .eq("role", "professionista");
+      const { data: professionalsRaw } = await supabase
+        .from("public_professionals" as any)
+        .select("id, first_name, last_name, bio, lat, lng, zona, professional_type, photo_url, verified");
+      const professionals = (professionalsRaw as any[] | null);
 
       if (!professionals || professionals.length === 0) return;
       const profIds = professionals.map((p) => p.id);

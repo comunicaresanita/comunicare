@@ -47,6 +47,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "availability_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "public_professionals"
+            referencedColumns: ["id"]
+          },
         ]
       }
       availability_overrides: {
@@ -83,6 +90,13 @@ export type Database = {
             columns: ["professional_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "availability_overrides_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "public_professionals"
             referencedColumns: ["id"]
           },
         ]
@@ -166,10 +180,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "bookings_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "public_professionals"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "bookings_professional_id_fkey"
             columns: ["professional_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "public_professionals"
             referencedColumns: ["id"]
           },
         ]
@@ -344,10 +372,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "reviews_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "public_professionals"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "reviews_professional_id_fkey"
             columns: ["professional_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "public_professionals"
             referencedColumns: ["id"]
           },
         ]
@@ -382,11 +424,74 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "services_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "public_professionals"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      public_professionals: {
+        Row: {
+          bio: string | null
+          created_at: string | null
+          first_name: string | null
+          id: string | null
+          last_name: string | null
+          lat: number | null
+          lng: number | null
+          numero_fnofi: string | null
+          numero_opi: string | null
+          partita_iva: string | null
+          photo_url: string | null
+          professional_type: string | null
+          role: string | null
+          user_id: string | null
+          verified: boolean | null
+          zona: string | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string | null
+          first_name?: string | null
+          id?: string | null
+          last_name?: string | null
+          lat?: number | null
+          lng?: number | null
+          numero_fnofi?: string | null
+          numero_opi?: string | null
+          partita_iva?: string | null
+          photo_url?: string | null
+          professional_type?: string | null
+          role?: string | null
+          user_id?: string | null
+          verified?: boolean | null
+          zona?: string | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string | null
+          first_name?: string | null
+          id?: string | null
+          last_name?: string | null
+          lat?: number | null
+          lng?: number | null
+          numero_fnofi?: string | null
+          numero_opi?: string | null
+          partita_iva?: string | null
+          photo_url?: string | null
+          professional_type?: string | null
+          role?: string | null
+          user_id?: string | null
+          verified?: boolean | null
+          zona?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
