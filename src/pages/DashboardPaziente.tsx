@@ -466,68 +466,7 @@ const DashboardPaziente = () => {
   const typeLabel = (t: string) => (t === "oss" ? "OSS" : t === "fisioterapista" ? "Fisioterapista" : "Infermiere");
 
   const isPaziente = profile?.role !== "professionista";
-  const recentBookings = bookings.slice(0, 2);
 
-  const HistoryCard = ({ className = "" }: { className?: string }) => (
-    <Card className={cn("flex flex-col h-full", className)}>
-      <CardHeader className="p-4 md:p-6">
-        <CardTitle className="text-lg md:text-senior-lg flex items-center gap-2">
-          <ClipboardList className="w-5 h-5 text-primary" /> Storico prestazioni
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-4 md:p-6 pt-0 md:pt-0 flex flex-col gap-3 flex-1">
-        {loadingBookings ? (
-          <div className="flex-1 flex items-center justify-center">
-            <p className="text-sm text-muted-foreground">Caricamento...</p>
-          </div>
-        ) : bookings.length === 0 ? (
-          <div className="flex-1 flex items-center justify-center">
-            <p className="text-sm text-muted-foreground text-center">
-              Non hai ancora effettuato prestazioni.
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="flex flex-col gap-3 flex-1">
-              {recentBookings.map((b) => (
-                <div key={b.id} className="p-3 rounded-lg border border-border/60 bg-secondary/30 hover:bg-secondary/60 transition-colors">
-                  <div className="flex justify-between items-start gap-2">
-                    <div className="min-w-0">
-                      <p className="font-medium text-sm break-words leading-tight">{b.service_name}</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {new Date(b.day).toLocaleDateString("it-IT")} — {b.time_slot}
-                      </p>
-                      {b.professional && (
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {b.professional.first_name} {b.professional.last_name}
-                        </p>
-                      )}
-                    </div>
-                    <span className={`text-xs px-2 py-0.5 rounded-full whitespace-nowrap font-medium ${
-                      b.status === "paid" || b.status === "confermato" ? "bg-primary/10 text-primary" :
-                      b.status === "completato" ? "bg-emerald-100 text-emerald-700" :
-                      "bg-muted text-muted-foreground"
-                    }`}>
-                      {b.status === "paid" || b.status === "confermato" ? "Confermato" :
-                       b.status === "completato" ? "Completato" :
-                       b.status === "pending" ? "In attesa" : b.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Button
-              variant="outline"
-              className="w-full mt-auto"
-              onClick={() => navigate("/storico-prestazioni")}
-            >
-              Mostra altro
-            </Button>
-          </>
-        )}
-      </CardContent>
-    </Card>
-  );
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -536,9 +475,11 @@ const DashboardPaziente = () => {
         <div className="container mx-auto px-4 md:px-6 max-w-6xl">
           <h1 className="md:text-senior-3xl mb-2 font-semibold text-xl font-sans">Trova la prestazione o il professionista</h1>
 
-          <div className="lg:grid lg:grid-cols-2 lg:gap-6 lg:items-start lg:mb-6">
-          <div className="grid md:grid-cols-5 gap-4 md:gap-6 mb-6 md:mb-8 lg:mb-0 lg:contents">
-          <Card className="md:col-span-3 lg:col-span-1 flex flex-col">
+          <div className="lg:grid lg:grid-cols-2 lg:gap-6 lg:items-stretch lg:mb-6">
+          <div className="mb-6 md:mb-8 lg:mb-0 lg:contents">
+
+          <Card className="lg:col-span-1 flex flex-col">
+
             <CardHeader className="p-4 md:p-6">
               <CardTitle className="text-lg md:text-senior-lg flex items-center gap-2">
                 <Search className="w-5 h-5" /> Cerca per
@@ -691,11 +632,10 @@ const DashboardPaziente = () => {
               )}
             </CardContent>
           </Card>
-          {isPaziente && <HistoryCard className="hidden md:block md:col-span-2 lg:hidden" />}
           </div>
 
           {/* Map always visible */}
-          <div ref={mapRef} className="w-full h-56 md:h-80 lg:h-auto lg:min-h-[500px] rounded-lg overflow-hidden border mb-4 md:mb-6 lg:mb-0 bg-secondary">
+          <div ref={mapRef} className="w-full h-56 md:h-80 lg:h-full lg:min-h-0 rounded-lg overflow-hidden border mb-4 md:mb-6 lg:mb-0 bg-secondary">
             {!mapsLoaded && (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
@@ -707,11 +647,8 @@ const DashboardPaziente = () => {
           </div>
           </div>
 
-          {isPaziente && <HistoryCard className="md:hidden mb-4" />}
+          <div>
 
-          <div className="lg:grid lg:grid-cols-2 lg:gap-6 lg:items-start">
-          {isPaziente && <HistoryCard className="hidden lg:block lg:col-span-1" />}
-          <div className="lg:col-span-1">
           {/* === Results: by service === */}
           {prestazioneSelezionata && !professionistaSelezionato && (
             <>
@@ -884,7 +821,7 @@ const DashboardPaziente = () => {
             </Card>
           )}
           </div>
-          </div>
+
         </div>
       </main>
       <ChatbotWidget
