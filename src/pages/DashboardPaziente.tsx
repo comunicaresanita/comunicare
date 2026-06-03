@@ -374,7 +374,7 @@ const DashboardPaziente = () => {
 
       const [{ data: services }, { data: reviews }] = await Promise.all([
         supabase.from("services").select("professional_id, name, price").in("professional_id", profIds),
-        supabase.from("reviews").select("professional_id, rating").in("professional_id", profIds),
+        supabase.from("public_reviews" as any).select("professional_id, rating").in("professional_id", profIds),
       ]);
 
       const mapped: ProfessionistaData[] = professionals
