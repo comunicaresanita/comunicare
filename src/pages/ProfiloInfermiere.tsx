@@ -195,7 +195,7 @@ const ProfiloInfermiere = () => {
       if (profileRes.data) setProfessional(profileRes.data as unknown as ProfessionalProfile);
       if (servicesRes.data) setServices(servicesRes.data);
       if (availRes.data) setAvailability(availRes.data);
-      if (reviewsRes.data) setReviews(reviewsRes.data);
+      if (reviewsRes.data) setReviews(reviewsRes.data as unknown as Review[]);
       if (overridesRes.data) setOverrides(overridesRes.data);
       if (bookingsRes.data) setBookedSlots(bookingsRes.data);
 
