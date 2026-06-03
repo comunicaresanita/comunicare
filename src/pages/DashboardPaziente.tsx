@@ -372,10 +372,11 @@ const DashboardPaziente = () => {
       if (!professionals || professionals.length === 0) return;
       const profIds = professionals.map((p) => p.id);
 
-      const [{ data: services }, { data: reviews }] = await Promise.all([
+      const [{ data: services }, { data: reviewsRaw }] = await Promise.all([
         supabase.from("services").select("professional_id, name, price").in("professional_id", profIds),
         supabase.from("public_reviews" as any).select("professional_id, rating").in("professional_id", profIds),
       ]);
+      const reviews = (reviewsRaw as unknown as { professional_id: string; rating: number }[] | null);
 
       const mapped: ProfessionistaData[] = professionals
         .filter((p) => p.lat && p.lng)
