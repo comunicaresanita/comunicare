@@ -855,6 +855,23 @@ const DashboardPaziente = () => {
           </div>
 
         </div>
+
+        {/* FAQ Section */}
+        <div className="mt-12 md:mt-16">
+          <h2 className="text-xl md:text-2xl font-bold mb-6">Domande frequenti (FAQ)</h2>
+          <Card>
+            <CardContent className="pt-6">
+              <Accordion type="single" collapsible className="w-full">
+                {patientFaqItems.map((item, i) => (
+                  <AccordionItem key={i} value={`faq-${i}`}>
+                    <AccordionTrigger className="text-left text-sm md:text-base">{item.q}</AccordionTrigger>
+                    <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </CardContent>
+          </Card>
+        </div>
       </main>
       <ChatbotWidget
         onSelectService={(service) => {
