@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import { MapPin, Search, Star, ShieldCheck, Stethoscope, Navigation, User, ClipboardList } from "lucide-react";
@@ -10,6 +11,37 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { fuzzySearchServices, haversineKm } from "@/lib/searchUtils";
 import { cn } from "@/lib/utils";
+
+const patientFaqItems = [
+  {
+    q: "Come posso prenotare una prestazione?",
+    a: "Accedi al tuo account, cerca il professionista o la prestazione che ti interessa dalla pagina 'Trova la prestazione o il professionista', seleziona data e orario disponibili e procedi con la prenotazione e il pagamento."
+  },
+  {
+    q: "Posso prenotare una prestazione per un familiare o un'altra persona?",
+    a: "Sì. Durante la prenotazione, dopo aver scelto data e orario, puoi indicare se la prestazione è per te o per un familiare/assistito. Selezionando 'Per un familiare / assistito' potrai inserire l'indirizzo della persona che riceverà la prestazione: il professionista si recherà a quell'indirizzo invece che al tuo. L'indirizzo del familiare viene salvato in automatico, così alle prenotazioni successive ti basterà sceglierlo con un clic."
+  },
+  {
+    q: "Posso cancellare una prenotazione?",
+    a: "Sì, puoi cancellare una prenotazione dalla tua dashboard. È obbligatorio avvisare almeno 24 ore prima della prestazione. In caso contrario, l'importo non sarà rimborsato."
+  },
+  {
+    q: "I pagamenti sono sicuri?",
+    a: "Sì, tutti i pagamenti vengono gestiti tramite Stripe, una piattaforma di pagamento certificata e sicura. ComuniCARE non conserva i dati delle carte di credito."
+  },
+  {
+    q: "Come posso modificare i miei dati personali?",
+    a: "Accedi al tuo profilo dalla sezione 'Il tuo profilo' nel menu in alto a destra, poi clicca su 'Il mio profilo' per aggiornare le tue informazioni."
+  },
+  {
+    q: "Cosa devo fare se riscontro un problema tecnico?",
+    a: "Compila il modulo di contatto in questa pagina descrivendo il problema nel modo più dettagliato possibile, oppure scrivici direttamente a comunicaresanita@gmail.com. Ti risponderemo il prima possibile."
+  },
+  {
+    q: "ComuniCARE è un'azienda sanitaria?",
+    a: "No, ComuniCARE è un fornitore di servizi di intermediazione. La responsabilità della prestazione sanitaria è esclusivamente in capo al professionista abilitato."
+  },
+];
 
 const prestazioniDisponibili = [
   // Infermieristici
@@ -822,6 +854,23 @@ const DashboardPaziente = () => {
           )}
           </div>
 
+        </div>
+
+        {/* FAQ Section */}
+        <div className="mt-12 md:mt-16">
+          <h2 className="text-xl md:text-2xl font-bold mb-6">Domande frequenti (FAQ)</h2>
+          <Card>
+            <CardContent className="pt-6">
+              <Accordion type="single" collapsible className="w-full">
+                {patientFaqItems.map((item, i) => (
+                  <AccordionItem key={i} value={`faq-${i}`}>
+                    <AccordionTrigger className="text-left text-sm md:text-base">{item.q}</AccordionTrigger>
+                    <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </CardContent>
+          </Card>
         </div>
       </main>
       <ChatbotWidget
