@@ -857,7 +857,7 @@ const DashboardPaziente = () => {
         </div>
 
         {/* FAQ Section */}
-        <div className="mt-12 md:mt-16">
+        <div className="mt-12 md:mt-16 max-w-3xl mx-auto">
           <h2 className="text-xl md:text-2xl font-bold mb-6">Domande frequenti (FAQ)</h2>
           <Card>
             <CardContent className="pt-6">
