@@ -187,7 +187,7 @@ const ProfiloInfermiere = () => {
         supabase.from("public_professionals" as any).select("*").eq("id", id).single(),
         supabase.from("services").select("*").eq("professional_id", id),
         supabase.from("availability").select("*").eq("professional_id", id),
-        supabase.from("reviews").select("*").eq("professional_id", id).order("created_at", { ascending: false }),
+        supabase.from("public_reviews" as any).select("*").eq("professional_id", id).order("created_at", { ascending: false }),
         supabase.from("availability_overrides").select("*").eq("professional_id", id),
         supabase.from("bookings").select("day, time_slot").eq("professional_id", id).in("status", ["pending", "confirmed"]),
       ]);
