@@ -570,6 +570,17 @@ const DashboardPaziente = () => {
                   </div>
                 </div>
               )}
+
+              {/* "Tutti i servizi" link – always visible at the bottom of the card */}
+              <button
+                type="button"
+                onClick={() => navigate("/prestazioni")}
+                className="mt-4 w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md border border-dashed border-primary/40 text-primary hover:bg-secondary/60 transition-colors"
+                aria-label="Vai alla pagina con tutte le prestazioni offerte"
+              >
+                <span className="text-sm md:text-senior-sm font-medium">Tutti i servizi</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </CardContent>
           </Card>
           </div>
