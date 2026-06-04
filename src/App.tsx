@@ -22,6 +22,7 @@ import Profilo from "./pages/Profilo.tsx";
 import SetupPosizione from "./pages/SetupPosizione.tsx";
 import Contatti from "./pages/Contatti.tsx";
 import StoricoPrestazioni from "./pages/StoricoPrestazioni.tsx";
+import Prestazioni from "./pages/Prestazioni.tsx";
 
 import BlogArticolo from "./pages/BlogArticolo.tsx";
 import Admin from "./pages/Admin.tsx";
