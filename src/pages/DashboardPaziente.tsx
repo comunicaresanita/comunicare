@@ -598,7 +598,73 @@ const DashboardPaziente = () => {
           </div>
           </div>
 
+          {/* === "Come prenotare in 3 passi" — reminder, non-promotional === */}
+          {!prestazioneSelezionata && !professionistaSelezionato && (
+            <section
+              aria-labelledby="come-prenotare-title"
+              className="mt-6 md:mt-8 rounded-xl border bg-secondary/30 p-5 md:p-6"
+            >
+              <h2
+                id="come-prenotare-title"
+                className="text-base md:text-senior-lg font-semibold mb-1"
+              >
+                Come prenotare in 3 passi
+              </h2>
+              <p className="text-xs md:text-sm text-muted-foreground mb-4 md:mb-5">
+                Un promemoria veloce per orientarti nel sito.
+              </p>
+              <ol className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                {[
+                  {
+                    n: 1,
+                    title: "Cerca la prestazione",
+                    body:
+                      "Usa la barra qui sopra per cercare una prestazione di cui hai bisogno o un professionista per nome.",
+                    Icon: Search,
+                  },
+                  {
+                    n: 2,
+                    title: "Scegli data e orario",
+                    body:
+                      "Tra le disponibilità del professionista, seleziona lo slot che ti è più comodo.",
+                    Icon: MousePointerClick,
+                  },
+                  {
+                    n: 3,
+                    title: "Conferma la prenotazione",
+                    body:
+                      "Verifica il riepilogo e conferma. Riceverai una conferma via email.",
+                    Icon: CalendarCheck,
+                  },
+                ].map(({ n, title, body, Icon }) => (
+                  <li
+                    key={n}
+                    className="bg-background rounded-lg border p-4 flex flex-col"
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <span
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white text-sm font-semibold flex-shrink-0"
+                        style={{ backgroundColor: "#0097B2" }}
+                        aria-hidden="true"
+                      >
+                        {n}
+                      </span>
+                      <h3 className="text-sm md:text-senior-sm font-semibold leading-tight">
+                        Passo {n}: {title}
+                      </h3>
+                      <Icon className="w-4 h-4 text-muted-foreground ml-auto" aria-hidden="true" />
+                    </div>
+                    <p className="text-xs md:text-sm text-muted-foreground leading-snug">
+                      {body}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+
           <div>
+
 
           {/* === Results: by service === */}
           {prestazioneSelezionata && !professionistaSelezionato && (
