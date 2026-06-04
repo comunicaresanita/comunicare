@@ -1,16 +1,17 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import { MapPin, Search, Star, ShieldCheck, Stethoscope, Navigation, User, ClipboardList } from "lucide-react";
+import { MapPin, Search, Star, ShieldCheck, Stethoscope, Navigation, User, ClipboardList, ChevronRight, CalendarCheck, MousePointerClick } from "lucide-react";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { fuzzySearchServices, haversineKm } from "@/lib/searchUtils";
 import { cn } from "@/lib/utils";
+import { prestazioniDisponibili } from "@/data/prestazioni";
 
 const patientFaqItems = [
   {
@@ -43,100 +44,6 @@ const patientFaqItems = [
   },
 ];
 
-const prestazioniDisponibili = [
-  // Infermieristici
-  "Iniezione intramuscolare",
-  "Iniezione sottocutanea",
-  "Iniezione endovenosa",
-  "Prelievo ematico a domicilio",
-  "Medicazione semplice",
-  "Medicazione complessa",
-  "Medicazione ferita chirurgica",
-  "Medicazione ulcera da pressione",
-  "Medicazione ulcera venosa",
-  "Rimozione punti di sutura",
-  "Rimozione graffette chirurgiche",
-  "Cateterismo vescicale maschile",
-  "Cateterismo vescicale femminile",
-  "Gestione e sostituzione catetere vescicale",
-  "Clistere evacuativo",
-  "Infusione endovenosa (flebo)",
-  "Terapia infusionale sottocutanea",
-  "Somministrazione terapia intramuscolare",
-  "Somministrazione terapia orale",
-  "Somministrazione insulina",
-  "Misurazione glicemia capillare",
-  "Misurazione parametri vitali completa",
-  "Misurazione pressione arteriosa",
-  "ECG a domicilio",
-  "Gestione stomie (colostomia, ileostomia, urostomia)",
-  "Sostituzione sacca stomia",
-  "Gestione nutrizione enterale (SNG/PEG)",
-  "Gestione nutrizione parenterale",
-  "Aspirazione tracheale",
-  "Gestione tracheostomia",
-  "Gestione drenaggi",
-  "Bendaggio compressivo",
-  "Bendaggio elastocompressivo arti inferiori",
-  "Assistenza post-operatoria a domicilio",
-  "Assistenza post-dimissione ospedaliera",
-  "Educazione sanitaria al paziente e caregiver",
-  "Educazione alla gestione del diabete",
-  "Prelievo per test rapido (tampone, urine)",
-  "Lavaggio auricolare",
-  "Aerosolterapia a domicilio",
-  "Ossigenoterapia domiciliare - avvio e monitoraggio",
-  "Assistenza domiciliare continuativa (per ora)",
-  "Assistenza infermieristica notturna (per ora)",
-  "Assistenza infermieristica diurna (per ora)",
-  // Fisioterapia
-  "Riabilitazione motoria a domicilio",
-  "Riabilitazione post-operatoria (protesi anca/ginocchio)",
-  "Riabilitazione post-frattura",
-  "Riabilitazione post-ictus",
-  "Riabilitazione neurologica",
-  "Riabilitazione respiratoria",
-  "Riabilitazione pavimento pelvico",
-  "Riabilitazione sportiva",
-  "Linfodrenaggio manuale",
-  "Massoterapia decontratturante",
-  "Terapia manuale ortopedica",
-  "Ginnastica posturale a domicilio",
-  "Ginnastica dolce per anziani",
-  "Rieducazione alla deambulazione",
-  "Mobilizzazione articolare",
-  "Trattamento cervicalgia/lombalgia",
-  "Kinesio taping",
-  "Esercizio terapeutico personalizzato",
-  "Stretching terapeutico",
-  "Laser terapia",
-  "Laser terapia YAG",
-  "Tecar terapia",
-  "Onde d'urto",
-  "Elettrostimolazione",
-  "Ultrasuono",
-  "Valutazione ecografica",
-  // OSS
-  "Igiene personale completa a letto",
-  "Bagno assistito in vasca/doccia",
-  "Vestizione e svestizione assistita",
-  "Cambio pannolone e igiene intima",
-  "Mobilizzazione e cambio postura a letto",
-  "Trasferimento letto-carrozzina/poltrona",
-  "Assistenza alla deambulazione",
-  "Assistenza ai pasti e imboccamento",
-  "Preparazione pasti a domicilio",
-  "Compagnia e sorveglianza diurna (per ora)",
-  "Sorveglianza notturna (per ora)",
-  "Accompagnamento a visite mediche",
-  "Accompagnamento a passeggiate",
-  "Piccola spesa e commissioni",
-  "Stimolazione cognitiva e attività ricreative",
-  "Supporto nella gestione della casa leggera",
-  "Assistenza continuativa diurna (per ora)",
-  "Assistenza continuativa notturna (per ora)",
-];
-
 interface ProfessionistaData {
   profileId: string;
   nome: string;
@@ -156,6 +63,7 @@ type SearchMode = "prestazione" | "professionista";
 
 const DashboardPaziente = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { profile } = useAuth();
   const [prestazioneSelezionata, setPrestazioneSelezionata] = useState("");
   const [professionistaSelezionato, setProfessionistaSelezionato] = useState<ProfessionistaData | null>(null);
@@ -317,6 +225,20 @@ const DashboardPaziente = () => {
     scrollToResult("results-by-service");
   };
 
+  // Pre-select a service when arriving with ?servizio= in the URL
+  // (used by the "Tutte le prestazioni" page and the chatbot).
+  useEffect(() => {
+    const fromUrl = searchParams.get("servizio");
+    if (!fromUrl) return;
+    setSearchMode("prestazione");
+    handleSelectPrestazione(fromUrl);
+    searchParams.delete("servizio");
+    setSearchParams(searchParams, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+
 
   // --- Maps & data loading (unchanged) ---
   useEffect(() => {
@@ -465,34 +387,19 @@ const DashboardPaziente = () => {
       markersRef.current.push(marker);
     });
 
+    // Center on the user's address and zoom to ~20 km radius.
+    // No marker on the user's own position (privacy + clarity).
     if (userCoords) {
-      const userMarker = new google.maps.Marker({
-        position: userCoords,
-        map: mapInstanceRef.current,
-        title: "La tua posizione",
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          fillColor: "#22c55e",
-          fillOpacity: 1,
-          strokeColor: "#16a34a",
-          strokeWeight: 2,
-          scale: 8,
-        },
-      });
-      markersRef.current.push(userMarker);
-    }
-
-    if (mapProfessionals.length > 0) {
+      mapInstanceRef.current.setCenter(userCoords);
+      mapInstanceRef.current.setZoom(10); // ~20 km radius visible
+    } else if (mapProfessionals.length > 0) {
+      // Fallback when we don't yet know where the user is
       const bounds = new google.maps.LatLngBounds();
-      if (userCoords) bounds.extend(userCoords);
       mapProfessionals.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
       mapInstanceRef.current.fitBounds(bounds);
       google.maps.event.addListenerOnce(mapInstanceRef.current, "bounds_changed", () => {
-        if (mapInstanceRef.current.getZoom() > 14) mapInstanceRef.current.setZoom(14);
+        if (mapInstanceRef.current.getZoom() > 12) mapInstanceRef.current.setZoom(12);
       });
-    } else if (userCoords) {
-      mapInstanceRef.current.setCenter(userCoords);
-      mapInstanceRef.current.setZoom(12);
     }
   }, [mapProfessionals, mapsLoaded, userCoords, prestazioneSelezionata]);
 
@@ -663,6 +570,17 @@ const DashboardPaziente = () => {
                   </div>
                 </div>
               )}
+
+              {/* "Tutti i servizi" link – always visible at the bottom of the card */}
+              <button
+                type="button"
+                onClick={() => navigate("/prestazioni")}
+                className="mt-4 w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md border border-dashed border-primary/40 text-primary hover:bg-secondary/60 transition-colors"
+                aria-label="Vai alla pagina con tutte le prestazioni offerte"
+              >
+                <span className="text-sm md:text-senior-sm font-medium">Tutti i servizi</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </CardContent>
           </Card>
           </div>
@@ -680,7 +598,73 @@ const DashboardPaziente = () => {
           </div>
           </div>
 
+          {/* === "Come prenotare in 3 passi" — reminder, non-promotional === */}
+          {!prestazioneSelezionata && !professionistaSelezionato && (
+            <section
+              aria-labelledby="come-prenotare-title"
+              className="mt-6 md:mt-8 rounded-xl border bg-secondary/30 p-5 md:p-6"
+            >
+              <h2
+                id="come-prenotare-title"
+                className="text-base md:text-senior-lg font-semibold mb-1"
+              >
+                Come prenotare in 3 passi
+              </h2>
+              <p className="text-xs md:text-sm text-muted-foreground mb-4 md:mb-5">
+                Un promemoria veloce per orientarti nel sito.
+              </p>
+              <ol className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                {[
+                  {
+                    n: 1,
+                    title: "Cerca la prestazione",
+                    body:
+                      "Usa la barra qui sopra per cercare una prestazione di cui hai bisogno o un professionista per nome.",
+                    Icon: Search,
+                  },
+                  {
+                    n: 2,
+                    title: "Scegli data e orario",
+                    body:
+                      "Tra le disponibilità del professionista, seleziona lo slot che ti è più comodo.",
+                    Icon: MousePointerClick,
+                  },
+                  {
+                    n: 3,
+                    title: "Conferma la prenotazione",
+                    body:
+                      "Verifica il riepilogo e conferma. Riceverai una conferma via email.",
+                    Icon: CalendarCheck,
+                  },
+                ].map(({ n, title, body, Icon }) => (
+                  <li
+                    key={n}
+                    className="bg-background rounded-lg border p-4 flex flex-col"
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <span
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white text-sm font-semibold flex-shrink-0"
+                        style={{ backgroundColor: "#0097B2" }}
+                        aria-hidden="true"
+                      >
+                        {n}
+                      </span>
+                      <h3 className="text-sm md:text-senior-sm font-semibold leading-tight">
+                        Passo {n}: {title}
+                      </h3>
+                      <Icon className="w-4 h-4 text-muted-foreground ml-auto" aria-hidden="true" />
+                    </div>
+                    <p className="text-xs md:text-sm text-muted-foreground leading-snug">
+                      {body}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+
           <div>
+
 
           {/* === Results: by service === */}
           {prestazioneSelezionata && !professionistaSelezionato && (

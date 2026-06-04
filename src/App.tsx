@@ -22,6 +22,7 @@ import Profilo from "./pages/Profilo.tsx";
 import SetupPosizione from "./pages/SetupPosizione.tsx";
 import Contatti from "./pages/Contatti.tsx";
 import StoricoPrestazioni from "./pages/StoricoPrestazioni.tsx";
+import Prestazioni from "./pages/Prestazioni.tsx";
 
 import BlogArticolo from "./pages/BlogArticolo.tsx";
 import Admin from "./pages/Admin.tsx";
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/pagamento-successo" element={<PagamentoSuccesso />} />
             <Route path="/profilo" element={<Profilo />} />
             <Route path="/storico-prestazioni" element={<StoricoPrestazioni />} />
+            <Route path="/prestazioni" element={<Prestazioni />} />
             <Route path="/contatti" element={<Contatti />} />
             
             <Route path="/blog/:slug" element={<BlogArticolo />} />
