@@ -225,6 +225,20 @@ const DashboardPaziente = () => {
     scrollToResult("results-by-service");
   };
 
+  // Pre-select a service when arriving with ?servizio= in the URL
+  // (used by the "Tutte le prestazioni" page and the chatbot).
+  useEffect(() => {
+    const fromUrl = searchParams.get("servizio");
+    if (!fromUrl) return;
+    setSearchMode("prestazione");
+    handleSelectPrestazione(fromUrl);
+    searchParams.delete("servizio");
+    setSearchParams(searchParams, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+
 
   // --- Maps & data loading (unchanged) ---
   useEffect(() => {
