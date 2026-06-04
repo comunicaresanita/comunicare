@@ -25,6 +25,7 @@ const Prestazioni = () => {
       <SEO
         title="Tutte le prestazioni a domicilio | ComuniCARE"
         description="Scopri tutte le prestazioni sanitarie e di assistenza disponibili a domicilio su ComuniCARE: infermieristiche, fisioterapiche e OSS."
+        path="/prestazioni"
       />
       <AuthHeader />
       <main className="flex-1 bg-background py-8 md:py-12">
