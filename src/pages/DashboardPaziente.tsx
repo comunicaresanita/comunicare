@@ -387,34 +387,19 @@ const DashboardPaziente = () => {
       markersRef.current.push(marker);
     });
 
+    // Center on the user's address and zoom to ~20 km radius.
+    // No marker on the user's own position (privacy + clarity).
     if (userCoords) {
-      const userMarker = new google.maps.Marker({
-        position: userCoords,
-        map: mapInstanceRef.current,
-        title: "La tua posizione",
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          fillColor: "#22c55e",
-          fillOpacity: 1,
-          strokeColor: "#16a34a",
-          strokeWeight: 2,
-          scale: 8,
-        },
-      });
-      markersRef.current.push(userMarker);
-    }
-
-    if (mapProfessionals.length > 0) {
+      mapInstanceRef.current.setCenter(userCoords);
+      mapInstanceRef.current.setZoom(10); // ~20 km radius visible
+    } else if (mapProfessionals.length > 0) {
+      // Fallback when we don't yet know where the user is
       const bounds = new google.maps.LatLngBounds();
-      if (userCoords) bounds.extend(userCoords);
       mapProfessionals.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
       mapInstanceRef.current.fitBounds(bounds);
       google.maps.event.addListenerOnce(mapInstanceRef.current, "bounds_changed", () => {
-        if (mapInstanceRef.current.getZoom() > 14) mapInstanceRef.current.setZoom(14);
+        if (mapInstanceRef.current.getZoom() > 12) mapInstanceRef.current.setZoom(12);
       });
-    } else if (userCoords) {
-      mapInstanceRef.current.setCenter(userCoords);
-      mapInstanceRef.current.setZoom(12);
     }
   }, [mapProfessionals, mapsLoaded, userCoords, prestazioneSelezionata]);
 
