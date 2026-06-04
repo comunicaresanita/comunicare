@@ -1,0 +1,132 @@
+// Centralized catalog of all services offered on the platform,
+// grouped by professional type. Update here to add/remove services.
+
+export const prestazioniInfermiere: string[] = [
+  "Aerosolterapia a domicilio",
+  "Aspirazione tracheale",
+  "Assistenza domiciliare continuativa (per ora)",
+  "Assistenza infermieristica diurna (per ora)",
+  "Assistenza infermieristica notturna (per ora)",
+  "Assistenza post-dimissione ospedaliera",
+  "Assistenza post-operatoria a domicilio",
+  "Bendaggio compressivo",
+  "Bendaggio elastocompressivo arti inferiori",
+  "Cateterismo vescicale femminile",
+  "Cateterismo vescicale maschile",
+  "Clistere evacuativo",
+  "ECG a domicilio",
+  "Educazione alla gestione del diabete",
+  "Educazione sanitaria al paziente e caregiver",
+  "Gestione drenaggi",
+  "Gestione e sostituzione catetere vescicale",
+  "Gestione nutrizione enterale (SNG/PEG)",
+  "Gestione nutrizione parenterale",
+  "Gestione stomie (colostomia, ileostomia, urostomia)",
+  "Gestione tracheostomia",
+  "Iniezione endovenosa",
+  "Iniezione intramuscolare",
+  "Iniezione sottocutanea",
+  "Infusione endovenosa (flebo)",
+  "Lavaggio auricolare",
+  "Medicazione complessa",
+  "Medicazione ferita chirurgica",
+  "Medicazione semplice",
+  "Medicazione ulcera da pressione",
+  "Medicazione ulcera venosa",
+  "Misurazione glicemia capillare",
+  "Misurazione parametri vitali completa",
+  "Misurazione pressione arteriosa",
+  "Ossigenoterapia domiciliare - avvio e monitoraggio",
+  "Prelievo ematico a domicilio",
+  "Prelievo per test rapido (tampone, urine)",
+  "Rimozione graffette chirurgiche",
+  "Rimozione punti di sutura",
+  "Somministrazione insulina",
+  "Somministrazione terapia intramuscolare",
+  "Somministrazione terapia orale",
+  "Sostituzione sacca stomia",
+  "Terapia infusionale sottocutanea",
+].sort((a, b) => a.localeCompare(b, "it"));
+
+export const prestazioniFisioterapista: string[] = [
+  "Elettrostimolazione",
+  "Esercizio terapeutico personalizzato",
+  "Ginnastica dolce per anziani",
+  "Ginnastica posturale a domicilio",
+  "Kinesio taping",
+  "Laser terapia",
+  "Laser terapia YAG",
+  "Linfodrenaggio manuale",
+  "Massoterapia decontratturante",
+  "Mobilizzazione articolare",
+  "Onde d'urto",
+  "Riabilitazione motoria a domicilio",
+  "Riabilitazione neurologica",
+  "Riabilitazione pavimento pelvico",
+  "Riabilitazione post-frattura",
+  "Riabilitazione post-ictus",
+  "Riabilitazione post-operatoria (protesi anca/ginocchio)",
+  "Riabilitazione respiratoria",
+  "Riabilitazione sportiva",
+  "Rieducazione alla deambulazione",
+  "Stretching terapeutico",
+  "Tecar terapia",
+  "Terapia manuale ortopedica",
+  "Trattamento cervicalgia/lombalgia",
+  "Ultrasuono",
+  "Valutazione ecografica",
+].sort((a, b) => a.localeCompare(b, "it"));
+
+export const prestazioniOss: string[] = [
+  "Accompagnamento a passeggiate",
+  "Accompagnamento a visite mediche",
+  "Assistenza ai pasti e imboccamento",
+  "Assistenza alla deambulazione",
+  "Assistenza continuativa diurna (per ora)",
+  "Assistenza continuativa notturna (per ora)",
+  "Bagno assistito in vasca/doccia",
+  "Cambio pannolone e igiene intima",
+  "Compagnia e sorveglianza diurna (per ora)",
+  "Igiene personale completa a letto",
+  "Mobilizzazione e cambio postura a letto",
+  "Piccola spesa e commissioni",
+  "Preparazione pasti a domicilio",
+  "Sorveglianza notturna (per ora)",
+  "Stimolazione cognitiva e attività ricreative",
+  "Supporto nella gestione della casa leggera",
+  "Trasferimento letto-carrozzina/poltrona",
+  "Vestizione e svestizione assistita",
+].sort((a, b) => a.localeCompare(b, "it"));
+
+// Flat list used by the search bar (preserves the existing behaviour)
+export const prestazioniDisponibili: string[] = [
+  ...prestazioniInfermiere,
+  ...prestazioniFisioterapista,
+  ...prestazioniOss,
+];
+
+export const prestazioniPerProfessione: {
+  type: "infermiere" | "fisioterapista" | "oss";
+  label: string;
+  description: string;
+  items: string[];
+}[] = [
+  {
+    type: "infermiere",
+    label: "Infermiere",
+    description: "Prestazioni sanitarie infermieristiche a domicilio.",
+    items: prestazioniInfermiere,
+  },
+  {
+    type: "fisioterapista",
+    label: "Fisioterapista",
+    description: "Trattamenti riabilitativi e fisioterapici a domicilio.",
+    items: prestazioniFisioterapista,
+  },
+  {
+    type: "oss",
+    label: "OSS",
+    description: "Assistenza e supporto nella vita quotidiana.",
+    items: prestazioniOss,
+  },
+];
