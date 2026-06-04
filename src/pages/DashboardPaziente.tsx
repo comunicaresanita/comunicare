@@ -63,6 +63,7 @@ type SearchMode = "prestazione" | "professionista";
 
 const DashboardPaziente = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { profile } = useAuth();
   const [prestazioneSelezionata, setPrestazioneSelezionata] = useState("");
   const [professionistaSelezionato, setProfessionistaSelezionato] = useState<ProfessionistaData | null>(null);
