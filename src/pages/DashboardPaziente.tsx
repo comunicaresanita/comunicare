@@ -858,6 +858,37 @@ const DashboardPaziente = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Ultimi articoli */}
+        <div className="mt-12 md:mt-16 max-w-3xl mx-auto">
+          <h2 className="text-xl md:text-2xl font-bold mb-6">Ultimi articoli</h2>
+          <div className="space-y-6">
+            {articles.map((article) => (
+              <Link to={`/blog/${article.slug}`} key={article.slug} className="block">
+                <Card className="hover:border-primary transition-colors cursor-pointer overflow-hidden">
+                  {article.imageUrl && (
+                    <div className="w-full h-48 overflow-hidden">
+                      <img src={article.imageUrl} alt={article.imageAlt} className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <CardHeader>
+                    <CardTitle className="text-base md:text-lg leading-snug">{article.title}</CardTitle>
+                    <CardDescription className="flex items-center gap-1.5 text-xs">
+                      <Calendar className="w-3.5 h-3.5" /> {article.date}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground leading-relaxed">{article.summary}</p>
+                    <span className="inline-flex items-center gap-1.5 text-xs text-primary font-medium">
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      Fonte: {article.source}
+                    </span>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
       </main>
       <ChatbotWidget
         onSelectService={(service) => {
