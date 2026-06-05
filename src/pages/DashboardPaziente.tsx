@@ -842,51 +842,56 @@ const DashboardPaziente = () => {
 
         </div>
 
-        {/* FAQ Section */}
-        <div className="mt-12 md:mt-16 max-w-3xl mx-auto">
-          <h2 className="text-xl md:text-2xl font-bold mb-6">Domande frequenti (FAQ)</h2>
-          <Card>
-            <CardContent className="pt-6">
-              <Accordion type="single" collapsible className="w-full">
-                {patientFaqItems.map((item, i) => (
-                  <AccordionItem key={i} value={`faq-${i}`}>
-                    <AccordionTrigger className="text-left text-sm md:text-base">{item.q}</AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </CardContent>
-          </Card>
-        </div>
+        {/* FAQ + Ultimi articoli — affiancati su desktop */}
+        <div className="mt-12 md:mt-16 grid lg:grid-cols-2 gap-8 items-stretch">
+          {/* FAQ */}
+          <div className="flex flex-col">
+            <h2 className="text-xl md:text-2xl font-bold mb-6">Domande frequenti (FAQ)</h2>
+            <Card className="flex-1">
+              <CardContent className="pt-6">
+                <Accordion type="single" collapsible className="w-full">
+                  {patientFaqItems.map((item, i) => (
+                    <AccordionItem key={i} value={`faq-${i}`}>
+                      <AccordionTrigger className="text-left text-sm md:text-base">{item.q}</AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </CardContent>
+            </Card>
+          </div>
 
-        {/* Ultimi articoli */}
-        <div className="mt-12 md:mt-16 max-w-3xl mx-auto">
-          <h2 className="text-xl md:text-2xl font-bold mb-6">Ultimi articoli</h2>
-          <div className="space-y-6">
-            {articles.map((article) => (
-              <Link to={`/blog/${article.slug}`} key={article.slug} className="block">
-                <Card className="hover:border-primary transition-colors cursor-pointer overflow-hidden">
-                  {article.imageUrl && (
-                    <div className="w-full h-48 overflow-hidden">
-                      <img src={article.imageUrl} alt={article.imageAlt} className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                  <CardHeader>
-                    <CardTitle className="text-base md:text-lg leading-snug">{article.title}</CardTitle>
-                    <CardDescription className="flex items-center gap-1.5 text-xs">
-                      <Calendar className="w-3.5 h-3.5" /> {article.date}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <p className="text-sm text-muted-foreground leading-relaxed">{article.summary}</p>
-                    <span className="inline-flex items-center gap-1.5 text-xs text-primary font-medium">
-                      <ExternalLink className="w-3.5 h-3.5" />
-                      Fonte: {article.source}
-                    </span>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+          {/* Ultimi articoli */}
+          <div className="flex flex-col min-h-0">
+            <h2 className="text-xl md:text-2xl font-bold mb-6">Ultimi articoli</h2>
+            <div className="flex-1 lg:min-h-0 lg:relative">
+              <div className="space-y-6 lg:absolute lg:inset-0 lg:overflow-y-auto lg:pr-2">
+                {articles.map((article) => (
+                  <Link to={`/blog/${article.slug}`} key={article.slug} className="block">
+                    <Card className="hover:border-primary transition-colors cursor-pointer overflow-hidden">
+                      {article.imageUrl && (
+                        <div className="w-full h-48 overflow-hidden">
+                          <img src={article.imageUrl} alt={article.imageAlt} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <CardHeader>
+                        <CardTitle className="text-base md:text-lg leading-snug">{article.title}</CardTitle>
+                        <CardDescription className="flex items-center gap-1.5 text-xs">
+                          <Calendar className="w-3.5 h-3.5" /> {article.date}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <p className="text-sm text-muted-foreground leading-relaxed">{article.summary}</p>
+                        <span className="inline-flex items-center gap-1.5 text-xs text-primary font-medium">
+                          <ExternalLink className="w-3.5 h-3.5" />
+                          Fonte: {article.source}
+                        </span>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </main>
