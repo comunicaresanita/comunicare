@@ -640,9 +640,9 @@ const DashboardPaziente = () => {
                 ].map(({ n, title, body, Icon }) => (
                   <li
                     key={n}
-                    className="bg-background rounded-lg border p-5 md:p-6 flex flex-col min-h-[180px] md:min-h-[200px]"
+                    className="bg-background rounded-lg border p-5 md:p-6 flex flex-col min-h-[180px] md:min-h-[220px] md:justify-center gap-4"
                   >
-                    <div className="flex items-center gap-3 mb-3">
+                    <div className="flex items-center gap-3">
                       <span
                         className="inline-flex items-center justify-center w-10 h-10 rounded-full text-white text-base font-semibold flex-shrink-0"
                         style={{ backgroundColor: "#0097B2" }}
@@ -653,7 +653,7 @@ const DashboardPaziente = () => {
                       <h3 className="text-base md:text-senior-base font-semibold leading-tight">
                         Passo {n}: {title}
                       </h3>
-                      <Icon className="w-5 h-5 text-muted-foreground ml-auto" aria-hidden="true" />
+                      <Icon className="w-8 h-8 md:w-9 md:h-9 text-muted-foreground ml-auto" aria-hidden="true" />
                     </div>
                     <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                       {body}
