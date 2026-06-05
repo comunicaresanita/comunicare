@@ -602,18 +602,18 @@ const DashboardPaziente = () => {
           {!prestazioneSelezionata && !professionistaSelezionato && (
             <section
               aria-labelledby="come-prenotare-title"
-              className="mt-6 md:mt-8 rounded-xl border bg-secondary/30 p-5 md:p-6"
+              className="mt-6 md:mt-8 rounded-xl border bg-secondary/30 p-6 md:p-10"
             >
               <h2
                 id="come-prenotare-title"
-                className="text-base md:text-senior-lg font-semibold mb-1"
+                className="text-lg md:text-senior-xl font-semibold mb-2"
               >
                 Come prenotare in 3 passi
               </h2>
-              <p className="text-xs md:text-sm text-muted-foreground mb-4 md:mb-5">
+              <p className="text-sm md:text-base text-muted-foreground mb-6 md:mb-8">
                 Un promemoria veloce per orientarti nel sito.
               </p>
-              <ol className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+              <ol className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                 {[
                   {
                     n: 1,
@@ -639,22 +639,22 @@ const DashboardPaziente = () => {
                 ].map(({ n, title, body, Icon }) => (
                   <li
                     key={n}
-                    className="bg-background rounded-lg border p-4 flex flex-col"
+                    className="bg-background rounded-lg border p-5 md:p-6 flex flex-col min-h-[180px] md:min-h-[200px]"
                   >
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-3 mb-3">
                       <span
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white text-sm font-semibold flex-shrink-0"
+                        className="inline-flex items-center justify-center w-10 h-10 rounded-full text-white text-base font-semibold flex-shrink-0"
                         style={{ backgroundColor: "#0097B2" }}
                         aria-hidden="true"
                       >
                         {n}
                       </span>
-                      <h3 className="text-sm md:text-senior-sm font-semibold leading-tight">
+                      <h3 className="text-base md:text-senior-base font-semibold leading-tight">
                         Passo {n}: {title}
                       </h3>
-                      <Icon className="w-4 h-4 text-muted-foreground ml-auto" aria-hidden="true" />
+                      <Icon className="w-5 h-5 text-muted-foreground ml-auto" aria-hidden="true" />
                     </div>
-                    <p className="text-xs md:text-sm text-muted-foreground leading-snug">
+                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                       {body}
                     </p>
                   </li>
