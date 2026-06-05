@@ -41,7 +41,7 @@ const Prestazioni = () => {
           <h1 className="text-2xl md:text-senior-3xl font-semibold mb-2">
             Tutte le prestazioni
           </h1>
-          <p className="text-sm md:text-senior-base text-muted-foreground mb-8 max-w-3xl">
+          <p className="text-sm md:text-senior-base text-muted-foreground mb-8">
             Di seguito trovi l'elenco completo delle prestazioni offerte tramite ComuniCARE,
             suddivise per professionista. Clicca su una prestazione per cercare un professionista
             disponibile nella tua zona.
