@@ -575,7 +575,7 @@ const DashboardPaziente = () => {
               <button
                 type="button"
                 onClick={() => navigate("/prestazioni")}
-                className="mt-4 w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md border border-dashed border-primary/40 text-primary hover:bg-secondary/60 transition-colors"
+                className="mt-4 inline-flex items-center gap-1 px-1 py-2 text-primary hover:underline transition-colors"
                 aria-label="Vai alla pagina con tutte le prestazioni offerte"
               >
                 <span className="text-sm md:text-senior-sm font-medium">Tutti i servizi</span>
