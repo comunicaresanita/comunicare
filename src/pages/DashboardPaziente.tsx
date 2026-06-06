@@ -606,29 +606,30 @@ const DashboardPaziente = () => {
                     n: 1,
                     title: "Cerca la prestazione",
                     body:
-                      "Usa la barra qui sopra per cercare una prestazione di cui hai bisogno o un professionista per nome.",
+                      "Usa la barra di ricerca qui sopra per trovare la prestazione di cui hai bisogno oppure cerca direttamente un professionista per nome e cognome.",
                     Icon: Search,
                   },
                   {
                     n: 2,
                     title: "Scegli data e orario",
                     body:
-                      "Tra le disponibilità del professionista, seleziona lo slot che ti è più comodo.",
+                      "Visualizza il calendario del professionista e seleziona tra le disponibilità lo slot che ti è più comodo, alla data e all'orario che preferisci.",
                     Icon: MousePointerClick,
                   },
                   {
                     n: 3,
                     title: "Conferma la prenotazione",
                     body:
-                      "Verifica il riepilogo e conferma. Riceverai una conferma via email.",
+                      "Controlla il riepilogo, completa il pagamento sicuro e conferma. Riceverai subito un'email con tutti i dettagli della tua prestazione.",
                     Icon: CalendarCheck,
                   },
                 ].map(({ n, title, body, Icon }) => (
                   <li
                     key={n}
-                    className="bg-background rounded-lg border p-5 md:p-6 flex flex-col min-h-[180px] md:min-h-[220px] md:justify-center gap-4"
+                    className="bg-background rounded-lg border p-5 md:p-6 flex flex-col min-h-[180px] md:min-h-[240px] gap-4"
                   >
-                    <div className="flex items-center gap-3">
+                    {/* Header row: number left, icon right — uniform across all 3 boxes */}
+                    <div className="flex items-center justify-between h-10">
                       <span
                         className="inline-flex items-center justify-center w-10 h-10 rounded-full text-white text-base font-semibold flex-shrink-0"
                         style={{ backgroundColor: "#0097B2" }}
@@ -636,12 +637,12 @@ const DashboardPaziente = () => {
                       >
                         {n}
                       </span>
-                      <h3 className="text-base md:text-senior-base font-semibold leading-tight">
-                        Passo {n}: {title}
-                      </h3>
-                      <Icon className="w-8 h-8 md:w-9 md:h-9 text-muted-foreground ml-auto" aria-hidden="true" />
+                      <Icon className="w-8 h-8 md:w-9 md:h-9 text-muted-foreground" aria-hidden="true" />
                     </div>
-                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+                    <h3 className="text-base md:text-senior-base font-semibold leading-tight">
+                      Passo {n}: {title}
+                    </h3>
+                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed flex-1">
                       {body}
                     </p>
                   </li>
