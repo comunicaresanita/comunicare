@@ -830,7 +830,7 @@ const DashboardPaziente = () => {
         </div>
 
         {/* FAQ + Ultimi articoli — affiancati su desktop */}
-        <div className="mt-12 md:mt-16 grid lg:grid-cols-2 gap-8 items-stretch">
+        <div className="mt-12 md:mt-16 grid lg:grid-cols-2 gap-6 items-stretch max-w-5xl mx-auto">
           {/* FAQ */}
           <div className="flex flex-col">
             <h2 className="text-xl md:text-2xl font-bold mb-6">Domande frequenti (FAQ)</h2>
