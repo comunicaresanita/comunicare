@@ -360,6 +360,7 @@ const DashboardPaziente = () => {
         position: { lat: p.lat, lng: p.lng },
         map: mapInstanceRef.current,
         title: p.nome,
+        clickable: false,
         icon: {
           path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
           fillColor: "#4A90D9",
@@ -370,7 +371,7 @@ const DashboardPaziente = () => {
           anchor: new google.maps.Point(12, 22),
         },
       });
-      // Marker is informational only — no click action.
+      // Marker is informational only — not clickable.
       markersRef.current.push(marker);
     });
 
