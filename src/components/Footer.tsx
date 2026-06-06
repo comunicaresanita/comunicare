@@ -9,8 +9,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
             <Link to="/"><img src={logo} alt="ComuniCARE" className="h-12 md:h-14 mb-4" /></Link>
-            <p className="text-sm md:text-senior-sm opacity-80">
-              Servizi sanitari a domicilio a Firenze. Qualità, professionalità e cura.
+            <p className="md:text-senior-sm opacity-80 text-base mx-[10px] text-left">
+              ​Qualità, professionalità 
+              e cura direttamente a casa tua.
             </p>
           </div>
           <div>
