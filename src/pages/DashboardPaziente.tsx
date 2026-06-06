@@ -833,7 +833,7 @@ const DashboardPaziente = () => {
         <div className="mt-12 md:mt-16 grid lg:grid-cols-2 gap-6 items-stretch max-w-5xl mx-auto">
           {/* FAQ */}
           <div className="flex flex-col">
-            <h2 className="text-xl md:text-2xl font-bold mb-6">Domande frequenti (FAQ)</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-6">&nbsp; &nbsp; &nbsp; Domande frequenti (FAQ)</h2>
             <Card className="flex-1">
               <CardContent className="pt-6">
                 <Accordion type="single" collapsible className="w-full">
@@ -850,7 +850,7 @@ const DashboardPaziente = () => {
 
           {/* Ultimi articoli */}
           <div className="flex flex-col min-h-0">
-            <h2 className="text-xl md:text-2xl font-bold mb-6">Ultimi articoli</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-6">&nbsp; &nbsp; &nbsp;Ultimi articoli</h2>
             <div className="flex-1 lg:min-h-0 lg:relative">
               <div className="space-y-6 lg:absolute lg:inset-0 lg:overflow-y-auto lg:pr-2">
                 {articles.map((article) => (
