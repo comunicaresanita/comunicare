@@ -612,7 +612,7 @@ const DashboardPaziente = () => {
                 Come prenotare in 3 passi
               </h2>
               <p className="text-sm md:text-base text-muted-foreground mb-6 md:mb-8">
-                Un promemoria veloce per orientarti nel sito.
+                La prossima volta ci vorrà meno di un minuto
               </p>
               <ol className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                 {[
