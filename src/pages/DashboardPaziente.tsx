@@ -370,21 +370,7 @@ const DashboardPaziente = () => {
           anchor: new google.maps.Point(12, 22),
         },
       });
-      marker.addListener("click", () => {
-        const scrollToCard = (id: string) => {
-          const el = document.getElementById(id);
-          if (!el) return;
-          const offset = 100; // leave space above so the name is visible
-          const top = el.getBoundingClientRect().top + window.scrollY - offset;
-          window.scrollTo({ top, behavior: "smooth" });
-        };
-        if (!prestazioneSelezionata) {
-          handleSelectProfessionista(p);
-          setTimeout(() => scrollToCard("prof-card-selected"), 100);
-        } else {
-          scrollToCard(`prof-card-${p.profileId}`);
-        }
-      });
+      // Marker is informational only — no click action.
       markersRef.current.push(marker);
     });
 
