@@ -33,7 +33,7 @@ const Footer = () => {
             ComuniCARE è un fornitore di servizi di intermediazione. La responsabilità della prestazione sanitaria è esclusivamente in capo al professionista abilitato.
           </p>
           <p className="text-xs md:text-sm text-center opacity-60 mt-3 md:mt-4">
-            © {new Date().getFullYear()} ComuniCARE.
+            © {new Date().getFullYear()} ComuniCARE
           </p>
         </div>
       </div>
