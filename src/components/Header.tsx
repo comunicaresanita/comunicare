@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/comunicare-logo.png";
+import logo from "@/assets/comunicare-logo-header.png";
 
 const Header = () => {
   return (
