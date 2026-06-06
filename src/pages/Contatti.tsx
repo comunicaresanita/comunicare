@@ -192,7 +192,7 @@ const Contatti = () => {
           {/* FAQ */}
           <Card id="faq">
             <CardHeader>
-              <CardTitle className="text-lg">Domande frequenti (FAQ)</CardTitle>
+              <CardTitle className="text-lg">&nbsp; &nbsp; &nbsp; Domande frequenti (FAQ)</CardTitle>
             </CardHeader>
             <CardContent>
               <Accordion type="single" collapsible className="w-full">
@@ -209,7 +209,7 @@ const Contatti = () => {
           {/* Ultimi articoli — solo per professionisti (i pazienti li vedono nella loro dashboard) */}
           {profile?.role === "professionista" && (
             <>
-              <h2 className="text-lg md:text-xl font-bold mt-10 mb-4">Ultimi articoli</h2>
+              <h2 className="text-lg md:text-xl font-bold mt-10 mb-4">&nbsp; &nbsp; &nbsp;Ultimi articoli</h2>
               <div className="space-y-6">
                 {articles.map((article) => (
                   <Link to={`/blog/${article.slug}`} key={article.slug} className="block">
