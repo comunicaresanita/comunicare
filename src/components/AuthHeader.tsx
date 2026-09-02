@@ -2,7 +2,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/comunicare-logo-header.png";
-import { Menu, LogOut, Phone, Home, User, LayoutDashboard, HelpCircle, ClipboardList } from "lucide-react";
+import { Menu, LogOut, Phone, Home, User, LayoutDashboard, HelpCircle, ClipboardList, BriefcaseMedical } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,15 +23,19 @@ const AuthHeader = () => {
   const logoTarget = user
     ? profile?.role === "professionista"
       ? "/dashboard-professionista"
-      : "/dashboard-paziente"
+      : "/"
     : "/";
 
   const handleHomeClick = () => {
-    if (location.pathname === "/dashboard-paziente") {
+    if (location.pathname === "/" || location.pathname === "/dashboard-paziente") {
       window.location.reload();
     } else {
-      navigate("/dashboard-paziente");
+      navigate("/");
     }
+  };
+
+  const requireAuth = (to: string, message: string) => {
+    navigate("/login", { state: { redirect: to, message } });
   };
 
   const isProfessionista = profile?.role === "professionista";
