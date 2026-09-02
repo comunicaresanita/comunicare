@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { MapPin, Search, Star, ShieldCheck, Stethoscope, Navigation, User, ClipboardList, ChevronRight, CalendarCheck, MousePointerClick, Calendar, ExternalLink } from "lucide-react";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import { supabase } from "@/integrations/supabase/client";
@@ -398,6 +399,11 @@ const DashboardPaziente = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Trova la prestazione — ComuniCARE assistenza a domicilio"
+        description="Cerca infermieri, OSS e fisioterapisti per prestazioni sanitarie a domicilio a Firenze: confronta professionisti verificati e prenota online."
+        path="/"
+      />
       <AuthHeader />
       <main className="flex-1 bg-background md:py-12 py-0">
         <div className="container mx-auto px-4 md:px-6 max-w-6xl">

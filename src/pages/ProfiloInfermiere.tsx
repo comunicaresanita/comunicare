@@ -334,8 +334,13 @@ const ProfiloInfermiere = () => {
       return;
     }
     if (!user || !userProfile?.id) {
-      toast({ title: "Accedi per prenotare", description: "Devi effettuare l'accesso per prenotare una prestazione.", variant: "destructive" });
-      navigate("/login");
+      toast({ title: "Accedi per prenotare", description: "Registrati o accedi al tuo profilo per completare la prenotazione." });
+      navigate("/login", {
+        state: {
+          redirect: `${window.location.pathname}${window.location.search}`,
+          message: "Per prenotare una prestazione devi accedere al tuo profilo o registrarti gratuitamente.",
+        },
+      });
       return;
     }
 

@@ -9,11 +9,14 @@ const Header = () => {
         <Link to="/" className="flex items-center">
           <img src={logo} alt="ComuniCARE" className="h-12 md:h-20" />
         </Link>
-        <Link to="/login">
-          <Button className="px-5 py-3 md:px-8 md:py-5 text-sm md:text-base">
-            Accedi
+        <div className="flex items-center gap-2">
+          <Button asChild variant="outline" size="sm" className="border-2 px-3 py-2 md:px-5 md:py-5 text-xs md:text-base">
+            <Link to="/registrazione?ruolo=professionista">Sei un professionista?</Link>
           </Button>
-        </Link>
+          <Button asChild className="px-4 py-2 md:px-8 md:py-5 text-sm md:text-base">
+            <Link to="/login">Accedi</Link>
+          </Button>
+        </div>
       </div>
     </header>
   );
