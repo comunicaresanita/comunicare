@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -22,6 +22,10 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as { redirect?: string; message?: string } | null;
+  const gateMessage = state?.message;
+  const redirectTo = state?.redirect;
   const { toast } = useToast();
   const { signIn, resetPassword } = useAuth();
 
@@ -49,7 +53,7 @@ const Login = () => {
                 if (profile?.role === "professionista") {
                   navigate("/dashboard-professionista");
                 } else {
-                  navigate("/dashboard-paziente");
+                  navigate(redirectTo || "/");
                 }
               }
             }, 300);
@@ -84,7 +88,7 @@ const Login = () => {
         if (profile?.role === "professionista") {
           navigate("/dashboard-professionista");
         } else {
-          navigate("/dashboard-paziente");
+          navigate(redirectTo || "/");
         }
       }
     }, 300);
@@ -119,6 +123,11 @@ const Login = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {gateMessage && !isRecovery && (
+              <div className="mb-4 rounded-md border border-primary/30 bg-secondary p-3 text-senior-sm text-foreground">
+                {gateMessage}
+              </div>
+            )}
             {isRecovery ? (
               <form onSubmit={handleRecovery} className="space-y-4">
                 <Input type="email" placeholder="La tua email" value={email} onChange={(e) => setEmail(e.target.value)} required className="text-senior-sm py-3" />
