@@ -2,7 +2,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/comunicare-logo-header.png";
-import { Menu, LogOut, Phone, Home, User, LayoutDashboard, HelpCircle, ClipboardList, BriefcaseMedical } from "lucide-react";
+import { Menu, LogOut, Phone, Home, User, HelpCircle, ClipboardList, BriefcaseMedical } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,40 +48,6 @@ const AuthHeader = () => {
         </Link>
         {user ? (
           <div className="flex items-center gap-1 md:gap-2">
-            <nav className="flex items-center gap-0.5 md:gap-1">
-              {isProfessionista ? (
-                <Button asChild variant="ghost" size="sm" className="gap-1.5 px-2 md:px-3">
-                  <Link to="/dashboard-professionista">
-                    <LayoutDashboard className="w-4 h-4" />
-                    <span className="hidden sm:inline text-xs md:text-sm">Dashboard</span>
-                  </Link>
-                </Button>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleHomeClick}
-                  className="gap-1.5 px-2 md:px-3"
-                >
-                  <Home className="w-4 h-4" />
-                  <span className="hidden sm:inline text-xs md:text-sm">Home</span>
-                </Button>
-              )}
-              <Button asChild variant="ghost" size="sm" className="gap-1.5 px-2 md:px-3">
-                <Link to="/profilo">
-                  <User className="w-4 h-4" />
-                  <span className="hidden sm:inline text-xs md:text-sm">Profilo</span>
-                </Link>
-              </Button>
-              {!isProfessionista && (
-                <Button asChild variant="ghost" size="sm" className="gap-1.5 px-2 md:px-3">
-                  <Link to="/storico-prestazioni">
-                    <ClipboardList className="w-4 h-4" />
-                    <span className="hidden sm:inline text-xs md:text-sm">Storico</span>
-                  </Link>
-                </Button>
-              )}
-            </nav>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-1.5 px-2 md:px-3">
@@ -90,6 +56,25 @@ const AuthHeader = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  {isProfessionista ? (
+                    <Link to="/dashboard-professionista" className="cursor-pointer">
+                      <Home className="w-4 h-4 mr-2" />Dashboard
+                    </Link>
+                  ) : (
+                    <button onClick={handleHomeClick} className="w-full text-left cursor-pointer">
+                      <Home className="w-4 h-4 mr-2" />Home
+                    </button>
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/profilo" className="cursor-pointer"><User className="w-4 h-4 mr-2" />Profilo</Link>
+                </DropdownMenuItem>
+                {!isProfessionista && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/storico-prestazioni" className="cursor-pointer"><ClipboardList className="w-4 h-4 mr-2" />Storico</Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem asChild>
                   <Link to="/contatti" className="cursor-pointer"><Phone className="w-4 h-4 mr-2" />Contatti</Link>
                 </DropdownMenuItem>
@@ -105,40 +90,6 @@ const AuthHeader = () => {
           </div>
         ) : (
           <div className="flex items-center gap-1 md:gap-2">
-            <nav className="flex items-center gap-0.5 md:gap-1">
-              <Button variant="ghost" size="sm" onClick={handleHomeClick} className="gap-1.5 px-2 md:px-3">
-                <Home className="w-4 h-4" />
-                <span className="hidden sm:inline text-xs md:text-sm">Home</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => requireAuth("/profilo", "Accedi o registrati per visualizzare il tuo profilo.")}
-                className="gap-1.5 px-2 md:px-3"
-              >
-                <User className="w-4 h-4" />
-                <span className="hidden sm:inline text-xs md:text-sm">Profilo</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => requireAuth("/storico-prestazioni", "Accedi o registrati per visualizzare lo storico delle tue prestazioni.")}
-                className="gap-1.5 px-2 md:px-3"
-              >
-                <ClipboardList className="w-4 h-4" />
-                <span className="hidden sm:inline text-xs md:text-sm">Storico</span>
-              </Button>
-            </nav>
-            <Button asChild variant="outline" size="sm" className="gap-1.5 px-2 md:px-3 border-2">
-              <Link to="/registrazione?ruolo=professionista">
-                <BriefcaseMedical className="w-4 h-4" />
-                <span className="hidden sm:inline text-xs md:text-sm">Sei un professionista?</span>
-                <span className="sm:hidden text-xs">Professionisti</span>
-              </Link>
-            </Button>
-            <Button asChild size="sm" className="px-4 py-2 md:px-6 md:py-5 text-sm md:text-base">
-              <Link to="/login">Accedi</Link>
-            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-1.5 px-2 md:px-3">
@@ -148,7 +99,25 @@ const AuthHeader = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <Link to="/registrazione" className="cursor-pointer"><User className="w-4 h-4 mr-2" />Registrati</Link>
+                  <button onClick={handleHomeClick} className="w-full text-left cursor-pointer">
+                    <Home className="w-4 h-4 mr-2" />Home
+                  </button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <button
+                    onClick={() => requireAuth("/profilo", "Accedi o registrati per visualizzare il tuo profilo.")}
+                    className="w-full text-left cursor-pointer"
+                  >
+                    <User className="w-4 h-4 mr-2" />Profilo
+                  </button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <button
+                    onClick={() => requireAuth("/storico-prestazioni", "Accedi o registrati per visualizzare lo storico delle tue prestazioni.")}
+                    className="w-full text-left cursor-pointer"
+                  >
+                    <ClipboardList className="w-4 h-4 mr-2" />Storico
+                  </button>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/contatti" className="cursor-pointer"><Phone className="w-4 h-4 mr-2" />Contatti</Link>
@@ -158,6 +127,16 @@ const AuthHeader = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <Button asChild size="sm" className="px-4 py-2 md:px-6 md:py-5 text-sm md:text-base">
+              <Link to="/login">Accedi</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="gap-1.5 px-2 md:px-3 border-2">
+              <Link to="/registrazione?ruolo=professionista">
+                <BriefcaseMedical className="w-4 h-4" />
+                <span className="hidden sm:inline text-xs md:text-sm">Sei un professionista?</span>
+                <span className="sm:hidden text-xs">Professionisti</span>
+              </Link>
+            </Button>
           </div>
         )}
       </div>
