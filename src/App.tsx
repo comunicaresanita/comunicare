@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
-import Index from "./pages/Index.tsx";
+import { Navigate } from "react-router-dom";
 import Registrazione from "./pages/Registrazione.tsx";
 import Termini from "./pages/Termini.tsx";
 import Privacy from "./pages/Privacy.tsx";
@@ -40,7 +40,7 @@ const App = () => (
         <AuthProvider>
           <ScrollToTop />
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<DashboardPaziente />} />
             <Route path="/login" element={<Login />} />
             <Route path="/registrazione" element={<Registrazione />} />
             <Route path="/termini" element={<Termini />} />
@@ -50,6 +50,7 @@ const App = () => (
             <Route path="/setup-professionista/posizione" element={<SetupPosizione />} />
             <Route path="/dashboard-professionista" element={<DashboardProfessionista />} />
             <Route path="/dashboard-paziente" element={<DashboardPaziente />} />
+            <Route path="/home" element={<Navigate to="/" replace />} />
             <Route path="/profilo-infermiere/:id" element={<ProfiloInfermiere />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/pagamento-successo" element={<PagamentoSuccesso />} />
