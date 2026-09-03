@@ -5,7 +5,7 @@ import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { MapPin, Star, Clock, ArrowLeft, BadgeCheck, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
