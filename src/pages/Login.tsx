@@ -159,7 +159,7 @@ const Login = () => {
                 </button>
                 <p className="text-center text-senior-sm text-muted-foreground">
                   Non hai un account?{" "}
-                  <Link to="/registrazione" className="text-primary underline font-medium">Registrati</Link>
+                  <Link to="/registrazione" state={redirectTo ? { redirect: redirectTo } : undefined} className="text-primary underline font-medium">Registrati</Link>
                 </p>
               </form>
             )}
