@@ -921,6 +921,11 @@ const ProfiloInfermiere = () => {
                 <Button size="lg" onClick={handlePrenotaSenzaPagamento} className="w-full py-5 md:py-6" disabled={paymentLoading}>
                   {paymentLoading ? "Prenotazione in corso..." : "Prenota"}
                 </Button>
+                {!user && (
+                  <p className="text-xs md:text-sm text-primary text-center mt-2 font-medium">
+                    Per proseguire con la prenotazione ti verrà richiesto l'accesso o la registrazione. I dati che hai inserito verranno conservati.
+                  </p>
+                )}
                 <p className="text-xs text-muted-foreground text-center mt-2">
                   Il pagamento verrà richiesto in un secondo momento. Riceverai una conferma via email.
                 </p>
