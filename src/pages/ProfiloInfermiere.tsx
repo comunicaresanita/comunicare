@@ -378,7 +378,20 @@ const ProfiloInfermiere = () => {
       return;
     }
     if (!user || !userProfile?.id) {
-      toast({ title: "Accedi per prenotare", description: "Registrati o accedi al tuo profilo per completare la prenotazione." });
+      // Save the whole booking draft so it can be restored after login/signup
+      localStorage.setItem(BOOKING_DRAFT_KEY, JSON.stringify({
+        professionalId: professional.id,
+        servizio: servizioSelezionato,
+        dateISO: selectedDate.toISOString(),
+        slot: slotSelezionato,
+        recipient,
+        cgFirstName, cgLastName, cgVia, cgCivico, cgCap, cgCitta,
+        selfMedicalNotes,
+        cgLivesInCondominio, cgIntercomName, cgFloorNumber, cgAccessNotes,
+        cgEmergencyName, cgEmergencyPhone, cgMedicalNotes,
+        savedAt: Date.now(),
+      }));
+      toast({ title: "Accedi per prenotare", description: "Registrati o accedi al tuo profilo per completare la prenotazione. I dati inseriti verranno conservati." });
       navigate("/login", {
         state: {
           redirect: `${window.location.pathname}${window.location.search}`,
