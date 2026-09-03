@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 md:px-6 py-8 md:py-12">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
-            <Link to="/"><img src={logo} alt="ComuniCARE" className="h-12 md:h-14 mb-4" /></Link>
+            <Link to="/"><img src={logo} alt="ComuniCARE" className="h-12 md:h-14 mb-4 w-auto object-contain" /></Link>
             <p className="md:text-senior-sm opacity-80 text-base mx-[10px] text-left">
               ​Qualità, professionalità 
               e cura direttamente a casa tua.
