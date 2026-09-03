@@ -156,7 +156,7 @@ const ChatbotWidget = ({ onSelectService, professionals = [] }: ChatbotWidgetPro
           className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 bg-primary text-primary-foreground rounded-full p-3 md:p-4 shadow-lg hover:opacity-90 transition-opacity flex items-center gap-2"
         >
           <MessageCircle className="w-5 h-5 md:w-6 md:h-6" />
-          <span className="text-sm font-medium hidden sm:inline">Serve aiuto?</span>
+          <span className="text-xs md:text-sm font-medium whitespace-nowrap">Serve aiuto?</span>
         </button>
       )}
 
