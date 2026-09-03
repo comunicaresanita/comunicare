@@ -42,10 +42,11 @@ const AuthHeader = () => {
 
   return (
     <header className="bg-card shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-2">
+      <div className="container mx-auto px-4 md:px-6 max-w-6xl py-3 md:py-4 flex items-center justify-between gap-1.5 md:gap-2">
         <Link to={logoTarget} className="flex items-center flex-shrink-0">
-          <img src={logo} alt="ComuniCARE" className="h-12 md:h-20 w-auto object-contain flex-shrink-0" />
+          <img src={logo} alt="ComuniCARE" className="h-9 sm:h-12 md:h-20 w-auto object-contain flex-shrink-0" />
         </Link>
+
         {user ? (
           <div className="flex items-center gap-1 md:gap-2">
             <DropdownMenu>
@@ -90,20 +91,19 @@ const AuthHeader = () => {
           </div>
         ) : (
           <div className="flex items-center gap-1 md:gap-2">
-            <Button asChild variant="outline" size="sm" className="gap-1.5 px-2 md:px-3 border-2">
+            <Button asChild variant="outline" size="sm" className="border-2 px-1.5 md:px-3 h-8 md:h-9 whitespace-nowrap">
               <Link to="/registrazione?ruolo=professionista">
-                <BriefcaseMedical className="w-4 h-4" />
-                <span className="hidden sm:inline text-xs md:text-sm">Sei un professionista?</span>
-                <span className="sm:hidden text-xs">Professionisti</span>
+                <span className="text-[10px] leading-none md:text-sm">Sei un professionista?</span>
               </Link>
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-1.5 px-2 md:px-3">
-                  <Menu className="w-4 h-4" />
-                  <span className="hidden sm:inline text-xs md:text-sm">Menu</span>
+                <Button variant="outline" size="sm" className="gap-1 px-1.5 md:px-3 h-8 md:h-9">
+                  <Menu className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <span className="text-[10px] leading-none md:text-sm">Menu</span>
                 </Button>
               </DropdownMenuTrigger>
+
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
                   <button onClick={handleHomeClick} className="w-full text-left cursor-pointer">
