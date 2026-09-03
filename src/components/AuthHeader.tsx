@@ -137,13 +137,6 @@ const AuthHeader = () => {
             <Button asChild size="sm" className="px-4 py-2 md:px-6 md:py-5 text-sm md:text-base">
               <Link to="/login">Accedi</Link>
             </Button>
-            <Button asChild variant="outline" size="sm" className="gap-1.5 px-2 md:px-3 border-2">
-              <Link to="/registrazione?ruolo=professionista">
-                <BriefcaseMedical className="w-4 h-4" />
-                <span className="hidden sm:inline text-xs md:text-sm">Sei un professionista?</span>
-                <span className="sm:hidden text-xs">Professionisti</span>
-              </Link>
-            </Button>
           </div>
         )}
       </div>
