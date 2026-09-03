@@ -17,6 +17,8 @@ import { Label } from "@/components/ui/label";
 
 const NIGHT_START_HOUR = 20;
 
+const BOOKING_DRAFT_KEY = "comunicare_booking_draft";
+
 const getSlotStartHour = (slot: string | null) => {
   if (!slot) return null;
   const [start] = slot.split("-");
