@@ -923,11 +923,11 @@ const ProfiloInfermiere = () => {
                 </Button>
                 {!user && (
                   <p className="text-xs md:text-sm text-primary text-center mt-2 font-medium">
-                    Per proseguire con la prenotazione ti verrà richiesto l'accesso o la registrazione. I dati che hai inserito verranno conservati.
+                    Per proseguire con la prenotazione ti verrà richiesto l'accesso o la registrazione
                   </p>
                 )}
                 <p className="text-xs text-muted-foreground text-center mt-2">
-                  Il pagamento verrà richiesto in un secondo momento. Riceverai una conferma via email.
+                  Il pagamento verrà richiesto al completamento della prenotazione. Riceverai una conferma via email.
                 </p>
                 <p className="text-xs text-muted-foreground text-center mt-1 font-bold">
                   In caso di cancellazione, è obbligatorio avvisare almeno 24 ore prima della prestazione.
