@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchParams, Link, useNavigate } from "react-router-dom";
+import { useSearchParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +23,8 @@ type TipoProfessionista = "infermiere" | "oss" | "fisioterapista";
 
 const Registrazione = () => {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const redirectAfterSignup = (location.state as { redirect?: string } | null)?.redirect || null;
   const ruoloParam = searchParams.get("ruolo");
   const initialRole = ruoloParam === "professionista" ? "professionista" : ruoloParam === "paziente" ? "paziente" : null;
   const [ruolo, setRuolo] = useState<Ruolo | null>(initialRole);
@@ -192,7 +194,7 @@ const Registrazione = () => {
     if (ruolo === "professionista") {
       navigate("/setup-professionista");
     } else {
-      navigate("/dashboard-paziente");
+      navigate(redirectAfterSignup || "/dashboard-paziente");
     }
   };
 

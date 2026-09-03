@@ -5,7 +5,7 @@ import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { MapPin, Star, Clock, ArrowLeft, BadgeCheck, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 const NIGHT_START_HOUR = 20;
+
+const BOOKING_DRAFT_KEY = "comunicare_booking_draft";
 
 const getSlotStartHour = (slot: string | null) => {
   if (!slot) return null;
@@ -153,9 +155,51 @@ const ProfiloInfermiere = () => {
   const [cgMedicalNotes, setCgMedicalNotes] = useState("");
   const [cgHousingErrors, setCgHousingErrors] = useState<HousingInfoErrors>({});
 
+  // Restore a booking draft saved before the user was asked to log in / sign up
+  const draftAppliedRef = useRef(false);
+  useEffect(() => {
+    if (draftAppliedRef.current || !id) return;
+    const raw = localStorage.getItem(BOOKING_DRAFT_KEY);
+    if (!raw) return;
+    try {
+      const d = JSON.parse(raw);
+      if (d.professionalId !== id || Date.now() - (d.savedAt || 0) > 24 * 60 * 60 * 1000) {
+        localStorage.removeItem(BOOKING_DRAFT_KEY);
+        return;
+      }
+      draftAppliedRef.current = true;
+      if (d.servizio) setServizioSelezionato(d.servizio);
+      if (d.dateISO) {
+        const dt = new Date(d.dateISO);
+        setSelectedDate(dt);
+        setCalendarMonth(dt.getMonth());
+        setCalendarYear(dt.getFullYear());
+      }
+      if (d.slot) setSlotSelezionato(d.slot);
+      if (d.recipient) setRecipient(d.recipient);
+      setCgFirstName(d.cgFirstName || "");
+      setCgLastName(d.cgLastName || "");
+      setCgVia(d.cgVia || "");
+      setCgCivico(d.cgCivico || "");
+      setCgCap(d.cgCap || "");
+      setCgCitta(d.cgCitta || "");
+      setSelfMedicalNotes(d.selfMedicalNotes || "");
+      setCgLivesInCondominio(d.cgLivesInCondominio ?? null);
+      setCgIntercomName(d.cgIntercomName || "");
+      setCgFloorNumber(d.cgFloorNumber || "");
+      setCgAccessNotes(d.cgAccessNotes || "");
+      setCgEmergencyName(d.cgEmergencyName || "");
+      setCgEmergencyPhone(d.cgEmergencyPhone || "");
+      setCgMedicalNotes(d.cgMedicalNotes || "");
+      localStorage.removeItem(BOOKING_DRAFT_KEY);
+    } catch {
+      localStorage.removeItem(BOOKING_DRAFT_KEY);
+    }
+  }, [id]);
+
   // Prefill from saved profile (caregiver address + medical/housing/emergency)
   useEffect(() => {
-    if (!userProfile) return;
+    if (!userProfile || draftAppliedRef.current) return;
     const p = userProfile as any;
     const savedAddr = p.caregiver_address;
     if (savedAddr) {
@@ -334,7 +378,20 @@ const ProfiloInfermiere = () => {
       return;
     }
     if (!user || !userProfile?.id) {
-      toast({ title: "Accedi per prenotare", description: "Registrati o accedi al tuo profilo per completare la prenotazione." });
+      // Save the whole booking draft so it can be restored after login/signup
+      localStorage.setItem(BOOKING_DRAFT_KEY, JSON.stringify({
+        professionalId: professional.id,
+        servizio: servizioSelezionato,
+        dateISO: selectedDate.toISOString(),
+        slot: slotSelezionato,
+        recipient,
+        cgFirstName, cgLastName, cgVia, cgCivico, cgCap, cgCitta,
+        selfMedicalNotes,
+        cgLivesInCondominio, cgIntercomName, cgFloorNumber, cgAccessNotes,
+        cgEmergencyName, cgEmergencyPhone, cgMedicalNotes,
+        savedAt: Date.now(),
+      }));
+      toast({ title: "Accedi per prenotare", description: "Registrati o accedi al tuo profilo per completare la prenotazione. I dati inseriti verranno conservati." });
       navigate("/login", {
         state: {
           redirect: `${window.location.pathname}${window.location.search}`,
@@ -864,6 +921,11 @@ const ProfiloInfermiere = () => {
                 <Button size="lg" onClick={handlePrenotaSenzaPagamento} className="w-full py-5 md:py-6" disabled={paymentLoading}>
                   {paymentLoading ? "Prenotazione in corso..." : "Prenota"}
                 </Button>
+                {!user && (
+                  <p className="text-xs md:text-sm text-primary text-center mt-2 font-medium">
+                    Per proseguire con la prenotazione ti verrà richiesto l'accesso o la registrazione. I dati che hai inserito verranno conservati.
+                  </p>
+                )}
                 <p className="text-xs text-muted-foreground text-center mt-2">
                   Il pagamento verrà richiesto in un secondo momento. Riceverai una conferma via email.
                 </p>
