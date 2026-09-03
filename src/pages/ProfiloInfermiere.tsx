@@ -153,9 +153,51 @@ const ProfiloInfermiere = () => {
   const [cgMedicalNotes, setCgMedicalNotes] = useState("");
   const [cgHousingErrors, setCgHousingErrors] = useState<HousingInfoErrors>({});
 
+  // Restore a booking draft saved before the user was asked to log in / sign up
+  const draftAppliedRef = useRef(false);
+  useEffect(() => {
+    if (draftAppliedRef.current || !id) return;
+    const raw = localStorage.getItem(BOOKING_DRAFT_KEY);
+    if (!raw) return;
+    try {
+      const d = JSON.parse(raw);
+      if (d.professionalId !== id || Date.now() - (d.savedAt || 0) > 24 * 60 * 60 * 1000) {
+        localStorage.removeItem(BOOKING_DRAFT_KEY);
+        return;
+      }
+      draftAppliedRef.current = true;
+      if (d.servizio) setServizioSelezionato(d.servizio);
+      if (d.dateISO) {
+        const dt = new Date(d.dateISO);
+        setSelectedDate(dt);
+        setCalendarMonth(dt.getMonth());
+        setCalendarYear(dt.getFullYear());
+      }
+      if (d.slot) setSlotSelezionato(d.slot);
+      if (d.recipient) setRecipient(d.recipient);
+      setCgFirstName(d.cgFirstName || "");
+      setCgLastName(d.cgLastName || "");
+      setCgVia(d.cgVia || "");
+      setCgCivico(d.cgCivico || "");
+      setCgCap(d.cgCap || "");
+      setCgCitta(d.cgCitta || "");
+      setSelfMedicalNotes(d.selfMedicalNotes || "");
+      setCgLivesInCondominio(d.cgLivesInCondominio ?? null);
+      setCgIntercomName(d.cgIntercomName || "");
+      setCgFloorNumber(d.cgFloorNumber || "");
+      setCgAccessNotes(d.cgAccessNotes || "");
+      setCgEmergencyName(d.cgEmergencyName || "");
+      setCgEmergencyPhone(d.cgEmergencyPhone || "");
+      setCgMedicalNotes(d.cgMedicalNotes || "");
+      localStorage.removeItem(BOOKING_DRAFT_KEY);
+    } catch {
+      localStorage.removeItem(BOOKING_DRAFT_KEY);
+    }
+  }, [id]);
+
   // Prefill from saved profile (caregiver address + medical/housing/emergency)
   useEffect(() => {
-    if (!userProfile) return;
+    if (!userProfile || draftAppliedRef.current) return;
     const p = userProfile as any;
     const savedAddr = p.caregiver_address;
     if (savedAddr) {
