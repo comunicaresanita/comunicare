@@ -42,10 +42,11 @@ const AuthHeader = () => {
 
   return (
     <header className="bg-card shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-2">
+      <div className="container mx-auto px-4 md:px-6 max-w-6xl py-3 md:py-4 flex items-center justify-between gap-1.5 md:gap-2">
         <Link to={logoTarget} className="flex items-center flex-shrink-0">
-          <img src={logo} alt="ComuniCARE" className="h-12 md:h-20 w-auto object-contain flex-shrink-0" />
+          <img src={logo} alt="ComuniCARE" className="h-9 sm:h-12 md:h-20 w-auto object-contain flex-shrink-0" />
         </Link>
+
         {user ? (
           <div className="flex items-center gap-1 md:gap-2">
             <DropdownMenu>
