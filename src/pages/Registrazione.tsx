@@ -245,15 +245,19 @@ const Registrazione = () => {
         <Header />
         <main className="flex-1 bg-background py-8 md:py-16">
           <div className="container mx-auto px-4 md:px-6 max-w-3xl">
-            <Button variant="ghost" className="mb-4 md:mb-6 text-sm md:text-senior-sm" onClick={() => setRuolo(null)}>
-              ← Torna alla selezione
+            <Button variant="ghost" className="mb-4 md:mb-6 text-sm md:text-senior-sm" onClick={() => (initialRole === "professionista" ? navigate("/") : setRuolo(null))}>
+              ← Torna indietro
             </Button>
             <h1 className="text-xl md:text-senior-3xl font-bold text-center mb-3 md:mb-4">
               Che tipo di professionista sei?
             </h1>
-            <p className="text-sm md:text-senior-base text-muted-foreground text-center mb-6 md:mb-10">
+            <p className="text-sm md:text-senior-base text-muted-foreground text-center mb-2">
               Seleziona la tua categoria professionale.
             </p>
+            <p className="text-sm md:text-senior-base text-muted-foreground text-center mb-6 md:mb-10">
+              Se sei già registrato, clicca il pulsante <span className="font-semibold text-foreground">Accedi</span> in alto a destra.
+            </p>
+
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
               <Card className="cursor-pointer border-2 hover:border-primary hover:shadow-lg transition-all" onClick={() => setTipoProfessionista("infermiere")}>
                 <CardContent className="p-6 text-center">

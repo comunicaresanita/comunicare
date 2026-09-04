@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -118,10 +118,22 @@ const Login = () => {
       <main className="flex-1 bg-background py-16 flex items-center justify-center">
         <Card className="w-full max-w-md mx-6 shadow-lg">
           <CardHeader className="text-center">
+            <div className="flex justify-start">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="gap-1 px-2 text-senior-sm"
+                onClick={() => (window.history.length > 1 ? navigate(-1) : navigate("/"))}
+              >
+                <ArrowLeft className="w-4 h-4" /> Indietro
+              </Button>
+            </div>
             <CardTitle className="text-senior-xl">
               {isRecovery ? "Recupera password" : "Accedi"}
             </CardTitle>
           </CardHeader>
+
           <CardContent>
             {gateMessage && !isRecovery && (
               <div className="mb-4 rounded-md border border-primary/30 bg-secondary p-3 text-senior-sm text-foreground">
