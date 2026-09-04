@@ -6,7 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
-import { MapPin, Search, Star, ShieldCheck, Stethoscope, Navigation, User, ClipboardList, ChevronRight, CalendarCheck, MousePointerClick, Calendar, ExternalLink } from "lucide-react";
+import { MapPin, Search, Star, ShieldCheck, Stethoscope, Navigation, User, ClipboardList, ChevronRight, CalendarCheck, MousePointerClick, Calendar, ExternalLink, BriefcaseMedical } from "lucide-react";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";

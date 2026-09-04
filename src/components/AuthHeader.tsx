@@ -91,11 +91,6 @@ const AuthHeader = () => {
           </div>
         ) : (
           <div className="flex items-center gap-1 md:gap-2">
-            <Button asChild variant="outline" size="sm" className="border-2 px-1 md:px-3 h-8 md:h-9 whitespace-nowrap">
-              <Link to="/registrazione?ruolo=professionista">
-                <span className="text-[9px] leading-none md:text-sm">Sei un professionista?</span>
-              </Link>
-            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-0.5 px-1 md:px-3 h-8 md:h-9">
