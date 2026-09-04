@@ -10,9 +10,6 @@ const Header = () => {
           <img src={logo} alt="ComuniCARE" className="h-8 sm:h-12 md:h-20 w-auto object-contain flex-shrink-0" />
         </Link>
         <div className="flex items-center gap-1 md:gap-2">
-          <Button asChild variant="outline" size="sm" className="border-2 px-1 md:px-5 h-8 md:h-9 whitespace-nowrap text-[9px] md:text-base">
-            <Link to="/registrazione?ruolo=professionista">Sei un professionista?</Link>
-          </Button>
           <Button asChild size="sm" className="px-2 md:px-8 h-8 md:h-9 text-[9px] md:text-base">
             <Link to="/login">Accedi</Link>
           </Button>

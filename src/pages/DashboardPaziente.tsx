@@ -6,7 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
-import { MapPin, Search, Star, ShieldCheck, Stethoscope, Navigation, User, ClipboardList, ChevronRight, CalendarCheck, MousePointerClick, Calendar, ExternalLink } from "lucide-react";
+import { MapPin, Search, Star, ShieldCheck, Stethoscope, Navigation, User, ClipboardList, ChevronRight, CalendarCheck, MousePointerClick, Calendar, ExternalLink, BriefcaseMedical } from "lucide-react";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -836,7 +836,7 @@ const DashboardPaziente = () => {
 
         </div>
 
-        {/* FAQ + Ultimi articoli — affiancati su desktop */}
+        {/* FAQ + Professionisti + Ultimi articoli — affiancati su desktop */}
         <div className="container mx-auto px-4 md:px-6 max-w-6xl mt-12 md:mt-16 grid lg:grid-cols-2 gap-6 items-stretch">
           {/* FAQ */}
           <div className="flex flex-col">
@@ -855,35 +855,57 @@ const DashboardPaziente = () => {
             </Card>
           </div>
 
-          {/* Ultimi articoli */}
-          <div className="flex flex-col min-h-0">
-            <h2 className="text-xl md:text-2xl font-bold mb-6">&nbsp; &nbsp; &nbsp;Ultimi articoli</h2>
-            <div className="flex-1 lg:min-h-0 lg:relative">
-              <div className="space-y-6 lg:absolute lg:inset-0 lg:overflow-y-auto lg:pr-2">
-                {articles.map((article) => (
-                  <Link to={`/blog/${article.slug}`} key={article.slug} className="block">
-                    <Card className="hover:border-primary transition-colors cursor-pointer overflow-hidden">
-                      {article.imageUrl && (
-                        <div className="w-full h-48 overflow-hidden">
-                          <img src={article.imageUrl} alt={article.imageAlt} className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                      <CardHeader>
-                        <CardTitle className="text-base md:text-lg leading-snug">{article.title}</CardTitle>
-                        <CardDescription className="flex items-center gap-1.5 text-xs">
-                          <Calendar className="w-3.5 h-3.5" /> {article.date}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <p className="text-sm text-muted-foreground leading-relaxed">{article.summary}</p>
-                        <span className="inline-flex items-center gap-1.5 text-xs text-primary font-medium">
-                          <ExternalLink className="w-3.5 h-3.5" />
-                          Fonte: {article.source}
-                        </span>
-                      </CardContent>
-                    </Card>
+          {/* Professionisti + Ultimi articoli */}
+          <div className="flex flex-col gap-6">
+            {/* Sei un professionista? */}
+            <Card>
+              <CardContent className="p-6 flex flex-col gap-3">
+                <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2">
+                  <BriefcaseMedical className="w-6 h-6 text-primary" aria-hidden="true" />
+                  Sei un professionista?
+                </h2>
+                <p className="text-sm md:text-base text-muted-foreground">
+                  Se sei un infermiere, un OSS o un fisioterapista, registrati su ComuniCARE per offrire le tue prestazioni a domicilio. Hai già un account? Accedi dal pulsante in alto a destra per gestire la tua dashboard professionista.
+                </p>
+                <Button asChild variant="outline" className="w-full sm:w-auto self-start gap-2">
+                  <Link to="/registrazione?ruolo=professionista">
+                    <BriefcaseMedical className="w-4 h-4" aria-hidden="true" />
+                    Sei un professionista?
                   </Link>
-                ))}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Ultimi articoli */}
+            <div className="flex flex-col min-h-0 flex-1">
+              <h2 className="text-xl md:text-2xl font-bold mb-6">&nbsp; &nbsp; &nbsp;Ultimi articoli</h2>
+              <div className="flex-1 lg:min-h-0 lg:relative">
+                <div className="space-y-6 lg:absolute lg:inset-0 lg:overflow-y-auto lg:pr-2">
+                  {articles.map((article) => (
+                    <Link to={`/blog/${article.slug}`} key={article.slug} className="block">
+                      <Card className="hover:border-primary transition-colors cursor-pointer overflow-hidden">
+                        {article.imageUrl && (
+                          <div className="w-full h-48 overflow-hidden">
+                            <img src={article.imageUrl} alt={article.imageAlt} className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                        <CardHeader>
+                          <CardTitle className="text-base md:text-lg leading-snug">{article.title}</CardTitle>
+                          <CardDescription className="flex items-center gap-1.5 text-xs">
+                            <Calendar className="w-3.5 h-3.5" /> {article.date}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <p className="text-sm text-muted-foreground leading-relaxed">{article.summary}</p>
+                          <span className="inline-flex items-center gap-1.5 text-xs text-primary font-medium">
+                            <ExternalLink className="w-3.5 h-3.5" />
+                            Fonte: {article.source}
+                          </span>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
