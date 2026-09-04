@@ -134,9 +134,10 @@ const AuthHeader = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button asChild size="sm" className="px-4 py-2 md:px-6 md:py-5 text-sm md:text-base">
+            <Button asChild size="sm" className="px-2.5 md:px-6 md:py-5 h-8 md:h-9 text-[10px] md:text-base">
               <Link to="/login">Accedi</Link>
             </Button>
+
           </div>
         )}
       </div>
