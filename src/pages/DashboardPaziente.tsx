@@ -858,7 +858,7 @@ const DashboardPaziente = () => {
           {/* Professionisti + Ultimi articoli */}
           <div className="flex flex-col gap-6">
             {/* Sei un professionista? */}
-            <Card>
+            <Card className="mx-auto max-w-xl">
               <CardContent className="p-6 flex flex-col gap-3">
                 <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2">
                   <BriefcaseMedical className="w-6 h-6 text-primary" aria-hidden="true" />
