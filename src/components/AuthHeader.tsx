@@ -1,8 +1,8 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/comunicare-logo-header.png";
-import { Menu, LogOut, Phone, Home, User, HelpCircle, ClipboardList } from "lucide-react";
+import { Menu, LogOut, Phone, Home, User, HelpCircle, ClipboardList, BriefcaseMedical } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +13,6 @@ import {
 const AuthHeader = () => {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleSignOut = async () => {
     await signOut();
@@ -26,14 +25,6 @@ const AuthHeader = () => {
       : "/"
     : "/";
 
-  const handleHomeClick = () => {
-    if (location.pathname === "/" || location.pathname === "/dashboard-paziente") {
-      window.location.reload();
-    } else {
-      navigate("/");
-    }
-  };
-
   const requireAuth = (to: string, message: string) => {
     navigate("/login", { state: { redirect: to, message } });
   };
@@ -44,30 +35,26 @@ const AuthHeader = () => {
     <header className="bg-card shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 md:px-6 max-w-6xl py-3 md:py-4 flex items-center justify-between gap-1.5 md:gap-2">
         <Link to={logoTarget} className="flex items-center flex-shrink-0">
-          <img src={logo} alt="ComuniCARE" className="h-8 sm:h-12 md:h-20 w-auto object-contain flex-shrink-0" />
+          <img src={logo} alt="ComuniCARE" className="h-10 sm:h-14 md:h-20 w-auto object-contain flex-shrink-0" />
         </Link>
 
         {user ? (
           <div className="flex items-center gap-1 md:gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-1.5 px-2 md:px-3">
+                <Button variant="outline" size="sm" className="gap-1.5 px-2 md:px-3 h-9 md:h-10">
                   <Menu className="w-4 h-4" />
-                  <span className="hidden sm:inline text-xs md:text-sm">Menu</span>
+                  <span className="text-sm md:text-base">Menu</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  {isProfessionista ? (
+                {isProfessionista && (
+                  <DropdownMenuItem asChild>
                     <Link to="/dashboard-professionista" className="cursor-pointer">
                       <Home className="w-4 h-4 mr-2" />Dashboard
                     </Link>
-                  ) : (
-                    <button onClick={handleHomeClick} className="w-full text-left cursor-pointer">
-                      <Home className="w-4 h-4 mr-2" />Home
-                    </button>
-                  )}
-                </DropdownMenuItem>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem asChild>
                   <Link to="/profilo" className="cursor-pointer"><User className="w-4 h-4 mr-2" />Profilo</Link>
                 </DropdownMenuItem>
@@ -78,6 +65,11 @@ const AuthHeader = () => {
                 )}
                 <DropdownMenuItem asChild>
                   <Link to="/contatti" className="cursor-pointer"><Phone className="w-4 h-4 mr-2" />Contatti</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to={isProfessionista ? "/dashboard-professionista" : "/registrazione?ruolo=professionista"} className="cursor-pointer">
+                    <BriefcaseMedical className="w-4 h-4 mr-2" />Professionisti
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/contatti#faq" className="cursor-pointer"><HelpCircle className="w-4 h-4 mr-2" />FAQ</Link>
@@ -93,18 +85,13 @@ const AuthHeader = () => {
           <div className="flex items-center gap-1 md:gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-0.5 px-1 md:px-3 h-8 md:h-9">
-                  <Menu className="w-3 h-3 md:w-4 md:h-4" />
-                  <span className="text-[9px] leading-none md:text-sm">Menu</span>
+                <Button variant="outline" size="sm" className="gap-1 px-2 md:px-3 h-9 md:h-10">
+                  <Menu className="w-4 h-4" />
+                  <span className="text-sm md:text-base">Menu</span>
                 </Button>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <button onClick={handleHomeClick} className="w-full text-left cursor-pointer">
-                    <Home className="w-4 h-4 mr-2" />Home
-                  </button>
-                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <button
                     onClick={() => requireAuth("/profilo", "Accedi o registrati per visualizzare il tuo profilo.")}
@@ -125,11 +112,16 @@ const AuthHeader = () => {
                   <Link to="/contatti" className="cursor-pointer"><Phone className="w-4 h-4 mr-2" />Contatti</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
+                  <Link to="/registrazione?ruolo=professionista" className="cursor-pointer">
+                    <BriefcaseMedical className="w-4 h-4 mr-2" />Professionisti
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link to="/contatti#faq" className="cursor-pointer"><HelpCircle className="w-4 h-4 mr-2" />FAQ</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button asChild size="sm" className="px-2 md:px-6 md:py-5 h-8 md:h-9 text-[9px] md:text-base">
+            <Button asChild size="sm" className="px-3 md:px-6 h-9 md:h-10 text-sm md:text-base">
               <Link to="/login">Accedi</Link>
             </Button>
 
