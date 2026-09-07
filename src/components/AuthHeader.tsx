@@ -26,14 +26,6 @@ const AuthHeader = () => {
       : "/"
     : "/";
 
-  const handleHomeClick = () => {
-    if (location.pathname === "/" || location.pathname === "/dashboard-paziente") {
-      window.location.reload();
-    } else {
-      navigate("/");
-    }
-  };
-
   const requireAuth = (to: string, message: string) => {
     navigate("/login", { state: { redirect: to, message } });
   };
