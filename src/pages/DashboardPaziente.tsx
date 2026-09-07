@@ -870,7 +870,7 @@ const DashboardPaziente = () => {
                 <Button asChild variant="outline" className="w-full sm:w-auto self-start gap-2">
                   <Link to="/registrazione?ruolo=professionista">
                     <BriefcaseMedical className="w-4 h-4" aria-hidden="true" />
-                    Sei un professionista?
+                    Registrati
                   </Link>
                 </Button>
               </CardContent>
