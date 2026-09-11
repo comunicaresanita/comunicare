@@ -837,15 +837,15 @@ const DashboardPaziente = () => {
           <div className="flex flex-col gap-6">
             {/* Sei un professionista? */}
             <Card className="mx-auto max-w-xl">
-              <CardContent className="p-6 flex flex-col gap-3">
-                <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2">
+              <CardContent className="p-6 flex flex-col gap-3 items-center text-center">
+                <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2 justify-center">
                   <BriefcaseMedical className="w-6 h-6 text-primary" aria-hidden="true" />
                   Sei un professionista?
                 </h2>
                 <p className="text-sm md:text-base text-muted-foreground">
                   Se sei un infermiere, un OSS o un fisioterapista, registrati su ComuniCARE per offrire le tue prestazioni a domicilio. Hai già un account? Accedi dal pulsante in alto a destra per gestire la tua dashboard professionista.
                 </p>
-                <Button asChild variant="outline" className="w-full sm:w-auto self-start gap-2">
+                <Button asChild variant="outline" className="w-full sm:w-auto gap-2">
                   <Link to="/registrazione?ruolo=professionista">
                     <BriefcaseMedical className="w-4 h-4" aria-hidden="true" />
                     Registrati
