@@ -5,97 +5,94 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// OpenStreetMap Nominatim — free, no API key required.
+const NOMINATIM = "https://nominatim.openstreetmap.org";
+const UA = "ComuniCARE/1.0 (https://comunicare.lovable.app)";
+
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    status,
+  });
+
+// Nominatim place identifier used as our place_id, e.g. "W123456".
+const toPlaceId = (item: any) =>
+  `${String(item.osm_type || "node")[0].toUpperCase()}${item.osm_id}`;
+
+const buildComponents = (addr: any) => ({
+  street: addr?.road || addr?.pedestrian || addr?.footway || addr?.residential || "",
+  streetNumber: addr?.house_number || "",
+  cap: addr?.postcode || "",
+  city: addr?.city || addr?.town || addr?.village || addr?.municipality || "",
+  province: addr?.county || addr?.state || "",
+});
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const apiKey = Deno.env.get("GOOGLE_MAPS_API_KEY");
-  if (!apiKey) {
-    return new Response(JSON.stringify({ error: "Google Maps API key not configured" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
-  }
-
   try {
-    const { action, input, placeId, types } = await req.json();
+    const { action, input, placeId, address } = await req.json();
 
     if (action === "autocomplete") {
-      const primaryTypes = types || ["street_address", "subpremise", "premise", "route"];
-      const res = await fetch("https://places.googleapis.com/v1/places:autocomplete", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Goog-Api-Key": apiKey,
-        },
-        body: JSON.stringify({
-          input,
-          includedRegionCodes: ["it"],
-          includedPrimaryTypes: primaryTypes,
-          languageCode: "it",
-        }),
-      });
+      if (!input || String(input).trim().length < 3) return json({ predictions: [] });
+      const url = `${NOMINATIM}/search?format=jsonv2&addressdetails=1&limit=6&countrycodes=it&accept-language=it&q=${encodeURIComponent(input)}`;
+      const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "application/json" } });
+      if (!res.ok) {
+        const body = await res.text();
+        console.error(`Nominatim search failed [${res.status}]: ${body}`);
+        return json({ predictions: [] });
+      }
       const data = await res.json();
-      
-      // Transform to a simple format for the client
-      const predictions = (data.suggestions || [])
-        .filter((s: any) => s.placePrediction)
-        .map((s: any) => ({
-          place_id: s.placePrediction.placeId,
-          description: s.placePrediction.text?.text || "",
-        }));
-
-      return new Response(JSON.stringify({ predictions }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      const predictions = (Array.isArray(data) ? data : []).map((item: any) => ({
+        place_id: toPlaceId(item),
+        description: item.display_name || "",
+      }));
+      return json({ predictions });
     }
 
     if (action === "details") {
-      const res = await fetch(`https://places.googleapis.com/v1/places/${placeId}`, {
-        headers: {
-          "X-Goog-Api-Key": apiKey,
-          "X-Goog-FieldMask": "formattedAddress,location,addressComponents",
-        },
-      });
-      const data = await res.json();
-
-      // Transform to match our client expectations
-      let street = "", streetNumber = "", cap = "", city = "", province = "";
-      for (const comp of data.addressComponents || []) {
-        const types: string[] = comp.types || [];
-        if (types.includes("route")) street = comp.longText || "";
-        if (types.includes("street_number")) streetNumber = comp.longText || "";
-        if (types.includes("postal_code")) cap = comp.longText || "";
-        if (types.includes("locality")) city = comp.longText || "";
-        if (types.includes("administrative_area_level_2")) province = comp.shortText || "";
-        if (!city && types.includes("administrative_area_level_3")) city = comp.longText || "";
+      if (!placeId) return json({ error: "Missing placeId" }, 400);
+      const url = `${NOMINATIM}/lookup?format=jsonv2&addressdetails=1&accept-language=it&osm_ids=${encodeURIComponent(placeId)}`;
+      const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "application/json" } });
+      if (!res.ok) {
+        const body = await res.text();
+        console.error(`Nominatim lookup failed [${res.status}]: ${body}`);
+        return json({ error: "Lookup failed", status: res.status, details: body }, res.status);
       }
+      const data = await res.json();
+      const item = Array.isArray(data) ? data[0] : null;
+      if (!item) return json({ error: "Place not found" }, 404);
 
-      return new Response(JSON.stringify({
+      return json({
         result: {
-          formatted_address: data.formattedAddress || "",
+          formatted_address: item.display_name || "",
           geometry: {
-            location: {
-              lat: data.location?.latitude || 0,
-              lng: data.location?.longitude || 0,
-            },
+            location: { lat: Number(item.lat) || 0, lng: Number(item.lon) || 0 },
           },
-          address_components: { street, streetNumber, cap, city, province },
+          address_components: buildComponents(item.address),
         },
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify({ error: "Invalid action" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 400,
-    });
+    if (action === "geocode") {
+      if (!address) return json({ error: "Missing address" }, 400);
+      const url = `${NOMINATIM}/search?format=jsonv2&addressdetails=1&limit=1&countrycodes=it&accept-language=it&q=${encodeURIComponent(address)}`;
+      const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "application/json" } });
+      if (!res.ok) {
+        const body = await res.text();
+        console.error(`Nominatim geocode failed [${res.status}]: ${body}`);
+        return json({ error: "Geocode failed", status: res.status, details: body }, res.status);
+      }
+      const data = await res.json();
+      const item = Array.isArray(data) ? data[0] : null;
+      if (!item) return json({ location: null });
+      return json({ location: { lat: Number(item.lat), lng: Number(item.lon) } });
+    }
+
+    return json({ error: "Invalid action" }, 400);
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+    return json({ error: (err as Error).message }, 500);
   }
 });

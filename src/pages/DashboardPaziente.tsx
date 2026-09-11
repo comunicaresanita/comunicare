@@ -14,6 +14,9 @@ import { fuzzySearchServices, haversineKm } from "@/lib/searchUtils";
 import { cn } from "@/lib/utils";
 import { prestazioniDisponibili } from "@/data/prestazioni";
 import { articles } from "@/data/blogArticles";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { bluePinIcon } from "@/lib/leafletPin";
 
 const patientFaqItems = [
   {
@@ -242,49 +245,34 @@ const DashboardPaziente = () => {
 
 
 
-  // --- Maps & data loading (unchanged) ---
+  // --- Map (OpenStreetMap via Leaflet — no API key required) ---
   useEffect(() => {
-    if ((window as any).google?.maps) {
-      setMapsLoaded(true);
-      return;
-    }
-    if (document.getElementById("google-maps-script")) return;
-    const loadMaps = async () => {
-      try {
-        const { data } = await supabase.functions.invoke("get-maps-key");
-        if (data?.apiKey) {
-          const script = document.createElement("script");
-          script.id = "google-maps-script";
-          script.src = `https://maps.googleapis.com/maps/api/js?key=${data.apiKey}&libraries=geocoding&callback=initMap`;
-          script.async = true;
-          script.defer = true;
-          (window as any).initMap = () => setMapsLoaded(true);
-          document.head.appendChild(script);
-        }
-      } catch (err) {
-        console.error("Failed to load Google Maps:", err);
-      }
-    };
-    loadMaps();
+    setMapsLoaded(true);
   }, []);
 
   useEffect(() => {
-    if (!mapsLoaded || !profile?.address) return;
+    if (!profile?.address) return;
     if (profile.lat && profile.lng) {
       setUserCoords({ lat: profile.lat, lng: profile.lng });
       return;
     }
-    const google = (window as any).google;
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ address: profile.address + ", Italia" }, (results: any[], status: string) => {
-      if (status === "OK" && results[0]) {
-        const loc = results[0].geometry.location;
-        setUserCoords({ lat: loc.lat(), lng: loc.lng() });
-      } else {
-        setUserCoords({ lat: 43.7696, lng: 11.2558 });
+    let cancelled = false;
+    const geocode = async () => {
+      try {
+        const { data } = await supabase.functions.invoke("places-autocomplete", {
+          body: { action: "geocode", address: `${profile.address}, Italia` },
+        });
+        if (cancelled) return;
+        setUserCoords(data?.location ?? { lat: 43.7696, lng: 11.2558 });
+      } catch {
+        if (!cancelled) setUserCoords({ lat: 43.7696, lng: 11.2558 });
       }
-    });
-  }, [mapsLoaded, profile]);
+    };
+    geocode();
+    return () => {
+      cancelled = true;
+    };
+  }, [profile]);
 
   useEffect(() => {
     const fetchProfessionisti = async () => {
@@ -337,60 +325,50 @@ const DashboardPaziente = () => {
     return professionisti;
   }, [professionistaSelezionato, prestazioneSelezionata, professionistiFiltrati, professionisti]);
 
-  // Map rendering
+  // Map rendering (Leaflet + OpenStreetMap tiles)
   useEffect(() => {
-    if (!mapRef.current || !mapsLoaded) return;
-    const google = (window as any).google;
-    if (!google) return;
+    if (!mapRef.current) return;
 
-    const center = userCoords || { lat: 43.7696, lng: 11.2558 };
+    const center: [number, number] = userCoords
+      ? [userCoords.lat, userCoords.lng]
+      : [43.7696, 11.2558];
+
     if (!mapInstanceRef.current) {
-      mapInstanceRef.current = new google.maps.Map(mapRef.current, {
-        center,
-        zoom: 11,
-        streetViewControl: false,
-        styles: [{ featureType: "poi", stylers: [{ visibility: "simplified" }] }],
-      });
+      const map = L.map(mapRef.current, { center, zoom: 11, scrollWheelZoom: true });
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+      mapInstanceRef.current = map;
+      setTimeout(() => map.invalidateSize(), 200);
     }
 
-    markersRef.current.forEach((m: any) => m.setMap(null));
+    const map: L.Map = mapInstanceRef.current;
+
+    markersRef.current.forEach((m: L.Marker) => m.remove());
     markersRef.current = [];
 
     mapProfessionals.forEach((p) => {
-      const marker = new google.maps.Marker({
-        position: { lat: p.lat, lng: p.lng },
-        map: mapInstanceRef.current,
-        title: p.nome,
-        clickable: false,
-        icon: {
-          path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
-          fillColor: "#4A90D9",
-          fillOpacity: 1,
-          strokeColor: "#2a6cb6",
-          strokeWeight: 1.5,
-          scale: 1.8,
-          anchor: new google.maps.Point(12, 22),
-        },
-      });
       // Marker is informational only — not clickable.
+      const marker = L.marker([p.lat, p.lng], {
+        icon: bluePinIcon(),
+        interactive: true,
+        keyboard: false,
+      })
+        .addTo(map)
+        .bindTooltip(p.nome, { direction: "top" });
       markersRef.current.push(marker);
     });
 
     // Center on the user's address and zoom to ~20 km radius.
     // No marker on the user's own position (privacy + clarity).
     if (userCoords) {
-      mapInstanceRef.current.setCenter(userCoords);
-      mapInstanceRef.current.setZoom(10); // ~20 km radius visible
+      map.setView([userCoords.lat, userCoords.lng], 10);
     } else if (mapProfessionals.length > 0) {
-      // Fallback when we don't yet know where the user is
-      const bounds = new google.maps.LatLngBounds();
-      mapProfessionals.forEach((p) => bounds.extend({ lat: p.lat, lng: p.lng }));
-      mapInstanceRef.current.fitBounds(bounds);
-      google.maps.event.addListenerOnce(mapInstanceRef.current, "bounds_changed", () => {
-        if (mapInstanceRef.current.getZoom() > 12) mapInstanceRef.current.setZoom(12);
-      });
+      const bounds = L.latLngBounds(mapProfessionals.map((p) => [p.lat, p.lng] as [number, number]));
+      map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });
     }
-  }, [mapProfessionals, mapsLoaded, userCoords, prestazioneSelezionata]);
+  }, [mapProfessionals, userCoords, prestazioneSelezionata]);
 
   const typeLabel = (t: string) => (t === "oss" ? "OSS" : t === "fisioterapista" ? "Fisioterapista" : "Infermiere");
 
@@ -580,7 +558,7 @@ const DashboardPaziente = () => {
           </div>
 
           {/* Map always visible */}
-          <div ref={mapRef} className="w-full h-56 md:h-80 lg:h-full lg:min-h-0 rounded-lg overflow-hidden border mb-4 md:mb-6 lg:mb-0 bg-secondary">
+          <div ref={mapRef} className="w-full h-56 md:h-80 lg:h-full lg:min-h-0 rounded-lg overflow-hidden border mb-4 md:mb-6 lg:mb-0 bg-secondary relative z-0">
             {!mapsLoaded && (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
