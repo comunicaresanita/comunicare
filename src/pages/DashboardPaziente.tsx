@@ -14,6 +14,9 @@ import { fuzzySearchServices, haversineKm } from "@/lib/searchUtils";
 import { cn } from "@/lib/utils";
 import { prestazioniDisponibili } from "@/data/prestazioni";
 import { articles } from "@/data/blogArticles";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { bluePinIcon } from "@/lib/leafletPin";
 
 const patientFaqItems = [
   {
