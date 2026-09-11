@@ -558,7 +558,7 @@ const DashboardPaziente = () => {
           </div>
 
           {/* Map always visible */}
-          <div ref={mapRef} className="w-full h-56 md:h-80 lg:h-full lg:min-h-0 rounded-lg overflow-hidden border mb-4 md:mb-6 lg:mb-0 bg-secondary">
+          <div ref={mapRef} className="w-full h-56 md:h-80 lg:h-full lg:min-h-0 rounded-lg overflow-hidden border mb-4 md:mb-6 lg:mb-0 bg-secondary relative z-0">
             {!mapsLoaded && (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
