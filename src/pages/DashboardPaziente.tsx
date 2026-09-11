@@ -242,49 +242,34 @@ const DashboardPaziente = () => {
 
 
 
-  // --- Maps & data loading (unchanged) ---
+  // --- Map (OpenStreetMap via Leaflet — no API key required) ---
   useEffect(() => {
-    if ((window as any).google?.maps) {
-      setMapsLoaded(true);
-      return;
-    }
-    if (document.getElementById("google-maps-script")) return;
-    const loadMaps = async () => {
-      try {
-        const { data } = await supabase.functions.invoke("get-maps-key");
-        if (data?.apiKey) {
-          const script = document.createElement("script");
-          script.id = "google-maps-script";
-          script.src = `https://maps.googleapis.com/maps/api/js?key=${data.apiKey}&libraries=geocoding&callback=initMap`;
-          script.async = true;
-          script.defer = true;
-          (window as any).initMap = () => setMapsLoaded(true);
-          document.head.appendChild(script);
-        }
-      } catch (err) {
-        console.error("Failed to load Google Maps:", err);
-      }
-    };
-    loadMaps();
+    setMapsLoaded(true);
   }, []);
 
   useEffect(() => {
-    if (!mapsLoaded || !profile?.address) return;
+    if (!profile?.address) return;
     if (profile.lat && profile.lng) {
       setUserCoords({ lat: profile.lat, lng: profile.lng });
       return;
     }
-    const google = (window as any).google;
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ address: profile.address + ", Italia" }, (results: any[], status: string) => {
-      if (status === "OK" && results[0]) {
-        const loc = results[0].geometry.location;
-        setUserCoords({ lat: loc.lat(), lng: loc.lng() });
-      } else {
-        setUserCoords({ lat: 43.7696, lng: 11.2558 });
+    let cancelled = false;
+    const geocode = async () => {
+      try {
+        const { data } = await supabase.functions.invoke("places-autocomplete", {
+          body: { action: "geocode", address: `${profile.address}, Italia` },
+        });
+        if (cancelled) return;
+        setUserCoords(data?.location ?? { lat: 43.7696, lng: 11.2558 });
+      } catch {
+        if (!cancelled) setUserCoords({ lat: 43.7696, lng: 11.2558 });
       }
-    });
-  }, [mapsLoaded, profile]);
+    };
+    geocode();
+    return () => {
+      cancelled = true;
+    };
+  }, [profile]);
 
   useEffect(() => {
     const fetchProfessionisti = async () => {
