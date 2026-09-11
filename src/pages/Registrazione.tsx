@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
-import GoogleMapPicker from "@/components/GoogleMapPicker";
+import OpenStreetMapPicker from "@/components/OpenStreetMapPicker";
 import AddressAutocomplete from "@/components/AddressAutocomplete";
 import StructuredAddressInput, { composeAddress } from "@/components/StructuredAddressInput";
 import HousingInfoFields, { HousingInfoErrors } from "@/components/HousingInfoFields";
@@ -478,7 +478,7 @@ const Registrazione = () => {
                     </div>
                     <div className="border-t pt-6">
                       <h3 className="text-senior-lg font-semibold mb-4">Posizione sulla mappa *</h3>
-                      <GoogleMapPicker
+                      <OpenStreetMapPicker
                         onLocationSelect={(lat, lng) => {
                           setMapLat(lat);
                           setMapLng(lng);

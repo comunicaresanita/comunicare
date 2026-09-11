@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import AuthHeader from "@/components/AuthHeader";
 import Footer from "@/components/Footer";
-import GoogleMapPicker from "@/components/GoogleMapPicker";
+import OpenStreetMapPicker from "@/components/OpenStreetMapPicker";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -68,7 +68,7 @@ const SetupPosizione = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <GoogleMapPicker
+              <OpenStreetMapPicker
                 onLocationSelect={(lat, lng) => {
                   setMapLat(lat);
                   setMapLng(lng);
