@@ -558,7 +558,7 @@ const DashboardPaziente = () => {
           </div>
 
           {/* Map always visible */}
-          <div ref={mapRef} className="w-full h-56 md:h-80 lg:h-full lg:min-h-0 rounded-lg overflow-hidden border mb-4 md:mb-6 lg:mb-0 bg-secondary relative z-0">
+          <div ref={mapRef} className="w-full h-56 md:h-80 lg:h-full lg:min-h-0 rounded-lg overflow-hidden border mb-2 md:mb-3 lg:mb-0 bg-secondary relative z-0">
             {!mapsLoaded && (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
@@ -568,6 +568,9 @@ const DashboardPaziente = () => {
               </div>
             )}
           </div>
+          <p className="text-[10px] md:text-xs text-muted-foreground text-center leading-tight">
+            La mappa è a scopo illustrativo e mostra i professionisti attivi più vicini in zona. Per prenotare una prestazione, cercarla nell'apposita barra di ricerca.
+          </p>
           </div>
 
           {/* === "Come prenotare in 3 passi" — reminder, non-promotional === */}
