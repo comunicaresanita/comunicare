@@ -490,10 +490,10 @@ const Registrazione = () => {
                       <p className="text-senior-sm text-muted-foreground mb-4">Carica i documenti richiesti per la verifica del tuo profilo.</p>
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <Label htmlFor="doc_identita" className="text-senior-sm">Documento d'identità *</Label>
+                          <Label htmlFor="doc_identita" className="text-senior-sm">{tipoProfessionista === "infermiere" ? "Documento d'identità" : "Documento d'identità *"}</Label>
                           <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
                             <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                            <Input id="doc_identita" type="file" accept=".pdf,.jpg,.jpeg,.png" required className="text-senior-sm" />
+                            <Input id="doc_identita" type="file" accept=".pdf,.jpg,.jpeg,.png" required={tipoProfessionista !== "infermiere"} className="text-senior-sm" />
                           </div>
                         </div>
                       </div>
